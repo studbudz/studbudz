@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/nav_bar.dart';
 import 'package:studubdz/UI/theme_data.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: theme.theme,
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -33,7 +34,17 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      bottomNavigationBar: NavBarWidget(height: 40),
+      body: Stack(
+        children: [
+          HomePage(),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 20,
+            child: NavBarWidget(height: 10),
+          ),
+        ],
+      ),
     );
   }
 }
