@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:studubdz/UI/theme_data.dart';
-import 'package:latlong2/latlong.dart';
 
 class NavBarWidget extends StatefulWidget {
   final double height;
