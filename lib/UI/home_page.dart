@@ -12,6 +12,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    //allows widgets to placed above one another
     return const Stack(
       children: [
         //search bar

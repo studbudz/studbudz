@@ -9,8 +9,8 @@ class MapWidget extends StatefulWidget {
 }
 
 //credit based (please don't abuse...)
-const apiKey = 'c8e66e68-0bd9-4ec0-9207-11212ce675d6';
-//const apiKey = '';
+// const apiKey = 'c8e66e68-0bd9-4ec0-9207-11212ce675d6';
+const apiKey = '';
 
 final maps = {
   'default': 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -23,7 +23,7 @@ final maps = {
 class _HomePageState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
-    final styleUrl = maps['dark'];
+    final styleUrl = maps['default'];
     return FlutterMap(
       mapController: MapController(),
       options: const MapOptions(),

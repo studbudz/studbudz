@@ -16,7 +16,7 @@ class _FeedPageState extends State<FeedPage> {
       children: [
         Positioned.fill(
           child: ListView.builder(
-            itemCount: 10,
+            itemCount: 3,
             itemBuilder: (context, index) {
               return const Padding(
                 padding: EdgeInsets.all(40.0),
