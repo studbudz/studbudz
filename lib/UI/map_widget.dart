@@ -34,7 +34,6 @@ class _HomePageState extends State<MapWidget> {
           additionalOptions: const {
             'api_key': apiKey,
           },
-          // Plenty of other options available!
         ),
       ],
     );

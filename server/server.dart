@@ -17,6 +17,8 @@ void main() async {
   }
 }
 
+///Handles messages based on their type
+///will send it to the appropriate module
 void handleConnection(WebSocket socket) {
   socket.listen((message) {
     print('Message received: $message');

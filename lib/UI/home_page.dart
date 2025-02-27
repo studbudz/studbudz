@@ -14,6 +14,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return const Stack(
       children: [
+        //search bar
         MapWidget(),
         Positioned(
           left: 0,
