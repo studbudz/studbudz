@@ -35,15 +35,12 @@ class PostHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: SizedBox(
-            width: 60,
-            height: 60,
-            child: Image.asset(
-              'assets/profileIcon.jpg',
-              fit: BoxFit.cover,
-            ),
+        SizedBox(
+          width: 60,
+          height: 60,
+          child: Image.asset(
+            'assets/profileIcon.jpg',
+            fit: BoxFit.cover,
           ),
         ),
         const Text('Username'),
