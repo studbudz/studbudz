@@ -1,4 +1,3 @@
-//This is the signalling class that will be used to handle all messages invloving the signalling process of P2P connections.
+//This is the signalling which 
 import 'dart:io';
 
-class Signalling {}
