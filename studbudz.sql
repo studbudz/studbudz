@@ -36,17 +36,43 @@ CREATE TABLE user_subject(
     FOREIGN KEY(subject_id) REFERENCES subject(subject_id)
 );
 
+CREATE TABLE event (
+    event_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    subject_id INT,
+    event_name VARCHAR(50) NOT NULL,
+    event_image VARCHAR(255),
+    event_description TEXT,
+    event_location_name VARCHAR(100) NOT NULL,
+    event_address VARCHAR(255) NOT NULL,
+    event_city VARCHAR(50) NOT NULL,
+    event_state VARCHAR(50) NOT NULL,
+    event_country VARCHAR(50) NOT NULL,
+    event_postal_code VARCHAR(20),
+    event_latitude DECIMAL(11, 8),
+    event_longitude DECIMAL(11, 8),
+    event_start_at TIMESTAMP NOT NULL,
+    event_end_at TIMESTAMP NOT NULL,
+    event_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES user(user_id)
+    FOREIGN KEY(subject_id) REFERENCES subject(subject_id)
+);
+
 CREATE TABLE post (
     post_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
-    subject_id INT, -- NULL if post is not subject specific
-    post_content TEXT, -- NULL if post is image only
-    subject_url VARCHAR(255), --the image or video url, can only be photo or video
-    -- post_latitude DECIMAL(11, 8), -- NULL if post is not location specific
-    -- post_longitude DECIMAL(11, 8), -- NULL if post is not location specific
+    post_content TEXT,
+    subject_url VARCHAR(255),
+    subject_id INT,
+    poll_id INT,
+    quiz_id INT, 
+    event_id INT,
     post_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY(user_id) REFERENCES user(user_id),
-    FOREIGN KEY(subject_id) REFERENCES subject(subject_id)
+    FOREIGN KEY(subject_id) REFERENCES subject(subject_id),
+    FOREIGN KEY(poll_id) REFERENCES poll(poll_id),
+    FOREIGN KEY(quiz_id) REFERENCES quiz(quiz_id),
+    FOREIGN KEY(event_id) REFERENCES event(event_id)
 );
 
 CREATE TABLE group (
@@ -99,28 +125,12 @@ CREATE TABLE settings (
     FOREIGN KEY(user_id) REFERENCES user(user_id)
 );
 
-CREATE TABLE user_event ();
-
-CREATE TABLE event (
-    event_id SERIAL PRIMARY KEY,
+CREATE TABLE user_event (
     user_id INT NOT NULL,
-    subject_id INT,
-    event_name VARCHAR(50) NOT NULL,
-    event_image VARCHAR(255),
-    event_description TEXT,
-    event_location_name VARCHAR(100) NOT NULL,
-    event_address VARCHAR(255) NOT NULL,
-    event_city VARCHAR(50) NOT NULL,
-    event_state VARCHAR(50) NOT NULL,
-    event_country VARCHAR(50) NOT NULL,
-    event_postal_code VARCHAR(20),
-    event_latitude DECIMAL(11, 8),
-    event_longitude DECIMAL(11, 8),
-    event_start_at TIMESTAMP NOT NULL,
-    event_end_at TIMESTAMP NOT NULL,
-    event_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY(user_id) REFERENCES user(user_id)
-    FOREIGN KEY(subject_id) REFERENCES subject(subject_id)
+    event_id INT NOT NULL,
+    PRIMARY KEY(user_id, event_id),
+    FOREIGN KEY(user_id) REFERENCES user(user_id),
+    FOREIGN KEY(event_id) REFERENCES event(event_id)
 );
 
 -- recursive table
@@ -136,9 +146,13 @@ CREATE TABLE comment (
     FOREIGN KEY(comment_id) REFERENCES comment(comment_id)
 );
 
-CREATE TABLE notification ();
-
-CREATE TABLE user_invitation ();
+CREATE TABLE notification (
+    notification_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    message TEXT NOT NULL,
+    notified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES user(user_id)
+);
 
 CREATE TABLE like (
     user_id INT NOT NULL,
@@ -148,16 +162,36 @@ CREATE TABLE like (
     FOREIGN KEY(post_id) REFERENCES post(post_id)
 );
 
-CREATE TABLE poll ();
+CREATE TABLE poll (
+    poll_id SERIAL PRIMARY KEY,
+    poll_name VARCHAR(50) NOT NULL,
+    poll_description TEXT,
+);
 
-CREATE TABLE poll_value ();
+CREATE TABLE poll_value (
+    poll_value_id SERIAL PRIMARY KEY,
+    poll_id INT NOT NULL,
+    poll_value VARCHAR(50) NOT NULL,
+    poll_value_count INT DEFAULT 0 NOT NULL,
+    FOREIGN KEY(poll_id) REFERENCES poll(poll_id)
+);
 
-CREATE TABLE invitation ();
+CREATE TABLE quiz (
+    quiz_id SERIAL PRIMARY KEY,
+    quiz_name VARCHAR(50) NOT NULL,
+    quiz_description TEXT,
+);
 
-CREATE TABLE quiz ();
+CREATE TABLE quiz_question (
+    quiz_question_id SERIAL PRIMARY KEY,
+    quiz_id INT NOT NULL,
+    FOREIGN KEY(quiz_id) REFERENCES quiz(quiz_id)
+);
 
-CREATE TABLE quiz_question ();
-
-CREATE TABLE message_report ();
-
-CREATE TABLE quiz_option ();
+CREATE TABLE quiz_option (
+    quiz_option_id SERIAL PRIMARY KEY,
+    quiz_question_id INT NOT NULL,
+    quiz_question TEXT NOT NULL,
+    quiz_is_correct BOOLEAN DEFAULT FALSE NOT NULL,
+    FOREIGN KEY(quiz_question_id) REFERENCES quiz_question(quiz_question_id)
+);
