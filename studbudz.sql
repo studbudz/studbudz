@@ -4,17 +4,19 @@ USE studbudz;
 CREATE TABLE user(
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
-    account_type VARCHAR(50) NOT NULL,
+    account_type ENUM('regular', 'tutor', 'admin') NOT NULL,
     user_avatar VARCHAR(255),
-    password_salt VARCHAR(50) NOT NULL,
+    password_salt VARCHAR(32) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    word_salt VARCHAR(50) NOT NULL,
+    user_private BOOLEAN DEFAULT FALSE NOT NULL,
+    word_salt VARCHAR(32) NOT NULL,
     word_hash VARCHAR(255) NOT NULL,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE subject(
     subject_id INT AUTO_INCREMENT PRIMARY KEY,
+    subject_url VARCHAR(255),
     subject_name VARCHAR(50) NOT NULL
 );
 
@@ -23,6 +25,15 @@ CREATE TABLE poll (
     poll_name VARCHAR(50) NOT NULL,
     poll_description TEXT
 );
+
+CREATE TABLE poll_value (
+    poll_value_id INT AUTO_INCREMENT PRIMARY KEY,
+    poll_id INT NOT NULL,
+    poll_value VARCHAR(50) NOT NULL,
+    poll_value_count INT DEFAULT 0 NOT NULL,
+    FOREIGN KEY(poll_id) REFERENCES poll(poll_id)
+);
+
 
 CREATE TABLE quiz (
     quiz_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -56,7 +67,7 @@ CREATE TABLE post (
     post_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     post_content TEXT,
-    subject_url VARCHAR(255),
+    post_url VARCHAR(255), -- image or video URL
     subject_id INT,
     poll_id INT,
     quiz_id INT, 
@@ -75,6 +86,17 @@ CREATE TABLE user_report (
     report_reason ENUM('spam', 'inappropriate', 'harassment', 'other') NOT NULL,
     report_description TEXT,
     report_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES user(user_id)
+);
+
+CREATE TABLE post_report (
+    report_id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id INT NOT NULL,
+    user_id INT NOT NULL,
+    report_reason ENUM('spam', 'inappropriate', 'harassment', 'other') NOT NULL,
+    report_description TEXT,
+    report_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY(post_id) REFERENCES post(post_id),
     FOREIGN KEY(user_id) REFERENCES user(user_id)
 );
 
@@ -148,7 +170,7 @@ CREATE TABLE user_event (
 CREATE TABLE comment (
     comment_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    post_id INT NOT NULL,
+    post_id INT,
     parent_comment_id INT, -- NULL if comment is not a reply
     comment_content TEXT NOT NULL,
     comment_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -173,24 +195,278 @@ CREATE TABLE `like` (
     FOREIGN KEY(post_id) REFERENCES post(post_id)
 );
 
-CREATE TABLE poll_value (
-    poll_value_id INT AUTO_INCREMENT PRIMARY KEY,
-    poll_id INT NOT NULL,
-    poll_value VARCHAR(50) NOT NULL,
-    poll_value_count INT DEFAULT 0 NOT NULL,
-    FOREIGN KEY(poll_id) REFERENCES poll(poll_id)
-);
-
 CREATE TABLE quiz_question (
     quiz_question_id INT AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT NOT NULL,
+    quiz_question TEXT NOT NULL,
     FOREIGN KEY(quiz_id) REFERENCES quiz(quiz_id)
 );
 
 CREATE TABLE quiz_option (
     quiz_option_id INT AUTO_INCREMENT PRIMARY KEY,
     quiz_question_id INT NOT NULL,
-    quiz_question TEXT NOT NULL,
+    quiz_option TEXT NOT NULL,
     quiz_is_correct BOOLEAN DEFAULT FALSE NOT NULL,
     FOREIGN KEY(quiz_question_id) REFERENCES quiz_question(quiz_question_id)
 );
+
+--------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------data from here onwards--------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+
+INSERT INTO user (username, account_type, password_salt, password_hash, word_sale, word_hash)
+VALUES
+('SophiaMiller', 'admin', 'FQN4mCv8eImiEpGEgvO7WYiXRVEEb5He', '$2a$12$iU6MWEn9GfW4YYALuv/3fuDd5XmVf0AqR9Ce8Qhvy37LGdvBjPFJu', 'CBQKcDCvwco2IgfjtOSxTPVFvGjHzGID', '$2a$12$3.HEtdugDGZukDTJdvOTQu.D77NQynqkiWEG.l1u8mkkygapkDQyG'), -- x|i0IS7IM$0K
+('JamesAnderso', 'tutor', '4ggUIehMMldAiLosbnSPHU1ffTXk97zq', '$2a$12$Jv0X83adMgI5n6ezTBsfq.tG9cqRZAItSSidi2sjVjDLtpWqBuIYi', 'IKrLJQlcmGelcDTCaBPOMo3TcLZiF26n', '$2a$12$tlQwUrunbzXT.uKQSdaBJOuV0TkMhh/W8lt7CVM4CkpQW0tY7eIIu'), -- 8qIe?]=L0e15
+('LiamJohnson', 'regular', 'H8fdUHmf4nSqm2OZTGB2D6XXxSHEgNYx', '$2a$12$YddGua7gTQDJZ6EWpbjDs.JJOHLJHw5thFo/Jl9UuBjG.RJ68Yy/i', 'ApgdwBcF8sLMvrwRlnysjAeyj1WWCHjK', '$2a$12$z2bb2WTfGpaF9AtyhvMdcOWzzi7mAsgfAVyTGDVGu6e59aq0dFIRi'), -- Cz9#B300#)'p
+('OliviaSmith', 'regular', 'evLgiV6IVBc6gRFyXYHnQlEoM0AB91ua', '$2a$12$GgUpLGwt2wF3fod3LSILWelNHbU33dDPhXdaeLNnVJl/mmVCGQi1.', 'wHKgLfIwChNb4voiNQQC4pCyIzkY5sMv', '$2a$12$tC5BsxhpItiBdiL74dojoOg2CZJyVauy6vP.5anSCDw0iRI5nKHIO'), -- PcPt[052Z?I(
+('NoahBrown', 'tutor', 'Pawz6gvEvuJfdTnaWGDoanMJmjHzcHK8', '$2a$12$I52DE6o/DEAWYi9TGjr1kug9H2zY7e81J2o4d5K.DIUN/SUhs6a/y', 'WXK7wVbNvm4Q3F27WXngH6igzUi8ukAX', '$2a$12$ekepdk./GquMca64Kkt1Q.r53UoGyvywLuJ/nY/nomAb.lNQOzFnK'); -- zP!103%t&N8M
+
+--user_subject
+INSERT INTO user_subject (user_id, subject_id)
+VALUES
+(1, 2),
+(2, 5),
+(3, 6),
+(4, 5),
+(5, 2);
+
+--settings
+INSERT INTO settings (user_id, email_notifications, push_notifications, dark_mode, font_size, paused_status)
+VALUES
+(1, TRUE, TRUE, FALSE, 'medium', 'active'),
+(2, TRUE, TRUE, FALSE, 'medium', 'active'),
+(3, TRUE, TRUE, FALSE, 'medium', 'active'),
+(4, TRUE, TRUE, FALSE, 'medium', 'active'),
+(5, TRUE, TRUE, FALSE, 'medium', 'active');
+
+--yes I numbered them, I can't be bothered to count each time
+INSERT INTO subject (subject_name)
+VALUES 
+('Mathematics'), -- 1
+('Physics'), -- 2
+('Chemistry'), -- 3
+('Biology'), -- 4
+('Computer Science'), -- 5
+('History'), -- 6
+('Geography'), -- 7
+('English'), -- 8
+('Economics'), -- 9
+('Psychology'), -- 10
+('Sociology'), -- 11
+('Philosophy'),-- 12
+('Art History'),-- 13
+('Music Theory');-- 14
+
+--images not correct yet
+INSERT INTO event (user_id, subject_id, event_name, event_image, event_description, event_location_name, event_address, event_city, event_state, event_country, event_postal_code, event_latitude, event_longitude, event_start_at, event_end_at)
+VALUES
+(1, 2, 'Physics Café at Starbucks', 'starbucks_physics_image.jpg', 'Join us for an intellectually stimulating cup of coffee at Starbucks. Let''s talk all things physics, from quantum mechanics to the mysteries of the universe!', 'Starbucks Café', 'Whiteley Wy, Whiteley, Fareham PO15 7LJ', 'Fareham', 'Hampshire', 'United Kingdom', 'PO15 7LJ', 50.885417, -1.245500, '2025-03-05 10:00:00', '2025-03-05 12:00:00'),
+(2, 5, 'Computer Science & Coffee at The Isambard', 'isambard_computer_science_image.jpg', 'Come join us at The Isambard Kingdom Brunel in Portsmouth for a great blend of caffeine and computer science talk. Whether you''re a coding newbie or a seasoned developer, there''s something for everyone!', 'The Isambard Kingdom Brunel', '2 Guildhall Walk, Portsmouth PO1 2DD', 'Portsmouth', 'Hampshire', 'United Kingdom', 'PO1 2DD', 50.796917, -1.092528, '2025-03-06 14:00:00', '2025-03-06 16:00:00'),
+(4, NULL, 'Italian Bear Chocolate Meetup', 'chocolate_meetup_image.jpg', 'A casual meetup for all chocolate lovers in the heart of Fitzrovia. Meet new people, chat, and enjoy delicious Italian Bear Chocolate together. Let''s make it a sweet day in London!', 'Italian Bear Chocolate', '29 Rathbone Pl, London W1T 1JG', 'London', 'England', 'United Kingdom', 'W1T 1JG', 51.517889, -0.134472, '2025-03-07 18:00:00', '2025-03-07 20:00:00');
+
+--user_event
+INSERT INTO user_event (user_id, event_id)
+VALUES
+(1, 1),
+(2, 1),
+(3, 1),
+(2, 2),
+(3, 2),
+(4, 2),
+(4, 3),
+(1, 3),
+(5, 3);
+
+INSERT INTO poll (poll_name, poll_description)
+VALUES
+('AI in Modern Technology', 'What do you think about AI’s role in modern technology? Vote and share your thoughts!');
+
+INSERT INTO poll_value (poll_id, poll_value, poll_value_count)
+VALUES
+(1, 'Very positive - AI will solve many problems', 6),
+(1, 'Somewhat positive - AI has benefits but needs regulation', 12),
+(1, 'Somewhat negative - AI poses more risks than benefits', 6),
+(1, 'Very negative - AI is dangerous for society', 4);
+
+INSERT INTO quiz (quiz_name, quiz_description)
+VALUES
+('Mathematics history', 'Test your knowledge of the history of maths!');
+
+-- Insert quiz questions
+INSERT INTO quiz_question (quiz_id, quiz_question)
+VALUES
+(1, 'Who is considered the father of modern mathematics?'),
+(1, 'What is the Pythagorean theorem?'),
+(1, 'What is the value of pi (π)?'),
+(1, 'Who was the first astronomer to calculate an accurate trajectory of Mars?'),
+(1, 'Who is credited with the development of calculus?'),
+(1, 'Who is often referred to as the "father of geometry"?'),
+(1, 'Who formulated the uncertainty principle in quantum mechanics?'),
+(1, 'Who introduced the Fibonacci sequence?'),
+(1, 'Who first proposed the heliocentric model of the solar system?'),
+(1, 'Who first proved the Fundamental Theorem of Arithmetic?'),
+(1, 'Who discovered the concept of imaginary numbers?');
+
+-- Insert quiz options
+INSERT INTO quiz_option (quiz_question_id, quiz_option, quiz_is_correct)
+VALUES
+(1, 'Isaac Newton', FALSE),
+(1, 'Albert Einstein', FALSE),
+(1, 'Euclid', TRUE),
+(1, 'Pythagoras', FALSE),
+(2, 'a^2 + b^2 = c^2', TRUE),
+(2, 'a^2 - b^2 = c^2', FALSE),
+(2, 'a^2 + b^2 = c', FALSE),
+(2, 'a^2 - b^2 = c', FALSE),
+(3, '3.14159', TRUE),
+(3, '2.71828', FALSE),
+(3, '1.61803', FALSE),
+(3, '0.57721', FALSE),
+(4, 'Johannes Kepler', TRUE),
+(4, 'Galileo Galilei', FALSE),
+(4, 'Isaac Newton', FALSE),
+(4, 'Tycho Brahe', FALSE),
+(5, 'Isaac Newton', TRUE),
+(5, 'Albert Einstein', FALSE),
+(5, 'Pierre-Simon Laplace', FALSE),
+(5, 'Gottfried Wilhelm Leibniz', FALSE),
+(6, 'Euclid', TRUE),
+(6, 'Pythagoras', FALSE),
+(6, 'Archimedes', FALSE),
+(6, 'Hippocrates', FALSE),
+(7, 'Werner Heisenberg', TRUE),
+(7, 'Max Planck', FALSE),
+(7, 'Albert Einstein', FALSE),
+(7, 'Niels Bohr', FALSE),
+(8, 'Leonardo Fibonacci', TRUE),
+(8, 'Galileo Galilei', FALSE),
+(8, 'Euclid', FALSE),
+(8, 'Carl Friedrich Gauss', FALSE),
+(9, 'Nicolaus Copernicus', TRUE),
+(9, 'Galileo Galilei', FALSE),
+(9, 'Johannes Kepler', FALSE),
+(9, 'Isaac Newton', FALSE),
+(10, 'Euclid', TRUE),
+(10, 'Carl Friedrich Gauss', FALSE),
+(10, 'Pierre de Fermat', FALSE),
+(10, 'Leonhard Euler', FALSE),
+(11, 'Rafael Bombelli', TRUE),
+(11, 'René Descartes', FALSE),
+(11, 'Carl Friedrich Gauss', FALSE),
+(11, 'John Wallis', FALSE);
+
+--images not correct yet
+INSERT INTO post (user_id, post_content, post_url, subject_id, poll_id, quiz_id, event_id, post_created_at)
+VALUES
+(1, 'Just finished reading about the latest advancements in quantum mechanics. Excited to share my thoughts soon!', NULL, 2, NULL, NULL, NULL, '2025-03-01 09:30:00'),
+(2, 'Check out this awesome image of a black hole simulation I came across! This is what modern physics looks like.', 'https://example.com/blackhole.jpg', 2, NULL, NULL, NULL, '2025-03-01 10:00:00'),
+(3, 'Poll: What do you think about AI’s role in modern technology? Vote and share your thoughts!', NULL, 5, 1, NULL, NULL, '2025-03-01 10:30:00'),
+(4, 'A stunning photo from our latest meetup at Starbucks. Great discussions on the napoleonic wars!', 'https://example.com/meetup.jpg', 6, NULL, NULL, NULL, '2025-03-01 11:00:00'),
+(5, 'Sharing an interesting article on how technology is shaping the future of education. Worth a read!', NULL, 5, NULL, NULL, NULL, '2025-03-01 11:30:00'),
+(2, 'AI POLL.', NULL, 5, 1, NULL, NULL, '2025-03-01 11:30:00'),
+(1, 'Quiz- Maths history.', NULL, 5, NULL, 1, NULL, '2025-03-01 11:30:00'),
+(3, 'Come Join!', NULL, 5, NULL, NULL, 1, '2025-03-01 11:30:00');
+
+-- comment
+INSERT INTO comment (user_id, post_id, parent_comment_id, comment_content, comment_created_at)
+VALUES
+(1, 1, NULL, 'Can''t wait to hear your thoughts!', '2025-03-01 09:45:00'),
+(2, 1, NULL, 'Sounds interesting! Looking forward to it.', '2025-03-01 09:50:00'),
+(3, 1, NULL, 'I''m excited to learn more about quantum mechanics!', '2025-03-01 09:55:00'),
+(4, 1, 1, 'Same here!', '2025-03-01 10:00:00'),
+(5, 1, 1, 'This is going to be great!', '2025-03-01 10:05:00'),
+(1, 2, NULL, 'Wow, that''s amazing!', '2025-03-01 10:15:00'),
+(2, 2, NULL, 'Incredible image!', '2025-03-01 10:20:00'),
+(3, 2, NULL, 'I love this!', '2025-03-01 10:25:00'),
+(4, 2, 6, 'I agree, it''s fascinating!', '2025-03-01 10:30:00'),
+(5, 2, 6, 'This is so cool!', '2025-03-01 10:35:00');
+
+
+-- like
+INSERT INTO `like` (user_id, post_id) VALUES
+(1, 1),
+(2, 1),
+(3, 1),
+(4, 1),
+(1, 2),
+(2, 2),
+(5, 2),
+(1, 3),
+(3, 3),
+(4, 3),
+(5, 3),
+(2, 4),
+(3, 4),
+(1, 5),
+(4, 5),
+(5, 5);
+
+--notification
+INSERT INTO notification (user_id, message, notified_at)
+VALUES
+(1, 'SophiaMiller liked your post.', '2025-03-01 09:45:00'),
+(2, 'JamesAnderso liked your post.', '2025-03-01 09:50:00'),
+(3, 'LiamJohnson liked your post.', '2025-03-01 09:55:00'),
+(4, 'OliviaSmith liked your post.', '2025-03-01 10:00:00'),
+(1, 'SophiaMiller liked your post.', '2025-03-01 10:15:00'),
+(2, 'JamesAnderso liked your post.', '2025-03-01 10:20:00'),
+(5, 'NoahBrown liked your post.', '2025-03-01 10:25:00'),
+(1, 'SophiaMiller liked your post.', '2025-03-01 10:30:00'),
+(3, 'LiamJohnson liked your post.', '2025-03-01 10:35:00'),
+(4, 'OliviaSmith liked your post.', '2025-03-01 10:40:00'),
+(5, 'NoahBrown liked your post.', '2025-03-01 10:45:00');
+
+
+--group
+INSERT INTO `group` (subject_id, admin_id, group_name, group_description, group_avatar, group_public, group_created_at)
+VALUES
+(2, 1, 'Physics Enthusiasts', 'A group for all physics lovers to discuss the latest discoveries and theories in the field.', 'physics_group_avatar.jpg', TRUE, '2025-03-01 12:00:00'),
+(5, 2, 'Computer Science Club', 'Join us to explore the world of computer science, from programming to cybersecurity and more!', 'computer_science_group_avatar.jpg', TRUE, '2025-03-01 12:30:00'),
+(6, 3, 'History Buffs', 'A group dedicated to all things history - from ancient civilizations to modern events.', 'history_group_avatar.jpg', TRUE, '2025-03-01 13:00:00');
+
+--user_group
+INSERT INTO user_group (user_id, group_id)
+VALUES
+(1, 1),
+(2, 1),
+(3, 1),
+(4, 2),
+(5, 2),
+(1, 3),
+(2, 3),
+(3, 3),
+(4, 3),
+(5, 3);
+
+--message
+INSERT INTO message (user_id, group_id, message_content, message_created_at)
+VALUES
+(1, 1, 'Welcome to the Physics Enthusiasts group! Let''s share our passion for physics and explore the wonders of the universe together.', '2025-03-01 12:15:00'),
+(2, 1, 'Excited to be part of this group! Looking forward to engaging discussions and learning from fellow physics enthusiasts.', '2025-03-01 12:30:00'),
+(3, 1, 'Hello everyone! I''m thrilled to join this group and delve into the fascinating world of physics with all of you.', '2025-03-01 12:45:00'),
+(4, 2, 'Greetings, Computer Science Club members! Let''s embark on a journey through the realms of technology and innovation together.', '2025-03-01 13:00:00'),
+(5, 2, 'Happy to be part of this group! Looking forward to exploring the diverse aspects of computer science with all of you.', '2025-03-01 13:15:00');
+
+--report user, message, post
+INSERT INTO user_report (user_id, report_reason, report_description, report_created_at)
+VALUES
+(1, 'spam', 'User is posting irrelevant content.', '2025-03-01 14:00:00'),
+(2, 'inappropriate', 'User is using offensive language.', '2025-03-01 14:15:00'),
+(3, 'harassment', 'User is sending threatening messages.', '2025-03-01 14:30:00'),
+(4, 'other', 'User is violating community guidelines.', '2025-03-01 14:45:00');
+
+INSERT INTO post_report (post_id, user_id, report_reason, report_description, report_created_at)
+VALUES
+(1, 1, 'spam', 'Post contains irrelevant content.', '2025-03-01 15:00:00'),
+(2, 2, 'inappropriate', 'Post contains offensive language.', '2025-03-01 15:15:00'),
+(3, 3, 'harassment', 'Post contains threatening messages.', '2025-03-01 15:30:00'),
+(4, 4, 'other', 'Post violates community guidelines.', '2025-03-01 15:45:00');
+
+--message report
+INSERT INTO message_report (message_id, user_id, report_reason, report_description, report_created_at)
+VALUES
+(1, 1, 'spam', 'Message contains irrelevant content.', '2025-03-01 16:00:00'),
+(2, 2, 'inappropriate', 'Message contains offensive language.', '2025-03-01 16:15:00'),
+(3, 3, 'harassment', 'Message contains threatening messages.', '2025-03-01 16:30:00'),
+(4, 4, 'other', 'Message violates community guidelines.', '2025-03-01 16:45:00');
