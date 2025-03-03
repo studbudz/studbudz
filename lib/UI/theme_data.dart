@@ -32,7 +32,7 @@ class CustomTheme {
   // 10% (Accent - Bold Highlights) → Teal (#28cecf)
   ColorScheme get colorScheme => _isDark
       ? const ColorScheme.dark(
-          primary: Color(0xFF2F3640),
+          primary: Color(0xFF2F3640), // text colour in buttons
           primaryContainer: Color(0xFF353B48),
           secondary: Color(0xFF00B894),
           tertiary: Color(0xFF00BFFF),
@@ -55,7 +55,12 @@ class CustomTheme {
         );
 
   ThemeData get theme => ThemeData(
-        brightness: _isDark ? Brightness.dark : Brightness.light,
-        colorScheme: colorScheme,
-      );
+      brightness: _isDark ? Brightness.dark : Brightness.light,
+      colorScheme: colorScheme,
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: colorScheme.onSurface,
+          backgroundColor: colorScheme.primaryContainer,
+        ),
+      ));
 }

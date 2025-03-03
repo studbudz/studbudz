@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future<String> generateMnemonic() async {
   return '${bip39.generateMnemonic()} ${bip39.generateMnemonic()}';
@@ -75,18 +74,21 @@ class AccountSetup extends StatefulWidget {
 class _AccountSetupState extends State<AccountSetup> {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Center(
         child: Column(
           children: [
             //title
-            Padding(
-              padding: const EdgeInsets.all(100.0),
-              child: Text('Sign Up', style: TextStyle(fontSize: 30.sp)),
+            const Padding(
+              padding: EdgeInsets.all(100.0),
+              child: Text('Sign Up', style: TextStyle(fontSize: 30)),
             ),
             //username field
             Padding(
-              padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
+              padding: EdgeInsets.fromLTRB(
+                  0.5 * screenWidth, 0, 0.5 * screenWidth, 0.5 * screenWidth),
               child: TextFormField(
                 decoration: const InputDecoration(
                   labelText: 'username *',
