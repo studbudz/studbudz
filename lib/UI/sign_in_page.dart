@@ -95,7 +95,7 @@ class _SignInPageState extends State<SignInPage> {
           
           // Bottom Section: Sign In Button
           Expanded(
-            flex: 2,,
+            flex: 2,
             child: Center(
               child: ElevatedButton(
                 onPressed: () => print('Sign In button pressed!'),
