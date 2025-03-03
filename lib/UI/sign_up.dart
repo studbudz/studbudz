@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future<String> generateMnemonic() async {
   return '${bip39.generateMnemonic()} ${bip39.generateMnemonic()}';
@@ -78,9 +79,9 @@ class _AccountSetupState extends State<AccountSetup> {
       child: Column(
         children: [
           //title
-          const Padding(
-            padding: EdgeInsets.all(100.0),
-            child: Text('Sign Up', style: TextStyle(fontSize: 30)),
+          Padding(
+            padding: const EdgeInsets.all(100.0),
+            child: Text('Sign Up', style: TextStyle(fontSize: 30.sp)),
           ),
           //username field
           Padding(

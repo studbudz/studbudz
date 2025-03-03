@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/UI/feed_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/post_widget.dart';
 import 'package:studubdz/UI/sign_up.dart';
 import 'package:studubdz/UI/theme_data.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ScreenUtilInit(
+      //android emulator screen size
+      designSize: Size(411, 914),
+      builder: (context, child) => MyApp(),
+    ),
+  );
 }
 
 //placeholder code
@@ -20,6 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: theme.theme,
+      debugShowCheckedModeBanner: false,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
