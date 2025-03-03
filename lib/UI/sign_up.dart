@@ -75,60 +75,62 @@ class AccountSetup extends StatefulWidget {
 class _AccountSetupState extends State<AccountSetup> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          //title
-          Padding(
-            padding: const EdgeInsets.all(100.0),
-            child: Text('Sign Up', style: TextStyle(fontSize: 30.sp)),
-          ),
-          //username field
-          Padding(
-            padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
-            child: TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'username *',
-              ),
-              validator: (String? value) {
-                return null;
-                //check if username is valid
-              },
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            //title
+            Padding(
+              padding: const EdgeInsets.all(100.0),
+              child: Text('Sign Up', style: TextStyle(fontSize: 30.sp)),
             ),
-          ),
-          //password
-          Padding(
-            padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
-            child: TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Password *',
+            //username field
+            Padding(
+              padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
+              child: TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'username *',
+                ),
+                validator: (String? value) {
+                  return null;
+                  //check if username is valid
+                },
               ),
-              validator: (String? value) {
-                return null;
-                //check if username is valid
-              },
             ),
-          ),
-          //passw
-          //confirm password
-          Padding(
-            padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
-            child: TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Confirm Password *',
+            //password
+            Padding(
+              padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
+              child: TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Password *',
+                ),
+                validator: (String? value) {
+                  return null;
+                  //check if username is valid
+                },
               ),
-              validator: (String? value) {
-                return null;
-                //check if username is valid
-              },
             ),
-          ),
-          //passw
-          TextButton(
-            onPressed: () => widget.onStepContinue(),
-            child: const Text('Next'),
-          )
-        ],
+            //passw
+            //confirm password
+            Padding(
+              padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
+              child: TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Confirm Password *',
+                ),
+                validator: (String? value) {
+                  return null;
+                  //check if username is valid
+                },
+              ),
+            ),
+            //passw
+            TextButton(
+              onPressed: () => widget.onStepContinue(),
+              child: const Text('Next'),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/post_widget.dart';
 import 'package:studubdz/UI/sign_up.dart';
 import 'package:studubdz/UI/theme_data.dart';
+import 'package:studubdz/UI/sign_in_page.dart';
 
 void main() {
   runApp(
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: theme.theme,
       debugShowCheckedModeBanner: false,
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Studbudz home page'),
     );
   }
 }
@@ -45,6 +46,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: SignUpPage());
+    return const Scaffold(body: SignInPage());
   }
 }
