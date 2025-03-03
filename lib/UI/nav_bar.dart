@@ -20,11 +20,11 @@ class _NavBarWidgetState extends State<NavBarWidget> {
       child: Padding(
         padding: EdgeInsets.only(bottom: widget.height),
         child: Container(
-            padding: EdgeInsets.all(12),
-            margin: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.all(Radius.circular(24))),
+                borderRadius: const BorderRadius.all(Radius.circular(24))),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(

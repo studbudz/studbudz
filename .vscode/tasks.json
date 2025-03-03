@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run server",
+            "type": "shell",
+            "command": "dart run server/server.dart",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Run client",
+            "type": "shell",
+            "command": "flutter run -d edge",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Run client again",
+            "type": "shell",
+            "command": "flutter run -d edge",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Run emulator",
+            "type": "shell",
+            "command": "emulator -avd Medium_Phone_API_35",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        }
+    ]
+}
