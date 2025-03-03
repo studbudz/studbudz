@@ -58,6 +58,7 @@ CREATE TABLE `event` (
     event_longitude DECIMAL(11, 8),
     event_start_at DATETIME NOT NULL,
     event_end_at DATETIME NOT NULL,
+    event_private BOOLEAN DEFAULT FALSE NOT NULL,
     event_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY(user_id) REFERENCES user(user_id),
     FOREIGN KEY(subject_id) REFERENCES subject(subject_id)
@@ -72,6 +73,7 @@ CREATE TABLE post (
     poll_id INT,
     quiz_id INT, 
     event_id INT,
+    post_private BOOLEAN DEFAULT FALSE NOT NULL,
     post_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY(user_id) REFERENCES user(user_id),
     FOREIGN KEY(subject_id) REFERENCES subject(subject_id),
@@ -132,9 +134,12 @@ CREATE TABLE message (
     user_id INT NOT NULL,
     group_id INT NOT NULL,
     message_content TEXT NOT NULL,
+    mesage_url VARCHAR(255), -- image or video URL
+    event_id INT,
     message_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY(user_id) REFERENCES user(user_id),
     FOREIGN KEY(group_id) REFERENCES `group`(group_id)
+    FOREIGN KEY(event_id) REFERENCES event(event_id)
 );
 
 CREATE TABLE message_report (
@@ -424,13 +429,13 @@ VALUES
 (4, 3),
 (5, 3);
 
-INSERT INTO message (user_id, group_id, message_content, message_created_at)
+INSERT INTO message (user_id, group_id, message_content, mesage_url, event_id, message_created_at)
 VALUES
-(1, 1, 'Welcome to the Physics Enthusiasts group! Let''s share our passion for physics and explore the wonders of the universe together.', '2025-03-01 12:15:00'),
-(2, 1, 'Excited to be part of this group! Looking forward to engaging discussions and learning from fellow physics enthusiasts.', '2025-03-01 12:30:00'),
-(3, 1, 'Hello everyone! I''m thrilled to join this group and delve into the fascinating world of physics with all of you.', '2025-03-01 12:45:00'),
-(4, 2, 'Greetings, Computer Science Club members! Let''s embark on a journey through the realms of technology and innovation together.', '2025-03-01 13:00:00'),
-(5, 2, 'Happy to be part of this group! Looking forward to exploring the diverse aspects of computer science with all of you.', '2025-03-01 13:15:00');
+(1, 1, 'Welcome to the Physics Enthusiasts group! Let''s share our passion for physics and explore the wonders of the universe together.', NULL, NULL, '2025-03-01 12:15:00'),
+(2, 1, 'Excited to be part of this group! Looking forward to engaging discussions and learning from fellow physics enthusiasts.', NULL, NULL, '2025-03-01 12:30:00'),
+(3, 1, 'Hello everyone! I''m thrilled to join this group and delve into the fascinating world of physics with all of you.', NULL, NULL, '2025-03-01 12:45:00'),
+(4, 2, 'Greetings, Computer Science Club members! Let''s embark on a journey through the realms of technology and innovation together.', NULL, NULL, '2025-03-01 13:00:00'),
+(5, 2, 'Happy to be part of this group! Looking forward to exploring the diverse aspects of computer science with all of you.', NULL, NULL, '2025-03-01 13:15:00');
 
 INSERT INTO user_report (user_id, report_reason, report_description, report_created_at)
 VALUES

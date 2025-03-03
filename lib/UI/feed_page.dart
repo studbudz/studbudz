@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:studubdz/UI/nav_bar.dart';
 import 'package:studubdz/UI/post_widget.dart';
 
+//server needs to filter posts based on user's interests
 class FeedPage extends StatefulWidget {
   const FeedPage({super.key});
 

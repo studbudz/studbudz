@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:studubdz/UI/feed_page.dart';
 import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/post_widget.dart';
+import 'package:studubdz/UI/sign_up.dart';
 import 'package:studubdz/UI/theme_data.dart';
 
 void main() {
@@ -36,6 +37,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: FeedPage());
+    return const Scaffold(body: SignUpPage());
   }
 }
