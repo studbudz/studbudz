@@ -14,6 +14,14 @@ CREATE TABLE user(
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
+CREATE TABLE follower(
+    user_id INT NOT NULL,
+    follower_id INT NOT NULL,
+    PRIMARY KEY (user_id, follower_id),
+    FOREIGN KEY (user_id) REFERENCES user(user_id),
+    FOREIGN KEY (follower_id) REFERENCES user(user_id)
+);
+
 CREATE TABLE subject(
     subject_id INT AUTO_INCREMENT PRIMARY KEY,
     subject_url VARCHAR(255),
@@ -134,11 +142,11 @@ CREATE TABLE message (
     user_id INT NOT NULL,
     group_id INT NOT NULL,
     message_content TEXT NOT NULL,
-    mesage_url VARCHAR(255), -- image or video URL
+    mesage_url VARCHAR(255),
     event_id INT,
     message_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY(user_id) REFERENCES user(user_id),
-    FOREIGN KEY(group_id) REFERENCES `group`(group_id)
+    FOREIGN KEY(group_id) REFERENCES `group`(group_id),
     FOREIGN KEY(event_id) REFERENCES event(event_id)
 );
 
@@ -223,6 +231,20 @@ VALUES
 ('OliviaSmith', 'regular', 'evLgiV6IVBc6gRFyXYHnQlEoM0AB91ua', '$2a$12$GgUpLGwt2wF3fod3LSILWelNHbU33dDPhXdaeLNnVJl/mmVCGQi1.', 'wHKgLfIwChNb4voiNQQC4pCyIzkY5sMv', '$2a$12$tC5BsxhpItiBdiL74dojoOg2CZJyVauy6vP.5anSCDw0iRI5nKHIO'), -- PcPt[052Z?I(
 ('NoahBrown', 'tutor', 'Pawz6gvEvuJfdTnaWGDoanMJmjHzcHK8', '$2a$12$I52DE6o/DEAWYi9TGjr1kug9H2zY7e81J2o4d5K.DIUN/SUhs6a/y', 'WXK7wVbNvm4Q3F27WXngH6igzUi8ukAX', '$2a$12$ekepdk./GquMca64Kkt1Q.r53UoGyvywLuJ/nY/nomAb.lNQOzFnK'); -- zP!103%t&N8M
 
+INSERT INTO follower (user_id, follower_id) 
+VALUES
+(1, 2),
+(1, 3),
+(1, 4),
+(2, 1),
+(2, 3),
+(3, 1),
+(3, 2),
+(4, 1),
+(4, 5),
+(5, 1),
+(5, 2),
+(5, 4);
 
 INSERT INTO settings (user_id, email_notifications, push_notifications, dark_mode, font_size, paused_status)
 VALUES
