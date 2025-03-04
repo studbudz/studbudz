@@ -14,12 +14,13 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Column(
         children: [
           // Top Section: Title and Profile Logo
           Expanded(
-            flex: 3,
+            flex: 2,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -87,7 +88,6 @@ class _SignInPageState extends State<SignInPage> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 10),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -104,9 +104,12 @@ class _SignInPageState extends State<SignInPage> {
           Expanded(
             flex: 2,
             child: Center(
-              child: ElevatedButton(
-                onPressed: () => print('Sign In button pressed!'),
-                child: const Text('Sign In'),
+              child: SizedBox(
+                width: screenWidth * 0.5,
+                child: ElevatedButton(
+                  onPressed: () => print('Sign In button pressed!'),
+                  child: const Text('Sign In'),
+                ),
               ),
             ),
           ),

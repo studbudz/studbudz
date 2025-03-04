@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
         const MapWidget(),
         //search bar
         Positioned(
-          top: 50,
+          top: 70,
           left: 20,
           right: 20,
           child: RoundedSearchBox(),

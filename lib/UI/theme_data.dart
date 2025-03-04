@@ -9,7 +9,7 @@ class CustomTheme {
     return _instance;
   }
 
-  bool _isDark = true;
+  bool _isDark = false;
 
   bool get isDark => _isDark;
 
@@ -43,8 +43,8 @@ class CustomTheme {
           onSecondary: Colors.black,
         )
       : const ColorScheme.light(
-          primary: Color(0xFFD1C9BE),
-          primaryContainer: Color(0xFFCBC5B6),
+          primary: Color(0xFFD1C9BE), //forgot password
+          primaryContainer: Color(0xFFCBC5B6), //sign in button
           secondary: Color(0xFFFF466A),
           tertiary: Color(0xFFFF4000),
           error: Color(0xFF28CECF),

@@ -210,8 +210,8 @@ class WordVerification extends StatefulWidget {
   State<WordVerification> createState() => _WordVerificationState();
 }
 
-//when pressing enter or space the next controller should request attention
 class _WordVerificationState extends State<WordVerification> {
+  //when pressing enter or space the next controller should request attention
   late List<TextEditingController> wordControllers;
 
   @override
