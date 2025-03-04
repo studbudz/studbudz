@@ -23,7 +23,9 @@ class _SignInPageState extends State<SignInPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 Icon(
                   Icons.person,
                   size: 100,
@@ -39,7 +41,6 @@ class _SignInPageState extends State<SignInPage> {
               ],
             ),
           ),
-          
           // Middle Section: Username and Password Fields
           Expanded(
             flex: 2,
@@ -52,7 +53,9 @@ class _SignInPageState extends State<SignInPage> {
                     controller: _usernameController,
                     decoration: const InputDecoration(
                       labelText: 'Username *',
-                      prefixIcon: const Icon(Icons.person,),
+                      prefixIcon: const Icon(
+                        Icons.person,
+                      ),
                     ),
                     validator: (String? value) {
                       return null;
@@ -64,10 +67,14 @@ class _SignInPageState extends State<SignInPage> {
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       labelText: 'Password *',
-                      prefixIcon: const Icon(Icons.lock,),
+                      prefixIcon: const Icon(
+                        Icons.lock,
+                      ),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                          _obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           setState(() {
@@ -92,7 +99,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ),
           ),
-          
+
           // Bottom Section: Sign In Button
           Expanded(
             flex: 2,
@@ -100,7 +107,6 @@ class _SignInPageState extends State<SignInPage> {
               child: ElevatedButton(
                 onPressed: () => print('Sign In button pressed!'),
                 child: const Text('Sign In'),
-
               ),
             ),
           ),
