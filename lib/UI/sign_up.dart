@@ -87,8 +87,7 @@ class _AccountSetupState extends State<AccountSetup> {
             ),
             //username field
             Padding(
-              padding: EdgeInsets.fromLTRB(
-                  0.5 * screenWidth, 0, 0.5 * screenWidth, 0.5 * screenWidth),
+              padding: EdgeInsets.fromLTRB(50, 0, 50, 50),
               child: TextFormField(
                 decoration: const InputDecoration(
                   labelText: 'username *',
