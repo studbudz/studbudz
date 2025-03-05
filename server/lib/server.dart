@@ -13,8 +13,8 @@ class Server {
     // Load SSL certificate and key
     SecurityContext context =
         SecurityContext()
-          ..useCertificateChain('path/to/your/certificate.pem')
-          ..usePrivateKey('path/to/your/private_key.pem');
+          ..useCertificateChain('certificate.pem')
+          ..usePrivateKey('private_key.pem');
 
     // Allows connection from any device on the current network using HTTPS.
     _httpServer = await HttpServer.bindSecure(
@@ -27,10 +27,12 @@ class Server {
     // Handles incoming connections
     await for (HttpRequest request in _httpServer) {
       if (request.uri.path == '/signin') {
-        //doesn't require a token.
-        //may have a uuid? If the uuid
+        //requires username and password + uuid if the user has one
+        //if the user doesn't have a uuid then they get sent one.
       } else if (request.uri.path == '/signup') {
-        //requires
+        //requires a username, password and 24 words.
+        //returns failure if exists
+        //returns pass if succeeded
       }
       //else requires a token.
 
