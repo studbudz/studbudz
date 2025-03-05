@@ -1,5 +1,7 @@
-import 'package:server/server.dart' as server;
+import 'dart:io';
+import 'package:server/token_validation.dart';
+import 'package:uuid/rng.dart';
 
 void main(List<String> arguments) {
-  print('Hello world: ${server.calculate()}!');
+  TokenHandler handler = TokenHandler();
 }
