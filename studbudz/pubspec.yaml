@@ -37,7 +37,7 @@ dependencies:
   bip39: ^1.0.6
   # for secure storage of uuid and token
   flutter_secure_storage: ^9.2.4
-  pointycastle: ^4.0.0
+  pointycastle: ^3.9.1
   convert: ^3.1.2
 
 dev_dependencies:
