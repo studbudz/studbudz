@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'logger.dart';
+import 'websocket.dart';
 
 ///This is the server which performs:
 ///MUST IMPLEMENT RATE LIMITTING
@@ -18,6 +19,7 @@ void main() async {
   // Handles incoming connections
   await for (HttpRequest request in server) {
     //request to swap protocol to websocket
+    //check for token first!!
     if (WebSocketTransformer.isUpgradeRequest(request)) {
       //upgrade the connection to a websocket
     } else if (request.method == 'POST') {

@@ -38,15 +38,17 @@ class _HomePageState extends State<HomePage> {
 //search for people
 //search for events
 class RoundedSearchBox extends StatelessWidget {
+  const RoundedSearchBox({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor, // Background color
         borderRadius: BorderRadius.circular(30), // Rounded border
       ),
-      child: TextField(
+      child: const TextField(
         decoration: InputDecoration(
           icon: Icon(Icons.search),
           hintText: "Search...",

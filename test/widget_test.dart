@@ -1,14 +1,15 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:studubdz/main.dart';
+import 'dart:convert';
+import 'package:pointycastle/export.dart';
+
+void testToken() {
+  String token =
+      'ewogICJhbGciOiAiUlMyNTYiLAogICJ0eXAiOiAiSldUIgp9.ewogICJzdWIiOiAiMTIzNDU2Nzg5MCIsCiAgIm5hbWUiOiAiSm9obiBEb2XigJ0sCuKAnHV1aWTigJ06ICJkMWZjN2ZkOC1iNzVmLTRlMmYtYmNlNS01ODNiOTIwNDQ1YTjigJ0sCiAgImlhdCI6IDE1MTYyMzkwMjIsCiAgImV4cCI6IDE3MTYyMzkwMjIKfQ.937b06921cda2f49ec5651f352ec4a659e9ccd41f1a9f5ad5ca637c8deed7aaebd6964d8770a18c449bd050eda7419367d8c1ea16f6388420d806966f42b913ba7d45970f350bf3460933fc186452c58cce98626433619ca2daa4cb98f6dff3c0c1ebfef2c053767e5a5e682ae46b02614cae59f76f10f2d5cef91e3ada666ea3e33f1fb6f4d4515da8c064e3f6cabb673a9eb975c21bc66a697cd82c23b0d387dc0e5cf21eb119e5c4221a9a22cc1a4a733a7359e190d961b22f50d8dfa687f085262c4ad9b96e0f035ca6bc0dc9f1001b45e5dbca1a7e5b11af39f69b5d3b98b5e3519e0305ff4da3225639183e0f22e1734d6a5d0123fde7af217a8729d3a';
+
+  //import the public key
+}
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
