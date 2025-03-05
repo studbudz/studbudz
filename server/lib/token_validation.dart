@@ -8,7 +8,7 @@ class TokenHandler {
     jwt = JWT('private_key.pem', 'public_key.pem');
   }
 
-  String requestToken(String username, {String? uuid}) {
+  List<String?> requestToken(String username, {String? uuid}) {
     if (uuid == null || uuid.isEmpty) {
       var uuidGenerator = Uuid();
       uuidGenerator.v4();
@@ -17,14 +17,11 @@ class TokenHandler {
     final payload = {
       'username': username,
       'uuid': uuid,
-      'iat':
-          DateTime.now().millisecondsSinceEpoch ~/
-          1000, // Current time in seconds
+      'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000,
       'exp':
-          DateTime.now().add(Duration(hours: 1)).millisecondsSinceEpoch ~/
-          1000, // Expiration in 1 hour
+          DateTime.now().add(Duration(days: 5)).millisecondsSinceEpoch ~/ 1000,
     };
 
-    return jwt.createToken(payload);
+    return [jwt.createToken(payload), uuid];
   }
 }

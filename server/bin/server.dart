@@ -1,7 +1,16 @@
 import 'dart:io';
-import 'package:server/token_validation.dart';
-import 'package:uuid/rng.dart';
+import 'package:server/server.dart';
+
+//sign in
+//sign up
+//get data (uses token)
+//  posts -> includes images
+//  messages
+//
+//webrtc
+//
 
 void main(List<String> arguments) {
-  TokenHandler handler = TokenHandler();
+  Server server = Server();
+  server.start();
 }
