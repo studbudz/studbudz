@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:server/token_validation.dart';
+import 'websocket_handler.dart';
 
 class Server {
   late HttpServer _httpServer;
   late TokenHandler _tokenHandler;
+  late WebsocketHandler _webSocketHandler;
 
   Server() {
     _tokenHandler = TokenHandler();
@@ -34,12 +36,23 @@ class Server {
         //returns failure if exists
         //returns pass if succeeded
       }
-      //else requires a token.
 
-      //request to swap protocol to websocket
-      //check for token first!!
+      //get token from request
+      String? token = request.headers.value('Authorization')?.split(' ').last;
+      if (token == null || !_tokenHandler.validateToken(token)) {
+        request.response.statusCode = HttpStatus.unauthorized;
+        await request.response.close();
+        continue;
+      }
+
+      //may not be the right param names
+      String uuid = _tokenHandler.getInfo(token)['uuid'];
+      String username = _tokenHandler.getInfo(token)['username'];
+
       if (WebSocketTransformer.isUpgradeRequest(request)) {
         //upgrade the connection to a websocket
+        WebSocket socket = await WebSocketTransformer.upgrade(request);
+        print('Upgraded to websocket connection.');
       } else if (request.method == 'POST') {
         //send data to the server.
         //handle post requests

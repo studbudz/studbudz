@@ -24,4 +24,24 @@ class TokenHandler {
 
     return [jwt.createToken(payload), uuid];
   }
+
+  bool validateToken(String token) {
+    if (!jwt.verifyToken(token)) {
+      return false;
+    }
+    Map<String, dynamic> payload = jwt.decodePayload(token);
+    if (payload.containsKey('exp')) {
+      int expiry = payload['exp'];
+      DateTime expiryDate = DateTime.fromMillisecondsSinceEpoch(expiry * 1000);
+      if (DateTime.now().isAfter(expiryDate)) {
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  Map<String, dynamic> getInfo(token) {
+    return jwt.decodePayload(token);
+  }
 }
