@@ -46,12 +46,12 @@ class Server {
       }
 
       //may not be the right param names
-      String uuid = _tokenHandler.getInfo(token)['uuid'];
       String username = _tokenHandler.getInfo(token)['username'];
 
       if (WebSocketTransformer.isUpgradeRequest(request)) {
         //upgrade the connection to a websocket
         WebSocket socket = await WebSocketTransformer.upgrade(request);
+        _webSocketHandler.handleConnection(socket, username);
         print('Upgraded to websocket connection.');
       } else if (request.method == 'POST') {
         //send data to the server.

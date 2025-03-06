@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:studubdz/UI/recovery_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -19,7 +20,7 @@ class _SignInPageState extends State<SignInPage> {
       body: Column(
         children: [
           // Top Section: Title and Profile Logo
-          Expanded(
+          const Expanded(
             flex: 2,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -54,15 +55,18 @@ class _SignInPageState extends State<SignInPage> {
                     controller: _usernameController,
                     decoration: const InputDecoration(
                       labelText: 'Username *',
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         Icons.person,
                       ),
                     ),
                     validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your username';
+                      }
                       return null;
                     },
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
@@ -85,14 +89,23 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     ),
                     validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your username';
+                      }
                       return null;
                     },
                   ),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () => print('Forgot Password?'),
-                      child: Text('Forgot Password?'),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const RecoveryPage()),
+                        );
+                      },
+                      child: const Text('Forgot Password?'),
                     ),
                   ),
                 ],
@@ -107,7 +120,7 @@ class _SignInPageState extends State<SignInPage> {
               child: SizedBox(
                 width: screenWidth * 0.5,
                 child: ElevatedButton(
-                  onPressed: () => print('Sign In button pressed!'),
+                  onPressed: () => _handleSignIn(),
                   child: const Text('Sign In'),
                 ),
               ),
@@ -116,5 +129,17 @@ class _SignInPageState extends State<SignInPage> {
         ],
       ),
     );
+  }
+
+  void _handleSignIn() {
+    String username = _usernameController.text;
+    String password = _passwordController.text;
+
+    print("Validating log in details.");
+
+    //server.validate username and password.
+    //get uuid and token.
+    //set both.
+    //next page.
   }
 }
