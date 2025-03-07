@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/UI/recovery_page.dart';
+import 'package:studubdz/Engine/engine.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -11,7 +12,6 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -22,96 +22,14 @@ class _SignInPageState extends State<SignInPage> {
           // Top Section: Title and Profile Logo
           const Expanded(
             flex: 2,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  height: 20,
-                ),
-                Icon(
-                  Icons.person,
-                  size: 100,
-                  color: Colors.grey,
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Sign In',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 30),
-                ),
-                SizedBox(height: 20),
-              ],
-            ),
+            child: SignInHeaderWidget(),
           ),
           // Middle Section: Username and Password Fields
           Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextFormField(
-                    controller: _usernameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Username *',
-                      prefixIcon: Icon(
-                        Icons.person,
-                      ),
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your username';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: 'Password *',
-                      prefixIcon: const Icon(
-                        Icons.lock,
-                      ),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your username';
-                      }
-                      return null;
-                    },
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RecoveryPage()),
-                        );
-                      },
-                      child: const Text('Forgot Password?'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+              flex: 2,
+              child: SignInFormWidget(
+                  usernameController: _usernameController,
+                  passwordController: _passwordController)),
 
           // Bottom Section: Sign In Button
           Expanded(
@@ -137,9 +55,127 @@ class _SignInPageState extends State<SignInPage> {
 
     print("Validating log in details.");
 
+    Engine().logIn(username, password);
+
     //server.validate username and password.
     //get uuid and token.
     //set both.
     //next page.
+  }
+}
+
+class SignInHeaderWidget extends StatefulWidget {
+  const SignInHeaderWidget({super.key});
+
+  @override
+  State<SignInHeaderWidget> createState() => _SignInHeaderWidgetState();
+}
+
+class _SignInHeaderWidgetState extends State<SignInHeaderWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        SizedBox(
+          height: 20,
+        ),
+        Icon(
+          Icons.person,
+          size: 100,
+          color: Colors.grey,
+        ),
+        SizedBox(height: 10),
+        Text(
+          'Sign In',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 30),
+        ),
+        SizedBox(height: 20),
+      ],
+    );
+  }
+}
+
+class SignInFormWidget extends StatefulWidget {
+  const SignInFormWidget(
+      {super.key,
+      required this.usernameController,
+      required this.passwordController});
+
+  final TextEditingController usernameController;
+  final TextEditingController passwordController;
+
+  @override
+  State<SignInFormWidget> createState() => _SignInFormWidgetState();
+}
+
+class _SignInFormWidgetState extends State<SignInFormWidget> {
+  bool _obscurePassword = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 50),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextFormField(
+            controller: widget.usernameController,
+            decoration: const InputDecoration(
+              labelText: 'Username *',
+              prefixIcon: Icon(
+                Icons.person,
+              ),
+            ),
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your username';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: widget.passwordController,
+            obscureText: _obscurePassword,
+            decoration: InputDecoration(
+              labelText: 'Password *',
+              prefixIcon: const Icon(
+                Icons.lock,
+              ),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              ),
+            ),
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your username';
+              }
+              return null;
+            },
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RecoveryPage()),
+                );
+              },
+              child: const Text('Forgot Password?'),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

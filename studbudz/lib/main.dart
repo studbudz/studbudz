@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:studubdz/Engine/engine.dart';
 import 'package:studubdz/UI/feed_page.dart';
 import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/post_widget.dart';
 import 'package:studubdz/UI/sign_up.dart';
 import 'package:studubdz/UI/theme_data.dart';
 import 'package:studubdz/UI/sign_in_page.dart';
+import 'package:provider/provider.dart';
+import 'notifier.dart';
 
 void main() {
   runApp(
-    MyApp(),
+    ChangeNotifierProvider(
+      create: (context) => Controller(),
+      child: MyApp(),
+    ),
   );
 }
 
@@ -21,6 +27,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Controller notifier = Provider.of<Controller>(context, listen: false);
+    Engine engine = Engine();
+    engine.setController(notifier);
+    notifier.engine = engine;
+
     return MaterialApp(
       theme: theme.theme,
       debugShowCheckedModeBanner: false,

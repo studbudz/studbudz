@@ -37,6 +37,7 @@ dependencies:
   bip39: ^1.0.6
   # for secure storage of uuid and token
   flutter_secure_storage: ^9.2.4
+  provider: ^6.1.2 #dynamic UI
 
 dev_dependencies:
   flutter_test:

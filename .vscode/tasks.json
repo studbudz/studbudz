@@ -4,7 +4,7 @@
         {
             "label": "Run server",
             "type": "shell",
-            "command": "dart run server/server.dart",
+            "command": "dart run server/bin/server.dart",
             "presentation": {
                 "reveal": "always",
                 "panel": "new"
