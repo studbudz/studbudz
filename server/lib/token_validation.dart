@@ -8,11 +8,9 @@ class TokenHandler {
     jwt = JWT('private_key.pem', 'public_key.pem');
   }
 
-  List<String?> requestToken(String username, {String? uuid}) {
-    if (uuid == null || uuid.isEmpty) {
-      var uuidGenerator = Uuid();
-      uuidGenerator.v4();
-    }
+  List<String?> requestToken(String username) {
+    var uuidGenerator = Uuid();
+    String uuid = uuidGenerator.v4();
 
     final payload = {
       'username': username,

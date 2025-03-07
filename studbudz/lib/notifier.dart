@@ -9,6 +9,7 @@ class Controller extends ChangeNotifier {
   //technically shouldn't be public but
   //I wanted to avoid needing to access it via an intermediary function
   late Engine engine;
+  String page = "Sign In";
 
   factory Controller() {
     return _instance; // always returns the same insance
@@ -16,5 +17,9 @@ class Controller extends ChangeNotifier {
 
   void setEngine(Engine engine) {
     this.engine = engine;
+  }
+
+  void setPage(String pageName) {
+    page = pageName;
   }
 }

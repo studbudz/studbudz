@@ -73,17 +73,22 @@ class HttpRequestHandler {
   }
 
   Future<bool> signInRequest(String username, String password) async {
-    final url = Uri.parse(
-        '$_address/signin?username=$username&password=$password'); // Send username and password as query parameters
+    final url = Uri.parse('$_address/signin');
     try {
-      // Perform the GET request
-      final request = await _httpClient.getUrl(url);
+      final request = await _httpClient.postUrl(url);
+      request.headers.contentType = ContentType.json;
+
+      // Send the username and password in the body as JSON
+      Map<String, dynamic> data = {'username': username, 'password': password};
+      request.add(utf8.encode(jsonEncode(data)));
+
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
 
       if (response.statusCode == 200) {
         // Assuming response contains 'token' and 'uuid'
         Map<String, dynamic> jsonResponse = jsonDecode(responseBody);
+        print(jsonResponse);
         if (jsonResponse.containsKey('token') &&
             jsonResponse.containsKey('uuid')) {
           String token = jsonResponse['token'];

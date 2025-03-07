@@ -50,8 +50,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Controller controller = Controller();
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: SignInPage());
+    switch (controller.page) {
+      case 'signIn':
+        return const SignInPage();
+      case 'signUp':
+        return const SignUpPage();
+      case 'homePage':
+        return const HomePage();
+      default:
+        return const HomePage();
+    }
   }
 }

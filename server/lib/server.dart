@@ -30,18 +30,18 @@ class Server {
 
     // Handles incoming connections
     await for (HttpRequest request in _httpServer) {
-      print("Recieved request.");
+      print("Received request.");
+
       if (request.uri.path == '/signin') {
-        print("Recieved Sign In request.");
-        //requires username and password + uuid if the user has one
-        //if the user doesn't have a uuid then they get sent one.
+        print("Received Sign In request.");
+        _handleSignIn(request);
+        continue; // Prevent further processing of this request.
       } else if (request.uri.path == '/signup') {
-        //requires a username, password and 24 words.
-        //returns failure if exists
-        //returns pass if succeeded
+        _handleSignUp(request);
+        continue; // Prevent further processing.
       }
 
-      //get token from request
+      // Get token from request if the endpoint isn't sign in/up
       String? token = request.headers.value('Authorization')?.split(' ').last;
       if (token == null || !_tokenHandler.validateToken(token)) {
         request.response.statusCode = HttpStatus.unauthorized;
@@ -49,20 +49,16 @@ class Server {
         continue;
       }
 
-      //may not be the right param names
+      // Additional processing (e.g., WebSocket upgrade, POST/GET handling)
       String username = _tokenHandler.getInfo(token)['username'];
-
       if (WebSocketTransformer.isUpgradeRequest(request)) {
-        //upgrade the connection to a websocket
         WebSocket socket = await WebSocketTransformer.upgrade(request);
         _webSocketHandler.handleConnection(socket, username);
         print('Upgraded to websocket connection.');
       } else if (request.method == 'POST') {
-        //send data to the server.
-        //handle post requests
+        // Handle POST requests
       } else if (request.method == 'GET') {
-        //requests data from the server
-        //handle get requests
+        // Handle GET requests
       } else {
         request.response.statusCode = HttpStatus.forbidden;
         await request.response.close();
@@ -72,12 +68,35 @@ class Server {
 
   void _handleSignIn(HttpRequest request) async {
     try {
-      // For now, just send an OK response
-      request.response.statusCode = HttpStatus.ok;
-      request.response.write('Sign-in successful');
+      // Read the request body
+      String content = await utf8.decodeStream(request);
+      Map<String, dynamic> requestBody = jsonDecode(content);
+
+      String username = requestBody['username'];
+      String password = requestBody['password'];
+
+      // Validate the username and password (replace with actual validation logic)
+      if (username == 'admin' && password == 'password123') {
+        // Generate a token and UUID
+        List<String?> values = _tokenHandler.requestToken(username);
+
+        print(values);
+
+        // Set headers before writing data
+        request.response.statusCode = HttpStatus.ok;
+        request.response.headers.contentType = ContentType.json;
+        request.response.write(
+          jsonEncode({'token': values[0], 'uuid': values[1]}),
+        );
+      } else {
+        request.response.statusCode = HttpStatus.unauthorized;
+        request.response.headers.contentType = ContentType.text;
+        request.response.write('Invalid credentials');
+      }
     } catch (e) {
       print('Error handling sign-in: $e');
       request.response.statusCode = HttpStatus.internalServerError;
+      request.response.headers.contentType = ContentType.text;
       request.response.write('Internal server error');
     } finally {
       await request.response.close();

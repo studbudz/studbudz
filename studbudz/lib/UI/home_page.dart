@@ -13,9 +13,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // Allows widgets to be placed above one another.
-    return Stack(
+    return const Stack(
       children: [
-        const MapWidget(),
+        MapWidget(),
         //search bar
         Positioned(
           top: 70,
@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
           right: 20,
           child: RoundedSearchBox(),
         ),
-        const Positioned(
+        Positioned(
           left: 0,
           right: 0,
           bottom: 20,

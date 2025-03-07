@@ -23,12 +23,6 @@ class Engine {
   void logIn(String username, String password) async {
     print("Logging in.");
 
-    // Ensure _httpHandler is initialized before use
-    if (_httpHandler == null) {
-      print("HttpRequestHandler is not initialized.");
-      // No longer need to initialize here; done in constructor.
-    }
-
     bool response = await _httpHandler.signInRequest(username, password);
     if (response) {
       print("Success!");
