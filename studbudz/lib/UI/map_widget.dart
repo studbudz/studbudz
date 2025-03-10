@@ -30,25 +30,9 @@ class _HomePageState extends State<MapWidget> {
     _mapController = MapController();
   }
 
-  void updateMaxZoom(BuildContext context) {
-    final double mapHeight =
-        MediaQuery.of(context).size.height; // Screen height
-    final double latitudeDifference =
-        0.1; // Example latitude difference (north-south range)
-
-    // Calculate the zoom level where the north-south extent fits the screen
-    // You may need to adjust this based on your actual desired latitude range
-    final double zoomLevel = (latitudeDifference / mapHeight) * 100;
-
-    // Update max zoom
-    _mapController.move(LatLng(51.505, -0.09), zoomLevel);
-  }
-
   @override
   Widget build(BuildContext context) {
     final styleUrl = maps['default'];
-    WidgetsBinding.instance
-        ?.addPostFrameCallback((_) => updateMaxZoom(context));
     return FlutterMap(
       mapController: _mapController,
       options: const MapOptions(),

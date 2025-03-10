@@ -27,42 +27,35 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Controller notifier = Provider.of<Controller>(context, listen: false);
+    // Access Controller via Provider
+    final Controller controller = Provider.of<Controller>(context);
     Engine engine = Engine();
-    engine.setController(notifier);
-    notifier.engine = engine;
+    engine.setController(controller);
+    controller.engine = engine;
 
     return MaterialApp(
       theme: theme.theme,
       debugShowCheckedModeBanner: false,
-      home: const MyHomePage(title: 'Studbudz home page'),
+      home: Scaffold(
+        body: _buildPage(controller),
+      ),
     );
   }
-}
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  // Method to switch pages based on controller's page
+  Widget _buildPage(Controller controller) {
+    print("Page: ${controller.currentPage}"); // Debugging
 
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  Controller controller = Controller();
-
-  @override
-  Widget build(BuildContext context) {
-    switch (controller.page) {
-      case 'signIn':
+    switch (controller.currentPage) {
+      //enum AppPage { signIn, signUp, home, profile, settings }
+      case AppPage.signIn:
         return const SignInPage();
-      case 'signUp':
+      case AppPage.signUp:
         return const SignUpPage();
-      case 'homePage':
+      case AppPage.home:
         return const HomePage();
       default:
-        return const HomePage();
+        return const SignUpPage(); // Default to SignUpPage
     }
   }
 }

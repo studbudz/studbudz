@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:studubdz/notifier.dart';
+import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/recovery_page.dart';
 import 'package:studubdz/Engine/engine.dart';
 
@@ -49,18 +51,29 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  void _handleSignIn() {
+  void _handleSignIn() async {
+    //server.validate username and password.
+    //get uuid and token.
+    //set both.
+    //next page.
     String username = _usernameController.text;
     String password = _passwordController.text;
 
     print("Validating log in details.");
 
-    Engine().logIn(username, password);
+    bool success = await Engine().logIn(username, password);
 
-    //server.validate username and password.
-    //get uuid and token.
-    //set both.
-    //next page.
+    if (success) {
+      Controller().setPage(AppPage.home);
+    } else {
+      //return error
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Invalid username or password'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
 
