@@ -64,7 +64,9 @@ class _SignInPageState extends State<SignInPage> {
     bool success = await Engine().logIn(username, password);
 
     if (success) {
-      Controller().setPage(AppPage.home);
+      setState(() {
+        Controller().setPage(AppPage.home);
+      });
     } else {
       //return error
       ScaffoldMessenger.of(context).showSnackBar(

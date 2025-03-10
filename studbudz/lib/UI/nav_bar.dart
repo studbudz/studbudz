@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:studubdz/UI/home_page.dart'; 
-import 'package:studubdz/UI/feed_page.dart'; 
+import 'package:studubdz/UI/home_page.dart';
+import 'package:studubdz/UI/feed_page.dart';
+import 'package:studubdz/notifier.dart';
 
 class NavBarWidget extends StatefulWidget {
   final double height;
@@ -12,10 +13,9 @@ class NavBarWidget extends StatefulWidget {
 }
 
 class _NavBarWidgetState extends State<NavBarWidget> {
-  int selectedIndex = 0; 
+  int selectedIndex = 0;
   double iconSize = 36;
 
-  
   final List<IconData> icons = [
     CupertinoIcons.home,
     CupertinoIcons.search,
@@ -34,6 +34,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Controller notifier = Controller();
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(bottom: widget.height),
@@ -50,13 +51,9 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    selectedIndex = 0; 
+                    selectedIndex = 0;
                   });
-                  print('Tapped on ${labels[0]}');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomePage()),
-                  ); // Navigate to HomePage
+                  notifier.setPage(AppPage.home); // Navigate to HomePage
                 },
                 icon: Icon(
                   icons[0],
@@ -67,7 +64,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    selectedIndex = 1; 
+                    selectedIndex = 1;
                   });
                   print('Tapped on ${labels[1]}');
                 },
@@ -80,7 +77,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    selectedIndex = 2; 
+                    selectedIndex = 2;
                   });
                   print('Tapped on ${labels[2]}');
                 },
@@ -93,13 +90,10 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    selectedIndex = 3; 
+                    selectedIndex = 3;
                   });
                   print('Tapped on ${labels[3]}');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const FeedPage()),
-                  ); // Navigate to FeedPage
+                  notifier.setPage(AppPage.feed); // Navigate to FeedPage
                 },
                 icon: Icon(
                   icons[3],
@@ -110,7 +104,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    selectedIndex = 4; 
+                    selectedIndex = 4;
                   });
                   print('Tapped on ${labels[4]}');
                 },

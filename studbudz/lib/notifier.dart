@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/Engine/engine.dart';
 
-enum AppPage { signIn, signUp, home, profile, settings }
+enum AppPage { signIn, signUp, home, profile, settings, feed }
 
 class Controller extends ChangeNotifier {
   //instantiates the controller internally
@@ -11,7 +11,7 @@ class Controller extends ChangeNotifier {
   //technically shouldn't be public but
   //I wanted to avoid needing to access it via an intermediary function
   late Engine engine;
-  AppPage currentPage = AppPage.home;
+  AppPage currentPage = AppPage.signIn;
 
   factory Controller() {
     return _instance; // always returns the same insance
@@ -22,7 +22,7 @@ class Controller extends ChangeNotifier {
   }
 
   void setPage(AppPage page) {
-    page = page;
+    currentPage = page;
     notifyListeners();
   }
 }
