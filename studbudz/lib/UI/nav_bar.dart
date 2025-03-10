@@ -1,18 +1,36 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:studubdz/UI/home_page.dart'; 
+import 'package:studubdz/UI/feed_page.dart'; 
 
 class NavBarWidget extends StatefulWidget {
   final double height;
-  const NavBarWidget({super.key, this.height = 40});
+  const NavBarWidget({super.key, this.height = 60});
 
   @override
   State<NavBarWidget> createState() => _NavBarWidgetState();
 }
 
 class _NavBarWidgetState extends State<NavBarWidget> {
-  int numItems = 5;
+  int selectedIndex = 0; 
   double iconSize = 36;
-  double iconScale = 1;
-  double height = 0;
+
+  
+  final List<IconData> icons = [
+    CupertinoIcons.home,
+    CupertinoIcons.search,
+    CupertinoIcons.add,
+    CupertinoIcons.square_stack_3d_up,
+    CupertinoIcons.person
+  ];
+
+  final List<String> labels = [
+    'Home',
+    'Search',
+    'Add',
+    'Feed',
+    'Profile',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -20,25 +38,91 @@ class _NavBarWidgetState extends State<NavBarWidget> {
       child: Padding(
         padding: EdgeInsets.only(bottom: widget.height),
         child: Container(
-            padding: const EdgeInsets.all(12),
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: const BorderRadius.all(Radius.circular(24))),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(
-                    numItems,
-                    (index) => GestureDetector(
-                          onTap: () => print('Tapped on $index'),
-                          child: SizedBox(
-                              height: iconSize,
-                              width: iconSize,
-                              child: Transform.scale(
-                                scale: iconScale,
-                                child: const Icon(Icons.home),
-                              )),
-                        )))),
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: const BorderRadius.all(Radius.circular(24)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    selectedIndex = 0; 
+                  });
+                  print('Tapped on ${labels[0]}');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  ); // Navigate to HomePage
+                },
+                icon: Icon(
+                  icons[0],
+                  size: iconSize,
+                  color: selectedIndex == 0 ? Colors.blue : Colors.black,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    selectedIndex = 1; 
+                  });
+                  print('Tapped on ${labels[1]}');
+                },
+                icon: Icon(
+                  icons[1],
+                  size: iconSize,
+                  color: selectedIndex == 1 ? Colors.blue : Colors.black,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    selectedIndex = 2; 
+                  });
+                  print('Tapped on ${labels[2]}');
+                },
+                icon: Icon(
+                  icons[2],
+                  size: iconSize,
+                  color: selectedIndex == 2 ? Colors.blue : Colors.black,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    selectedIndex = 3; 
+                  });
+                  print('Tapped on ${labels[3]}');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FeedPage()),
+                  ); // Navigate to FeedPage
+                },
+                icon: Icon(
+                  icons[3],
+                  size: iconSize,
+                  color: selectedIndex == 3 ? Colors.blue : Colors.black,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    selectedIndex = 4; 
+                  });
+                  print('Tapped on ${labels[4]}');
+                },
+                icon: Icon(
+                  icons[4],
+                  size: iconSize,
+                  color: selectedIndex == 4 ? Colors.blue : Colors.black,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
