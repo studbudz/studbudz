@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/Engine/engine.dart';
 
-enum AppPage { signIn, signUp, home, profile, settings }
+enum AppPage { signIn, signUp, home, profile, settings, feed }
 
 class Controller extends ChangeNotifier {
   //instantiates the controller internally
@@ -22,7 +22,7 @@ class Controller extends ChangeNotifier {
   }
 
   void setPage(AppPage page) {
-    page = page;
+    currentPage = page;
     notifyListeners();
   }
 }

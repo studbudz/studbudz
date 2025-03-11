@@ -1,15 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:server/sql_handler.dart';
 import 'package:server/token_validation.dart';
 import 'websocket_handler.dart';
+import 'package:bcrypt/bcrypt.dart';
 
 class Server {
   late HttpServer _httpServer;
   late TokenHandler _tokenHandler;
   late WebsocketHandler _webSocketHandler;
+  late SqlHandler _sqlHandler;
 
   Server() {
     _tokenHandler = TokenHandler();
+    _sqlHandler = SqlHandler();
   }
 
   Future<void> start() async {
@@ -75,8 +79,21 @@ class Server {
       String username = requestBody['username'];
       String password = requestBody['password'];
 
+      //get salt and hashed password from sql_handler for that username
+      //add and then return the password
+      final data = await _sqlHandler.select("getUserCredentialsByUsername", [
+        username,
+      ]);
+
+      String salt = data[0]['password_salt'];
+      String passwordHash = data[0]['password_hash'];
+
+      String concatenated = salt + password;
+
+      String computedHash = BCrypt.hashpw(concatenated, passwordHash);
+
       // Validate the username and password (replace with actual validation logic)
-      if (username == 'admin' && password == 'password123') {
+      if (passwordHash == computedHash) {
         // Generate a token and UUID
         List<String?> values = _tokenHandler.requestToken(username);
 

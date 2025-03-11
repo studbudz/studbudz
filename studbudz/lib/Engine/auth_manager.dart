@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthManager {
-  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   Future<void> saveAuthData(String token, String uuid) async {
     try {
@@ -17,6 +17,7 @@ class AuthManager {
     try {
       final token = await _secureStorage.read(key: 'token');
       if (token == null) {
+        //send user to sign in page.
         throw Exception('Token not found');
       }
       return token;
@@ -30,6 +31,7 @@ class AuthManager {
     try {
       final uuid = await _secureStorage.read(key: 'uuid');
       if (uuid == null) {
+        //needs to send user to sign in page.
         throw Exception('UUID not found');
       }
       return uuid;

@@ -46,6 +46,11 @@ class MyApp extends StatelessWidget {
   Widget _buildPage(Controller controller) {
     print("Page: ${controller.currentPage}"); // Debugging
 
+    //weird logic but allows hard coding of default page through controller.currentPage.
+    if (!Controller().engine.isLoggedIn()) {
+      return const SignUpPage();
+    }
+
     switch (controller.currentPage) {
       //enum AppPage { signIn, signUp, home, profile, settings }
       case AppPage.signIn:
