@@ -11,7 +11,7 @@ class Controller extends ChangeNotifier {
   //technically shouldn't be public but
   //I wanted to avoid needing to access it via an intermediary function
   late Engine engine;
-  AppPage currentPage = AppPage.home;
+  AppPage currentPage = AppPage.signUp;
 
   factory Controller() {
     return _instance; // always returns the same insance

@@ -1,0 +1,2 @@
+C:/Users/hashe_mgn0ntk/Documents/year 2/set up/studbudz/studbudz/android/app/.cxx/Debug/6j1e3242/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/hashe_mgn0ntk/Documents/year 2/set up/studbudz/studbudz/android/app/.cxx/Debug/6j1e3242/armeabi-v7a/CMakeFiles/rebuild_cache.dir
