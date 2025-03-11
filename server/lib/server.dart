@@ -86,14 +86,14 @@ class Server {
       ]);
 
       String salt = data[0]['password_salt'];
-      String password_hash = data[0]['password_hash'];
+      String passwordHash = data[0]['password_hash'];
 
       String concatenated = salt + password;
 
-      String computedHash = BCrypt.hashpw(concatenated, password_hash);
+      String computedHash = BCrypt.hashpw(concatenated, passwordHash);
 
       // Validate the username and password (replace with actual validation logic)
-      if (computedHash == password_hash) {
+      if (passwordHash == computedHash) {
         // Generate a token and UUID
         List<String?> values = _tokenHandler.requestToken(username);
 

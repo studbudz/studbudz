@@ -14,6 +14,16 @@ class Engine {
     print('HttpHandler initialized: $_httpHandler');
   }
 
+  bool isLoggedIn() {
+    try {
+      _authManager.getToken();
+      _authManager.getUuid();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   void setController(Controller controller) {
     _controller = controller;
     print('Controller set: $_controller');
