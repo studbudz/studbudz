@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:studubdz/Engine/auth_manager.dart';
-import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/notifier.dart';
 import 'http_request_handler.dart';
 
 class Engine {
-  AuthManager _authManager = AuthManager();
+  final AuthManager _authManager = AuthManager();
   late final Controller _controller;
   late final HttpRequestHandler _httpHandler;
 

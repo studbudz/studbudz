@@ -61,7 +61,7 @@ class _SignInPageState extends State<SignInPage> {
 
     print("Validating log in details.");
 
-    bool success = await Engine().logIn(username, password);
+    bool success = await Controller().engine.logIn(username, password);
 
     if (success) {
       setState(() {
