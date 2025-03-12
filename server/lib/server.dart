@@ -56,6 +56,7 @@ class Server {
       // Additional processing (e.g., WebSocket upgrade, POST/GET handling)
       String username = _tokenHandler.getInfo(token)['username'];
       if (WebSocketTransformer.isUpgradeRequest(request)) {
+        //for p2p and notifications
         WebSocket socket = await WebSocketTransformer.upgrade(request);
         _webSocketHandler.handleConnection(socket, username);
         print('Upgraded to websocket connection.');
