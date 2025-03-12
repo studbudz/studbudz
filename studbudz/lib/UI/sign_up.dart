@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 Future<String> generateMnemonic() async {
-  return '${bip39.generateMnemonic()} ${bip39.generateMnemonic()}';
+  return bip39.generateMnemonic(strength: 256); // 24-word mnemonic
 }
 
 class SignUpPage extends StatefulWidget {
@@ -19,10 +20,7 @@ class _SignUpPageState extends State<SignUpPage> {
   void nextStep() {
     setState(() {
       step++;
-
-      if (step == 1) {
-        generateWords();
-      }
+      if (step == 1) generateWords();
     });
   }
 
@@ -36,100 +34,45 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     switch (step) {
-      case 0:
-        return AccountSetup(
-          onStepContinue: nextStep,
-        );
-      case 1:
-        //words generation
-        return WordGeneration(
-          words: words,
-          onStep: nextStep,
-        );
-      case 2:
-        //words confirmation or back
-        //make account creation request to server
-        return WordVerification(
-          words: words,
-          onStep: nextStep,
-        );
-      case 3:
-        //send user to login page
-        return const Placeholder();
-      default:
-        return const Placeholder();
+      case 0: return AccountSetup(onStepContinue: nextStep);
+      case 1: return WordGeneration(words: words, onStep: nextStep);
+      case 2: return WordVerification(words: words, onStep: nextStep);
+      default: return const Placeholder();
     }
   }
 }
 
-class AccountSetup extends StatefulWidget {
+class AccountSetup extends StatelessWidget {
   const AccountSetup({super.key, required this.onStepContinue});
-
   final VoidCallback onStepContinue;
 
   @override
-  State<AccountSetup> createState() => _AccountSetupState();
-}
-
-class _AccountSetupState extends State<AccountSetup> {
-  @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Center(
         child: Column(
           children: [
-            //title
             const Padding(
-              padding: EdgeInsets.all(100.0),
+              padding: EdgeInsets.all(50.0),
               child: Text('Sign Up', style: TextStyle(fontSize: 30)),
             ),
-            //username field
-            Padding(
-              padding: EdgeInsets.fromLTRB(50, 0, 50, 50),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'username *',
-                ),
-                validator: (String? value) {
-                  return null;
-                  //check if username is valid
-                },
-              ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+              child: TextField(decoration: InputDecoration(labelText: 'Username *')),
             ),
-            //password
-            Padding(
-              padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Password *',
-                ),
-                validator: (String? value) {
-                  return null;
-                  //check if username is valid
-                },
-              ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+              child: TextField(decoration: InputDecoration(labelText: 'Password *')),
             ),
-            //passw
-            //confirm password
-            Padding(
-              padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Confirm Password *',
-                ),
-                validator: (String? value) {
-                  return null;
-                  //check if username is valid
-                },
-              ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+              child: TextField(decoration: InputDecoration(labelText: 'Confirm Password *')),
             ),
-            //passw
-            TextButton(
-              onPressed: () => widget.onStepContinue(),
+            ElevatedButton(
+              onPressed: onStepContinue,
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
               child: const Text('Next'),
-            )
+            ),
           ],
         ),
       ),
@@ -138,12 +81,7 @@ class _AccountSetupState extends State<AccountSetup> {
 }
 
 class WordGeneration extends StatefulWidget {
-  const WordGeneration({
-    super.key,
-    required this.words,
-    required this.onStep,
-  });
-
+  const WordGeneration({super.key, required this.words, required this.onStep});
   final String words;
   final VoidCallback onStep;
 
@@ -152,56 +90,123 @@ class WordGeneration extends StatefulWidget {
 }
 
 class _WordGenerationState extends State<WordGeneration> {
+  bool copied = false;
+
+  void copyToClipboard() {
+    Clipboard.setData(ClipboardData(text: widget.words));
+    setState(() {
+      copied = true;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Recovery phrase copied!")),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final wordList = widget.words.split(' ');
-    return Center(
-      child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(100.0),
-            child: Text(
-              'Recovery',
-              style: TextStyle(fontSize: 30),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4, childAspectRatio: 3),
-            itemCount: wordList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return TextField(
-                controller: TextEditingController(text: wordList[index]),
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 4, horizontal: 8)),
-                style: const TextStyle(color: Colors.white),
+
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.key, size: 60, color: Colors.black),
+              const SizedBox(height: 10),
+              const Text(
+                'Your Recovery Phrase',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red),
                 textAlign: TextAlign.center,
-                readOnly: true,
-              );
-            },
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'These words are your account recovery phrase. If you lose access, use them to restore your account. **Never share them with anyone!**',
+                style: TextStyle(fontSize: 16, color: Colors.red, fontWeight: FontWeight.w600),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: wordList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Row(
+                        children: [
+                          Text(
+                            '${index + 1}.', // Numbering
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    spreadRadius: 2,
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: TextField(
+                                readOnly: true,
+                                controller: TextEditingController(text: wordList[index]),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                decoration: const InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: copyToClipboard,
+                    icon: const Icon(Icons.copy, size: 16), // Only the icon
+                    label: const SizedBox.shrink(), // text removed
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    ),
+                  ),
+
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: widget.onStep,
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                    child: const Text('Confirm', style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ],
           ),
-          const Text(
-            'These words are your account recovery phrase. If you lose access to your account, you can use these words to reset your password. Never share these words with anyone.',
-            textAlign: TextAlign.center,
-          ),
-          TextButton(
-            onPressed: () => widget.onStep(),
-            child: const Text('Next'),
-          )
-        ],
+        ),
       ),
     );
   }
 }
 
 class WordVerification extends StatefulWidget {
-  const WordVerification(
-      {super.key, required this.words, required this.onStep});
-
+  const WordVerification({super.key, required this.words, required this.onStep});
   final String words;
   final VoidCallback onStep;
 
@@ -210,55 +215,60 @@ class WordVerification extends StatefulWidget {
 }
 
 class _WordVerificationState extends State<WordVerification> {
-  //when pressing enter or space the next controller should request attention
   late List<TextEditingController> wordControllers;
 
   @override
   void initState() {
     super.initState();
-    wordControllers = List.generate(
-        widget.words.split(' ').length, (index) => TextEditingController());
+    wordControllers = List.generate(widget.words.split(' ').length, (index) => TextEditingController());
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<String> wordsList = widget.words.split(' ');
-    //send information to the server and get a token and a UUID in return.
-    //UUID verifies device, token used to check if a user is logged in.
-    return Center(
-      child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(100.0),
-            child: Text(
-              'Confirm Recovery Phrase',
-              style: TextStyle(fontSize: 25),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4, childAspectRatio: 3),
-            itemCount: wordsList.length,
-            itemBuilder: (context, index) {
-              return TextField(
-                controller: wordControllers[index],
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: 4, // Minimal vertical padding
-                    horizontal: 8,
-                  ),
-                ),
-                style: const TextStyle(
-                  color: Colors.white, // White text
-                ),
+    final wordsList = widget.words.split(' ');
+
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Confirm Recovery Phrase',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
-              );
-            },
-          )
-        ],
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: wordsList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: TextField(
+                        controller: wordControllers[index],
+                        textAlign: TextAlign.center,
+                        decoration: const InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: EdgeInsets.symmetric(vertical: 10),
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: widget.onStep,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                child: const Text('Confirm', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
