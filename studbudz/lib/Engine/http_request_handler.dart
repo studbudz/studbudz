@@ -81,7 +81,8 @@ class HttpRequestHandler {
       Map<String, dynamic> data = {'username': username, 'password': password};
       request.add(utf8.encode(jsonEncode(data)));
 
-      final response = await request.close();
+      final response = await request
+          .close(); // both closing and sending the data to the server
       final responseBody = await response.transform(utf8.decoder).join();
 
       if (response.statusCode == 200) {

@@ -69,6 +69,7 @@ class _SignInPageState extends State<SignInPage> {
       });
     } else {
       //return error
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Invalid username or password'),

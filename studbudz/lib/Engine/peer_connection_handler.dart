@@ -1,2 +1,4 @@
 //handles individual peer connections
-class PeerConnectionHandler {}
+class PeerConnectionHandler {
+  //essentially client from the prototype.
+}

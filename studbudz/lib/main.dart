@@ -3,6 +3,7 @@ import 'package:studubdz/Engine/engine.dart';
 import 'package:studubdz/UI/feed_page.dart';
 import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/post_widget.dart';
+import 'package:studubdz/UI/schedule_page.dart';
 import 'package:studubdz/UI/sign_up.dart';
 import 'package:studubdz/UI/theme_data.dart';
 import 'package:studubdz/UI/sign_in_page.dart';
@@ -59,6 +60,8 @@ class MyApp extends StatelessWidget {
         return const SignUpPage();
       case AppPage.home:
         return const HomePage();
+      case AppPage.schedule:
+        return const SchedulePage();
       default:
         return const SignUpPage(); // Default to SignUpPage
     }

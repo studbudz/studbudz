@@ -3,8 +3,8 @@ import 'package:studubdz/notifier.dart';
 import 'http_request_handler.dart';
 
 class Engine {
-  final AuthManager _authManager = AuthManager();
-  late final Controller _controller;
+  final AuthManager _authManager = AuthManager(); //handles token and uuid
+  late final Controller _controller; //
   late final HttpRequestHandler _httpHandler;
 
   // Constructor ensures HttpRequestHandler is initialized upon Engine instantiation
@@ -12,10 +12,12 @@ class Engine {
     _httpHandler = HttpRequestHandler(
         address: 'https://192.168.1.107:8080', authManager: _authManager);
     print('HttpHandler initialized: $_httpHandler');
+    //connect to the webserver.
   }
 
   bool isLoggedIn() {
     try {
+      //token needs to be verified by server.
       _authManager.getToken();
       _authManager.getUuid();
       return true;

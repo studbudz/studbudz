@@ -11,6 +11,15 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
+  List<String> widgets = [
+    "post",
+    "post",
+    "post",
+    "quickadd",
+    "post",
+    "post",
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Stack(
