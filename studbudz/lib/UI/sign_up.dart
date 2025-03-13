@@ -179,17 +179,19 @@ class _WordGenerationState extends State<WordGeneration> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton.icon(
+                  ElevatedButton(
                     onPressed: copyToClipboard,
-                    icon: const Icon(Icons.copy, size: 16), // Only the icon
-                    label: const SizedBox.shrink(), // text removed
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                      padding: const EdgeInsets.all(12), // Ensures even spacing
+                      shape: const CircleBorder(), // Makes it round and centers the icon
                     ),
+                    child: const Icon(Icons.copy, size: 20, color: Colors.white), // Centered icon
                   ),
 
+
                   const SizedBox(width: 20),
+
                   ElevatedButton(
                     onPressed: widget.onStep,
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
@@ -224,6 +226,7 @@ class _WordVerificationState extends State<WordVerification> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     final wordsList = widget.words.split(' ');
 
@@ -234,33 +237,70 @@ class _WordVerificationState extends State<WordVerification> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Key Icon
+              const Icon(Icons.key, size: 60, color: Colors.black),
+              const SizedBox(height: 10),
+
+              // Title
               const Text(
                 'Confirm Recovery Phrase',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
+
+              // Numbered Input Fields with Box Shadows
               Expanded(
                 child: ListView.builder(
                   itemCount: wordsList.length,
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: TextField(
-                        controller: wordControllers[index],
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: EdgeInsets.symmetric(vertical: 10),
-                          border: OutlineInputBorder(),
-                        ),
+                      child: Row(
+                        children: [
+                          // Numbering
+                          Text(
+                            '${index + 1}.',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 10),
+
+                          // Input Field with Box Shadow
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    spreadRadius: 2,
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: TextField(
+                                controller: wordControllers[index],
+                                textAlign: TextAlign.center,
+                                decoration: const InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   },
                 ),
               ),
               const SizedBox(height: 20),
+
+              // Confirm Button
               ElevatedButton(
                 onPressed: widget.onStep,
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
@@ -271,5 +311,4 @@ class _WordVerificationState extends State<WordVerification> {
         ),
       ),
     );
-  }
-}
+  }}
