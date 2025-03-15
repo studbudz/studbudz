@@ -15,7 +15,7 @@ class SqlHandler {
     String host = "localhost",
     int port = 3306,
     String userName = "root",
-    String password = "password123",
+    String password = "",
     String databaseName = "studbudz",
   }) async {
     _conn = await MySqlConnection.connect(

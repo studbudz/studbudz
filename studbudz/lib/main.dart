@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
 
     //weird logic but allows hard coding of default page through controller.currentPage.
     if (!Controller().engine.isLoggedIn()) {
-      return const SignUpPage();
+      return const SignInPage();
     }
 
     switch (controller.currentPage) {

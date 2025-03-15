@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'nav_bar.dart';
 
 class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key});
@@ -123,6 +124,12 @@ class _SchedulePageState extends State<SchedulePage> {
           top: centerY,
           child: IconButton(
               onPressed: nextPage, icon: const Icon(Icons.arrow_forward)),
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 20,
+          child: NavBarWidget(height: 60),
         ),
       ],
     );

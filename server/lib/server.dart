@@ -86,6 +86,7 @@ class Server {
         username,
       ]);
 
+      print(data);
       String salt = data[0]['password_salt'];
       String passwordHash = data[0]['password_hash'];
 
@@ -133,5 +134,14 @@ class Server {
     } finally {
       await request.response.close();
     }
+  }
+
+  void _handleAutofill(HttpRequest request) async {
+    String content = await utf8.decodeStream(request);
+    Map<String, dynamic> requestBody = jsonDecode(content);
+
+    String username = requestBody['username'];
+
+    final data = await _sqlHandler.select("getUserInfoFromName", [username]);
   }
 }

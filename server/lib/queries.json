@@ -1,3 +1,4 @@
 {
-    "getUserCredentialsByUsername": "SELECT password_salt, password_hash FROM user WHERE username = ?" 
+    "getUserCredentialsByUsername": "SELECT password_salt, password_hash FROM user WHERE username = ?",
+    "getUserInfoFromName": "SELECT user_id, username, user_avatar FROM user WHERE username LIKE %?%"
 }
