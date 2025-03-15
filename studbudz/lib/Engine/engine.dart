@@ -9,6 +9,7 @@ class Engine {
 
   // Constructor ensures HttpRequestHandler is initialized upon Engine instantiation
   Engine() {
+    //use websocket to connect instantly
     _httpHandler = HttpRequestHandler(
         address: 'https://192.168.1.107:8080', authManager: _authManager);
     print('HttpHandler initialized: $_httpHandler');
@@ -32,7 +33,7 @@ class Engine {
   }
 
   Future<bool> logIn(String username, String password) async {
-    print("Logging in.");
+    print("Logging in with: $username and $password");
 
     try {
       bool response = await _httpHandler.signInRequest(username, password);
@@ -47,5 +48,15 @@ class Engine {
       print("Login failed.");
       return false;
     }
+  }
+
+  Future<Map<dynamic, dynamic>> autoSuggest(String query) async {
+    //perform query on Names
+    final response = await _httpHandler.fetchData('getUserSuggestionsFromName',
+        queryParams: {'query': '${query}%'});
+    //perform query on subjects
+    //perform query on places -> uses stadia maps
+    print(response);
+    return {"hi": "hi"};
   }
 }

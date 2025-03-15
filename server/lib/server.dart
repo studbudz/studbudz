@@ -44,7 +44,6 @@ class Server {
         _handleSignUp(request);
         continue; // Prevent further processing.
       }
-
       // Get token from request if the endpoint isn't sign in/up
       String? token = request.headers.value('Authorization')?.split(' ').last;
       if (token == null || !_tokenHandler.validateToken(token)) {
@@ -64,6 +63,12 @@ class Server {
         // Handle POST requests
       } else if (request.method == 'GET') {
         // Handle GET requests
+        final uri = request.uri.path;
+        switch (uri) {
+          case '/getUserSuggestionsFromName':
+          default:
+            Exception('not valid...');
+        }
       } else {
         request.response.statusCode = HttpStatus.forbidden;
         await request.response.close();
@@ -136,12 +141,23 @@ class Server {
     }
   }
 
-  void _handleAutofill(HttpRequest request) async {
-    String content = await utf8.decodeStream(request);
-    Map<String, dynamic> requestBody = jsonDecode(content);
+  Future<void> suggestion(HttpRequest request) async {
+    final params = request.uri.queryParameters;
+    final data = await _getNameSuggestions(params['query']!);
 
-    String username = requestBody['username'];
+    request.response.headers.contentType = ContentType.json;
+    request.response.statusCode = HttpStatus.ok;
 
-    final data = await _sqlHandler.select("getUserInfoFromName", [username]);
+    // Send the JSON encoded data as the response
+    request.response.write(jsonEncode(data));
+
+    await request.response.close();
+  }
+
+  Future<List<Map<String, dynamic>>> _getNameSuggestions(String query) async {
+    final data = await _sqlHandler.select("getUserSuggestionsFromName", [
+      query,
+    ]);
+    return data;
   }
 }

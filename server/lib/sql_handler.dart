@@ -23,7 +23,7 @@ class SqlHandler {
         host: host,
         port: port,
         user: userName,
-        password: password,
+        password: password.isEmpty ? null : password,
         db: databaseName,
       ),
     );

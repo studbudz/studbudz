@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/UI/map_widget.dart';
 import 'package:studubdz/UI/nav_bar.dart';
+import 'package:studubdz/notifier.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -48,8 +49,11 @@ class RoundedSearchBox extends StatelessWidget {
         color: Theme.of(context).primaryColor, // Background color
         borderRadius: BorderRadius.circular(30), // Rounded border
       ),
-      child: const TextField(
-        decoration: InputDecoration(
+      child: TextField(
+        onChanged: (text) {
+          Controller().engine.autoSuggest(text);
+        },
+        decoration: const InputDecoration(
           icon: Icon(Icons.search),
           hintText: "Search...",
           border: InputBorder.none, // Removes default underline

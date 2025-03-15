@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
       case AppPage.schedule:
         return const SchedulePage();
       default:
-        return const SignUpPage(); // Default to SignUpPage
+        return const SignInPage(); // Default to SignUpPage
     }
   }
 }
