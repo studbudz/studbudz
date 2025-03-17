@@ -125,6 +125,12 @@ class _SchedulePageState extends State<SchedulePage> {
           child: IconButton(
               onPressed: nextPage, icon: const Icon(Icons.arrow_forward)),
         ),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 20,
+          child: NavBarWidget(height: 60),
+        ),
       ],
     );
   }

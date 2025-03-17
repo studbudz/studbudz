@@ -29,8 +29,9 @@ class HttpRequestHandler {
     try {
       final request = await _httpClient.postUrl(url);
       request.headers.contentType = ContentType.json;
-      request.headers.set('Authorization',
-          'Bearer ${_authManager.getToken()}'); // Add the token in the header
+      final token = await _authManager.getToken();
+      request.headers
+          .set('Authorization', 'Bearer $token'); // Add the token in the header
       request.add(utf8.encode(jsonEncode(data)));
 
       //send and close
@@ -48,13 +49,22 @@ class HttpRequestHandler {
     }
   }
 
-  Future<Map<String, dynamic>> fetchData(String endpoint) async {
+  Future<Map<String, dynamic>> fetchData(String endpoint,
+      {Map<String, String>? queryParams}) async {
     //replace with getter from auth manager
-    final url = Uri.parse('$_address/$endpoint');
+    final uri = Uri.parse('$_address/$endpoint');
+    final url = queryParams != null && queryParams.isNotEmpty
+        ? uri.replace(queryParameters: queryParams)
+        : uri;
+
+    print(url.queryParameters);
+
     try {
       final request = await _httpClient.getUrl(url);
-      request.headers.set('Authorization', 'Bearer ${_authManager.getToken()}');
+      final token = await _authManager.getToken();
+      request.headers.set('Authorization', 'Bearer $token');
       final response = await request.close();
+      print(response);
       //into readable text
       //.join combines the multiple streams
       final responseBody = await response.transform(utf8.decoder).join();

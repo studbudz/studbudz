@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/Engine/engine.dart';
-import 'package:studubdz/UI/chat_page.dart';
 import 'package:studubdz/UI/feed_page.dart';
 import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/post_widget.dart';
-import 'package:studubdz/UI/profile_page.dart';
 import 'package:studubdz/UI/schedule_page.dart';
 import 'package:studubdz/UI/sign_up.dart';
 import 'package:studubdz/UI/theme_data.dart';
