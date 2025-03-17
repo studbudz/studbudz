@@ -5,11 +5,13 @@ import 'http_request_handler.dart';
 class Engine {
   final AuthManager _authManager = AuthManager(); //handles token and uuid
   late final Controller _controller; //
+  late final WebsocketHandler;
   late final HttpRequestHandler _httpHandler;
 
   // Constructor ensures HttpRequestHandler is initialized upon Engine instantiation
   Engine() {
     //use websocket to connect instantly
+    
     _httpHandler = HttpRequestHandler(
         address: 'https://192.168.1.107:8080', authManager: _authManager);
     print('HttpHandler initialized: $_httpHandler');

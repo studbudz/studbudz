@@ -5,6 +5,12 @@ import 'package:server/token_validation.dart';
 import 'websocket_handler.dart';
 import 'package:bcrypt/bcrypt.dart';
 
+// Notifications -> websocket
+// image/asset retrieval and post -> https
+// signIn -> done ish
+// chat -> websocket, webrtc
+// coordinates -> idk
+
 class Server {
   late HttpServer _httpServer;
   late TokenHandler _tokenHandler;
@@ -43,6 +49,10 @@ class Server {
       } else if (request.uri.path == '/signup') {
         _handleSignUp(request);
         continue; // Prevent further processing.
+      } else if (request.uri.path == '/ping') {
+        request.response.statusCode = HttpStatus.accepted;
+        await request.response.close();
+        continue;
       }
       // Get token from request if the endpoint isn't sign in/up
       String? token = request.headers.value('Authorization')?.split(' ').last;

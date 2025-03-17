@@ -7,7 +7,8 @@ plugins {
 
 android {
     namespace = "com.example.studubdz"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34  // Updated compileSdkVersion to 34 (Android 14)
+
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -24,8 +25,8 @@ android {
         applicationId = "com.example.studubdz"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 23  // Set minSdkVersion to 23 (Android 6.0)
+        targetSdk = 34  // Set targetSdkVersion to 34 (Android 14)
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -40,5 +41,5 @@ android {
 }
 
 flutter {
-    source = "../.."
+    source = "../.."  // Flutter source path
 }

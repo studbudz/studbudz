@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/programming/flutter/studbudz/studbudz/linux"
+    "cmake.sourceDirectory": "D:/programming/flutter/studbudz/studbudz/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

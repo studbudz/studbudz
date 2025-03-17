@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:studubdz/Engine/engine.dart';
 import 'package:studubdz/UI/feed_page.dart';
@@ -13,6 +14,15 @@ import 'package:provider/provider.dart';
 import 'notifier.dart';
 
 void main() {
+  AwesomeNotifications().initialize(
+      null,
+      [
+        NotificationChannel(
+            channelKey: 'basic_channel',
+            channelName: 'basic notifications',
+            channelDescription: 'notification channel for basic notifications')
+      ],
+      debug: true);
   runApp(
     ChangeNotifierProvider(
       create: (context) => Controller(),
@@ -23,19 +33,37 @@ void main() {
 
 //placeholder code
 //use for testing each UI
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({super.key});
 
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final CustomTheme theme = CustomTheme();
+  late Controller controller;
+  late Engine engine;
+
+  @override
+  void initState() {
+    //store decision if no so we don't spam them every time.
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+
+    // Initialize the controller and engine
+    controller = Provider.of<Controller>(context, listen: false);
+    engine = Engine();
+    engine.setController(controller);
+    controller.engine = engine;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Access Controller via Provider
-    final Controller controller = Provider.of<Controller>(context);
-    Engine engine = Engine();
-    engine.setController(controller);
-    controller.engine = engine;
-
     return MaterialApp(
       theme: theme.theme,
       debugShowCheckedModeBanner: false,
@@ -49,13 +77,13 @@ class MyApp extends StatelessWidget {
   Widget _buildPage(Controller controller) {
     print("Page: ${controller.currentPage}"); // Debugging
 
-    //weird logic but allows hard coding of default page through controller.currentPage.
-    //if (!Controller().engine.isLoggedIn()) {
-    //return const SignUpPage();
-    //}
+    // weird logic but allows hard coding of default page through controller.currentPage.
+    // if (!Controller().engine.isLoggedIn()) {
+    // return const SignUpPage();
+    // }
 
     switch (controller.currentPage) {
-      //enum AppPage { signIn, signUp, home, profile, settings }
+      // enum AppPage { signIn, signUp, home, profile, settings }
       case AppPage.signIn:
         return const SignInPage();
       case AppPage.signUp:
