@@ -55,7 +55,7 @@ class Engine {
   Future<Map<dynamic, dynamic>> autoSuggest(String query) async {
     //perform query on Names
     final response = await _httpHandler.fetchData('getUserSuggestionsFromName',
-        queryParams: {'query': '${query}%'});
+        queryParams: {'query': '$query%'});
     //perform query on subjects
     //perform query on places -> uses stadia maps
     print(response);
