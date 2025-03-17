@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
         //search bar
         Positioned(
           top: 70,
-          left: 20,
+          left: 0,
           right: 20,
           child: RoundedSearchBox(),
         ),
@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
           left: 0,
           right: 0,
           bottom: 20,
-          child: NavBarWidget(height: 60),
+          child: NavBarWidget(),
         ),
       ],
     );
