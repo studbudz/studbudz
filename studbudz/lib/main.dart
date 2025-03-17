@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
 
     //weird logic but allows hard coding of default page through controller.currentPage.
     //if (!Controller().engine.isLoggedIn()) {
-      //return const SignUpPage();
+    //return const SignUpPage();
     //}
 
     switch (controller.currentPage) {
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
         return const ChatPage();
       case AppPage.profile:
         return const ProfilePage();
-      case AppPage.post:
+      case AppPage.postWidget:
         return const PostWidget();
       default:
         return const SignUpPage(); // Default to SignUpPage

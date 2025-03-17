@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:studubdz/UI/nav_bar.dart';  // Import your NavBarWidget
+import 'package:studubdz/UI/nav_bar.dart'; // Import your NavBarWidget
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -28,11 +28,11 @@ class _ChatPageState extends State<ChatPage> {
             ],
           ),
         ),
-         Positioned(
+        Positioned(
           bottom: 0,
           left: 0,
-          right: 0,
-          child: NavBarWidget(),  // Add NavBarWidget at the bottom
+          right: 20,
+          child: NavBarWidget(), // Add NavBarWidget at the bottom
         ),
       ],
     );

@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/Engine/engine.dart';
 
-enum AppPage { signIn, signUp, home, profile, settings, feed, schedule, chat, post}
+enum AppPage {
+  signIn,
+  signUp,
+  home,
+  profile,
+  settings,
+  feed,
+  schedule,
+  chat,
+  post,
+  postWidget
+}
 
 class Controller extends ChangeNotifier {
   //instantiates the controller internally
