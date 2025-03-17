@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/Engine/engine.dart';
+import 'package:studubdz/UI/chat_page.dart';
 import 'package:studubdz/UI/feed_page.dart';
 import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/post_widget.dart';
+import 'package:studubdz/UI/profile_page.dart';
 import 'package:studubdz/UI/schedule_page.dart';
 import 'package:studubdz/UI/sign_up.dart';
 import 'package:studubdz/UI/theme_data.dart';
@@ -48,9 +50,9 @@ class MyApp extends StatelessWidget {
     print("Page: ${controller.currentPage}"); // Debugging
 
     //weird logic but allows hard coding of default page through controller.currentPage.
-    if (!Controller().engine.isLoggedIn()) {
-      return const SignUpPage();
-    }
+    //if (!Controller().engine.isLoggedIn()) {
+      //return const SignUpPage();
+    //}
 
     switch (controller.currentPage) {
       //enum AppPage { signIn, signUp, home, profile, settings }
@@ -62,6 +64,14 @@ class MyApp extends StatelessWidget {
         return const HomePage();
       case AppPage.schedule:
         return const SchedulePage();
+      case AppPage.feed:
+        return const FeedPage();
+      case AppPage.chat:
+        return const ChatPage();
+      case AppPage.profile:
+        return const ProfilePage();
+      case AppPage.post:
+        return const PostWidget();
       default:
         return const SignUpPage(); // Default to SignUpPage
     }

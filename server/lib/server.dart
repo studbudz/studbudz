@@ -18,7 +18,7 @@ class Server {
 
   Future<void> start() async {
     // Load SSL certificate and key
-    //cerificate is self signed and is seen as extremely risky. (is encrypted and works for our purposes.)
+    //certificate is self signed and is seen as extremely risky. (is encrypted and works for our purposes.)
     SecurityContext context =
         SecurityContext()
           ..useCertificateChain('certificate.pem')

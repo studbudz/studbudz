@@ -2,39 +2,10 @@
   <library name="Dart Packages" type="DartPackagesLibraryType">
     <properties>
       <option name="packageNameToDirsMap">
-        <entry key="_fe_analyzer_shared">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/_fe_analyzer_shared-80.0.0/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="analyzer">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/analyzer-7.3.0/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="args">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/args-2.6.0/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="async">
           <value>
             <list>
               <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.12.0/lib" />
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.13.0/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="basic_utils">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/basic_utils-3.9.4/lib" />
             </list>
           </value>
         </entry>
@@ -80,13 +51,6 @@
             </list>
           </value>
         </entry>
-        <entry key="coverage">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/coverage-1.11.1/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="crypto">
           <value>
             <list>
@@ -108,13 +72,6 @@
             </list>
           </value>
         </entry>
-        <entry key="easy_dart_jwt">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/easy_dart_jwt-0.2.0/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="fake_async">
           <value>
             <list>
@@ -129,24 +86,10 @@
             </list>
           </value>
         </entry>
-        <entry key="file">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/file-7.0.1/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="fixnum">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/fixnum-1.1.1/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="flutter">
           <value>
             <list>
-              <option value="C:/flutter/packages/flutter/lib" />
+              <option value="$PROJECT_DIR$/../../../tools/flutter/packages/flutter/lib" />
             </list>
           </value>
         </entry>
@@ -209,28 +152,14 @@
         <entry key="flutter_test">
           <value>
             <list>
-              <option value="C:/flutter/packages/flutter_test/lib" />
+              <option value="$PROJECT_DIR$/../../../tools/flutter/packages/flutter_test/lib" />
             </list>
           </value>
         </entry>
         <entry key="flutter_web_plugins">
           <value>
             <list>
-              <option value="C:/flutter/packages/flutter_web_plugins/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="frontend_server_client">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/frontend_server_client-4.0.0/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="glob">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/glob-2.1.3/lib" />
+              <option value="$PROJECT_DIR$/../../../tools/flutter/packages/flutter_web_plugins/lib" />
             </list>
           </value>
         </entry>
@@ -245,14 +174,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/http-1.3.0/lib" />
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/http-0.13.6/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="http_multi_server">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/http_multi_server-3.2.2/lib" />
             </list>
           </value>
         </entry>
@@ -270,25 +191,10 @@
             </list>
           </value>
         </entry>
-        <entry key="io">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/io-1.0.5/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="js">
           <value>
             <list>
               <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/js-0.6.7/lib" />
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/js-0.7.2/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="json_annotation">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/json_annotation-4.9.0/lib" />
             </list>
           </value>
         </entry>
@@ -324,7 +230,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/lints-4.0.0/lib" />
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/lints-5.1.1/lib" />
             </list>
           </value>
         </entry>
@@ -377,31 +282,10 @@
             </list>
           </value>
         </entry>
-        <entry key="mime">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/mime-2.0.0/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="nested">
           <value>
             <list>
               <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/nested-1.0.0/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="node_preamble">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/node_preamble-2.0.2/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="package_config">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/package_config-2.1.1/lib" />
             </list>
           </value>
         </entry>
@@ -482,13 +366,6 @@
             </list>
           </value>
         </entry>
-        <entry key="pool">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/pool-1.5.1/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="proj4dart">
           <value>
             <list>
@@ -503,59 +380,10 @@
             </list>
           </value>
         </entry>
-        <entry key="pub_semver">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/pub_semver-2.1.5/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="shelf">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/shelf-1.4.2/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="shelf_packages_handler">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/shelf_packages_handler-3.0.2/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="shelf_static">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/shelf_static-1.1.3/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="shelf_web_socket">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/shelf_web_socket-3.0.0/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="sky_engine">
           <value>
             <list>
-              <option value="C:/flutter/bin/cache/pkg/sky_engine/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="source_map_stack_trace">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/source_map_stack_trace-2.1.2/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="source_maps">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/source_maps-0.10.13/lib" />
+              <option value="$PROJECT_DIR$/../../../tools/flutter/bin/cache/pkg/sky_engine/lib" />
             </list>
           </value>
         </entry>
@@ -563,13 +391,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/source_span-1.10.1/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="sprintf">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/sprintf-7.0.0/lib" />
             </list>
           </value>
         </entry>
@@ -601,24 +422,10 @@
             </list>
           </value>
         </entry>
-        <entry key="test">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/test-1.25.15/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="test_api">
           <value>
             <list>
               <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/test_api-0.7.4/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="test_core">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/test_core-0.6.8/lib" />
             </list>
           </value>
         </entry>
@@ -636,13 +443,6 @@
             </list>
           </value>
         </entry>
-        <entry key="uuid">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/uuid-4.5.1/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="vector_math">
           <value>
             <list>
@@ -654,14 +454,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/vm_service-14.3.1/lib" />
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/vm_service-15.0.0/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="watcher">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/watcher-1.1.1/lib" />
             </list>
           </value>
         </entry>
@@ -669,28 +461,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/web-1.1.0/lib" />
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/web-1.1.1/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="web_socket">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/web_socket-0.1.6/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="web_socket_channel">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/web_socket_channel-3.0.2/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="webkit_inspection_protocol">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/webkit_inspection_protocol-1.2.1/lib" />
             </list>
           </value>
         </entry>
@@ -715,37 +485,21 @@
             </list>
           </value>
         </entry>
-        <entry key="yaml">
-          <value>
-            <list>
-              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/yaml-3.1.3/lib" />
-            </list>
-          </value>
-        </entry>
       </option>
     </properties>
     <CLASSES>
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/_fe_analyzer_shared-80.0.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/analyzer-7.3.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/args-2.6.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.12.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.13.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/basic_utils-3.9.4/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/bip39-1.0.6/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/boolean_selector-2.1.2/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/characters-1.4.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/clock-1.1.2/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/collection-1.19.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/convert-3.1.2/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/coverage-1.11.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/crypto-3.0.6/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/cupertino_icons-1.0.8/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/dart_earcut-1.2.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/easy_dart_jwt-0.2.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/fake_async-1.3.2/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/ffi-2.1.4/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/file-7.0.1/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/fixnum-1.1.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-4.0.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_map-8.1.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage-9.2.4/lib" />
@@ -754,24 +508,16 @@
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_platform_interface-1.1.2/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_web-1.2.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_windows-3.1.2/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/frontend_server_client-4.0.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/glob-2.1.3/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/hex-0.2.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/http-0.13.6/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/http-1.3.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/http_multi_server-3.2.2/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/http_parser-4.1.2/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.20.2/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/io-1.0.5/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/js-0.6.7/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/js-0.7.2/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/json_annotation-4.9.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/latlong2-0.9.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/leak_tracker-10.0.8/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.9/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/leak_tracker_testing-3.0.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/lints-4.0.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/lints-5.1.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/lists-1.0.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/logger-2.5.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/logging-1.3.0/lib" />
@@ -779,10 +525,7 @@
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/material_color_utilities-0.11.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/meta-1.16.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/mgrs_dart-2.0.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/mime-2.0.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/nested-1.0.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/node_preamble-2.0.2/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/package_config-2.1.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/path-1.9.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider-2.1.5/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_android-2.2.15/lib" />
@@ -794,45 +537,26 @@
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/plugin_platform_interface-2.1.8/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/pointycastle-3.9.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/polylabel-1.0.1/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/pool-1.5.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/proj4dart-2.1.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/provider-6.1.2/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/pub_semver-2.1.5/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/shelf-1.4.2/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/shelf_packages_handler-3.0.2/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/shelf_static-1.1.3/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/shelf_web_socket-3.0.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/source_map_stack_trace-2.1.2/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/source_maps-0.10.13/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/source_span-1.10.1/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/sprintf-7.0.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/stack_trace-1.12.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/stream_channel-2.1.4/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/string_scanner-1.4.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/term_glyph-1.2.2/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/test-1.25.15/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/test_api-0.7.4/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/test_core-0.6.8/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/typed_data-1.4.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/unicode-0.3.1/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/uuid-4.5.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/vector_math-2.1.4/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/vm_service-14.3.1/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/vm_service-15.0.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/watcher-1.1.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/web-1.1.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/web-1.1.1/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/web_socket-0.1.6/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/web_socket_channel-3.0.2/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/webkit_inspection_protocol-1.2.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/win32-5.11.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/wkt_parser-2.0.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/xdg_directories-1.1.0/lib" />
-      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/yaml-3.1.3/lib" />
-      <root url="file://C:/flutter/bin/cache/pkg/sky_engine/lib" />
-      <root url="file://C:/flutter/packages/flutter/lib" />
-      <root url="file://C:/flutter/packages/flutter_test/lib" />
-      <root url="file://C:/flutter/packages/flutter_web_plugins/lib" />
+      <root url="file://$PROJECT_DIR$/../../../tools/flutter/bin/cache/pkg/sky_engine/lib" />
+      <root url="file://$PROJECT_DIR$/../../../tools/flutter/packages/flutter/lib" />
+      <root url="file://$PROJECT_DIR$/../../../tools/flutter/packages/flutter_test/lib" />
+      <root url="file://$PROJECT_DIR$/../../../tools/flutter/packages/flutter_web_plugins/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

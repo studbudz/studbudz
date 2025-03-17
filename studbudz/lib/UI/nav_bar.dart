@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/feed_page.dart';
 import 'package:studubdz/notifier.dart';
+import 'package:studubdz/UI/schedule_page.dart';
+import 'package:studubdz/UI/chat_page.dart';
+import 'package:studubdz/UI/profile_page.dart';
+
 
 class NavBarWidget extends StatefulWidget {
   final double height;
@@ -17,19 +21,22 @@ class _NavBarWidgetState extends State<NavBarWidget> {
   double iconSize = 36;
 
   final List<IconData> icons = [
-    CupertinoIcons.home,
-    CupertinoIcons.search,
-    CupertinoIcons.add,
     CupertinoIcons.square_stack_3d_up,
-    CupertinoIcons.person
+    CupertinoIcons.home,
+    CupertinoIcons.calendar,
+    CupertinoIcons.chat_bubble_text,
+    CupertinoIcons.person,
+    CupertinoIcons.add
+
   ];
 
   final List<String> labels = [
-    'Home',
-    'Search',
-    'Add',
     'Feed',
-    'Profile',
+    'Home',
+    'Schedule',
+    'Chat',
+    'Profile'
+    'Add Post',
   ];
 
   @override
@@ -53,7 +60,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                   setState(() {
                     selectedIndex = 0;
                   });
-                  notifier.setPage(AppPage.home); // Navigate to HomePage
+                  notifier.setPage(AppPage.feed); // Navigate to Feed
                 },
                 icon: Icon(
                   icons[0],
@@ -67,9 +74,10 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                     selectedIndex = 1;
                   });
                   print('Tapped on ${labels[1]}');
+                  notifier.setPage(AppPage.home);
                 },
                 icon: Icon(
-                  icons[1],
+                  selectedIndex == 1 ? CupertinoIcons.add : icons[1],
                   size: iconSize,
                   color: selectedIndex == 1 ? Colors.blue : Colors.black,
                 ),
@@ -80,6 +88,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                     selectedIndex = 2;
                   });
                   print('Tapped on ${labels[2]}');
+                  notifier.setPage(AppPage.schedule);
                 },
                 icon: Icon(
                   icons[2],
@@ -93,7 +102,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                     selectedIndex = 3;
                   });
                   print('Tapped on ${labels[3]}');
-                  notifier.setPage(AppPage.feed); // Navigate to FeedPage
+                  notifier.setPage(AppPage.chat); // Navigate to FeedPage
                 },
                 icon: Icon(
                   icons[3],
@@ -107,6 +116,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                     selectedIndex = 4;
                   });
                   print('Tapped on ${labels[4]}');
+                  notifier.setPage(AppPage.profile);
                 },
                 icon: Icon(
                   icons[4],

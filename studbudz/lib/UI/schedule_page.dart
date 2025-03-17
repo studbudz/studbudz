@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:studubdz/UI/nav_bar.dart';
 
 class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key});
