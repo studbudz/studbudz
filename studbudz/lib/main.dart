@@ -11,15 +11,18 @@ import 'package:studubdz/UI/sign_in_page.dart';
 import 'package:studubdz/UI/profile_page.dart';
 import 'package:studubdz/UI/chat_page.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import 'notifier.dart';
 
 void main() {
   AwesomeNotifications().initialize(
       null,
       [
+        //channels for granular control and settings page.
         NotificationChannel(
             channelKey: 'basic_channel',
             channelName: 'basic notifications',
+            channelGroupKey: 'basic_group',
             channelDescription: 'notification channel for basic notifications')
       ],
       debug: true);
@@ -40,7 +43,8 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  bool isInBackground = false;
   final CustomTheme theme = CustomTheme();
   late Controller controller;
   late Engine engine;
@@ -59,7 +63,27 @@ class _MyAppState extends State<MyApp> {
     engine = Engine();
     engine.setController(controller);
     controller.engine = engine;
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('AppLifecycleState: ${state.toString()}');
+    if (state == AppLifecycleState.resumed) {
+      isInBackground = false;
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached ||
+        state == AppLifecycleState.hidden) {
+      isInBackground = true;
+    }
   }
 
   @override
@@ -101,7 +125,41 @@ class _MyAppState extends State<MyApp> {
       case AppPage.postWidget:
         return const PostWidget();
       default:
-        return const SignUpPage(); // Default to SignUpPage
+        return const TestWidget(); // Default to SignUpPage
     }
+  }
+}
+
+class TestWidget extends StatefulWidget {
+  const TestWidget({super.key});
+
+  @override
+  State<TestWidget> createState() => _TestWidgetState();
+}
+
+class _TestWidgetState extends State<TestWidget> {
+  triggerNotification() {
+    index += 1;
+    //unique id allows for multiple notifications to be displayed
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: index,
+            channelKey: 'basic_channel',
+            groupKey: 'basic_group',
+            title: 'Simple Notification',
+            body: 'Simple body'));
+  }
+
+  int index = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+            onPressed: triggerNotification,
+            child: const Text('Trigger Notification')),
+      ),
+    );
   }
 }
