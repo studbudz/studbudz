@@ -125,7 +125,7 @@ class _SchedulePageState extends State<SchedulePage> {
           child: IconButton(
               onPressed: nextPage, icon: const Icon(Icons.arrow_forward)),
         ),
-        Positioned(
+        const Positioned(
           left: 0,
           right: 0,
           bottom: 20,
@@ -174,7 +174,7 @@ Widget _buildFront() {
       color: Colors.blue,
       borderRadius: BorderRadius.circular(16),
     ),
-    child: Center(child: Text('hello')),
+    child: const Center(child: Text('hello')),
   );
 }
 
@@ -184,6 +184,6 @@ Widget _buildBack() {
       color: Colors.blue,
       borderRadius: BorderRadius.circular(16),
     ),
-    child: Text('hiLo'),
+    child: const Text('hiLo'),
   );
 }

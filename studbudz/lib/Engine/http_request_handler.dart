@@ -19,6 +19,8 @@ class HttpRequestHandler {
     };
     _address = address;
     _authManager = authManager;
+
+    checkConnection();
   }
 
   // Method to send data (POST request)
@@ -116,6 +118,27 @@ class HttpRequestHandler {
       // Debugging: print out the error message
       print('Error during sign in: $e');
       throw Exception('Error during sign in: $e');
+    }
+  }
+
+  // Method to check if the connection to the server is valid
+  Future<void> checkConnection() async {
+    final url = Uri.parse(
+        '$_address/ping'); // Use a 'ping' endpoint or a health-check endpoint
+    try {
+      final request = await _httpClient.getUrl(url);
+      final response = await request.close();
+
+      if (response.statusCode == 202) {
+        print("Connected.");
+      } else {
+        // Server is not responding as expected
+        print(
+            'Failed to reach the server. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Error in connection (e.g., no network, unreachable host)
+      print('Error while checking connection: $e');
     }
   }
 }
