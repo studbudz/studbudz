@@ -7,6 +7,8 @@ import 'package:studubdz/UI/schedule_page.dart';
 import 'package:studubdz/UI/sign_up.dart';
 import 'package:studubdz/UI/theme_data.dart';
 import 'package:studubdz/UI/sign_in_page.dart';
+import 'package:studubdz/UI/profile_page.dart';
+import 'package:studubdz/UI/chat_page.dart';
 import 'package:provider/provider.dart';
 import 'notifier.dart';
 
