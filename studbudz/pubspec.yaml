@@ -37,7 +37,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4 # for secure storage of uuid and token
   provider: ^6.1.2 #dynamic UI
   awesome_notifications: ^0.10.1 # push notifications
-  flutter_webrtc: ^0.6.10
+  flutter_webrtc: ^0.12.12+hotfix.1
   web_socket_channel: ^2.1.0
 
 dev_dependencies:

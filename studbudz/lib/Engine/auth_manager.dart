@@ -16,13 +16,13 @@ class AuthManager {
   Future<String> getToken() async {
     try {
       final token = await _secureStorage.read(key: 'token');
-      if (token == null) {
+      if (token == null || token.isEmpty) {
         //send user to sign in page.
-        throw Exception('Token not found');
+        throw Exception('Token not found or is empty');
       }
       return token;
     } catch (e) {
-      throw Exception('Error retrieving token: $e');
+      rethrow;
     }
   }
 
@@ -36,7 +36,22 @@ class AuthManager {
       }
       return uuid;
     } catch (e) {
-      throw Exception('Error retrieving UUID: $e');
+      rethrow;
+    }
+  }
+
+  //relatively simple logged in check.
+  Future<bool> isLoggedIn() async {
+    try {
+      final uuid = await _secureStorage.read(key: "uuid");
+      final token = await _secureStorage.read(key: "token");
+      if (uuid == null || token == null) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (e) {
+      return false;
     }
   }
 }

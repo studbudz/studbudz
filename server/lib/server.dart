@@ -40,7 +40,7 @@ class Server {
 
     // Handles incoming connections
     await for (HttpRequest request in _httpServer) {
-      print("Received request.");
+      print("Received request: ${request}");
 
       if (request.uri.path == '/signin') {
         print("Received Sign In request.");
@@ -65,10 +65,9 @@ class Server {
       // Additional processing (e.g., WebSocket upgrade, POST/GET handling)
       String username = _tokenHandler.getInfo(token)['username'];
       if (WebSocketTransformer.isUpgradeRequest(request)) {
-        //for p2p and notifications
+        print('Upgrading to websocket connection.');
         WebSocket socket = await WebSocketTransformer.upgrade(request);
-        _webSocketHandler.handleConnection(socket, username);
-        print('Upgraded to websocket connection.');
+        _webSocketHandler.handleConnection(socket, token);
       } else if (request.method == 'POST') {
         // Handle POST requests
       } else if (request.method == 'GET') {

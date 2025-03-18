@@ -31,6 +31,7 @@ class HttpRequestHandler {
     try {
       final request = await _httpClient.postUrl(url);
       request.headers.contentType = ContentType.json;
+      print("getting token2");
       final token = await _authManager.getToken();
       request.headers
           .set('Authorization', 'Bearer $token'); // Add the token in the header
@@ -63,6 +64,7 @@ class HttpRequestHandler {
 
     try {
       final request = await _httpClient.getUrl(url);
+      print("getting token3");
       final token = await _authManager.getToken();
       request.headers.set('Authorization', 'Bearer $token');
       final response = await request.close();

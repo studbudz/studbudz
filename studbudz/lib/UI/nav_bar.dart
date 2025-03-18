@@ -72,10 +72,10 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    selectedIndex = 2;
+                    selectedIndex = 1;
+                    print('Tapped on ${labels[2]}');
+                    notifier.setPage(AppPage.schedule);
                   });
-                  print('Tapped on ${labels[2]}');
-                  notifier.setPage(AppPage.schedule);
                 },
                 icon: Icon(
                   icons[2],
@@ -87,11 +87,15 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               ),
               IconButton(
                 onPressed: () {
-                  setState(() {
-                    selectedIndex = 1;
-                  });
-                  print('Tapped on ${labels[1]}');
-                  notifier.setPage(AppPage.home);
+                  if (currentPage == AppPage.home) {
+                    notifier.setPage(AppPage.postWidget);
+                  } else {
+                    setState(() {
+                      selectedIndex = 2;
+                    });
+                    print('Tapped on ${labels[1]}');
+                    notifier.setPage(AppPage.home);
+                  }
                 },
                 icon: Icon(
                   currentPage == AppPage.home ? CupertinoIcons.add : icons[1],

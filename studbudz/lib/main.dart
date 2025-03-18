@@ -18,7 +18,7 @@ void main() {
   AwesomeNotifications().initialize(
       null,
       [
-        //channels for granular control and settings page.
+        // channels for granular control and settings page.
         NotificationChannel(
             channelKey: 'basic_channel',
             channelName: 'basic notifications',
@@ -34,8 +34,8 @@ void main() {
   );
 }
 
-//placeholder code
-//use for testing each UI
+// placeholder code
+// use for testing each UI
 class MyApp extends StatefulWidget {
   MyApp({super.key});
 
@@ -44,14 +44,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  bool isInBackground = false;
   final CustomTheme theme = CustomTheme();
   late Controller controller;
   late Engine engine;
 
   @override
   void initState() {
-    //store decision if no so we don't spam them every time.
+    super.initState();
+    // store decision so we don't spam them every time.
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       if (!isAllowed) {
         AwesomeNotifications().requestPermissionToSendNotifications();
@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     engine.setController(controller);
     controller.engine = engine;
     WidgetsBinding.instance.addObserver(this);
-    super.initState();
+    controller.init();
   }
 
   @override
@@ -77,17 +77,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print('AppLifecycleState: ${state.toString()}');
     if (state == AppLifecycleState.resumed) {
-      isInBackground = false;
+      controller.isInBackground = false;
     } else if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached ||
         state == AppLifecycleState.hidden) {
-      isInBackground = true;
+      controller.isInBackground = true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Use Provider.of with listen: true to rebuild the UI when Controller notifies listeners.
+    final controller = Provider.of<Controller>(context);
     return MaterialApp(
       theme: theme.theme,
       debugShowCheckedModeBanner: false,
@@ -97,17 +99,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 
+  triggerNotification() {
+    controller.triggerNotification('basic_channel', 'basic_group',
+        'basic notification', 'Simple notification');
+  }
+
+  int index = 0;
+
   // Method to switch pages based on controller's page
   Widget _buildPage(Controller controller) {
-    print("Page: ${controller.currentPage}"); // Debugging
-
-    // weird logic but allows hard coding of default page through controller.currentPage.
-    // if (!Controller().engine.isLoggedIn()) {
-    // return const SignUpPage();
-    // }
+    print("Current Page: ${controller.currentPage}");
 
     switch (controller.currentPage) {
-      // enum AppPage { signIn, signUp, home, profile, settings }
       case AppPage.signIn:
         return const SignInPage();
       case AppPage.signUp:
@@ -125,39 +128,29 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       case AppPage.postWidget:
         return const PostWidget();
       default:
-        return const TestWidget(); // Default to SignUpPage
+        return TestWidget(
+          onTriggerNotificaiton: triggerNotification,
+        ); // Default to TestWidget
     }
   }
 }
 
 class TestWidget extends StatefulWidget {
-  const TestWidget({super.key});
+  final VoidCallback onTriggerNotificaiton;
+
+  const TestWidget({super.key, required this.onTriggerNotificaiton});
 
   @override
   State<TestWidget> createState() => _TestWidgetState();
 }
 
 class _TestWidgetState extends State<TestWidget> {
-  triggerNotification() {
-    index += 1;
-    //unique id allows for multiple notifications to be displayed
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: index,
-            channelKey: 'basic_channel',
-            groupKey: 'basic_group',
-            title: 'Simple Notification',
-            body: 'Simple body'));
-  }
-
-  int index = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: ElevatedButton(
-            onPressed: triggerNotification,
+            onPressed: widget.onTriggerNotificaiton,
             child: const Text('Trigger Notification')),
       ),
     );
