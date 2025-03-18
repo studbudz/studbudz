@@ -1,19 +1,22 @@
 import 'package:studubdz/Engine/auth_manager.dart';
 import 'package:studubdz/notifier.dart';
 import 'http_request_handler.dart';
+import 'package:studubdz/config.dart';
+import 'package:studubdz/Engine/websocket_handler.dart';
+import 'package:studubdz/config.dart';
 
 class Engine {
   final AuthManager _authManager = AuthManager(); //handles token and uuid
   late final Controller _controller; //
-  late final WebsocketHandler;
+  late final _websocketHandler;
   late final HttpRequestHandler _httpHandler;
 
   // Constructor ensures HttpRequestHandler is initialized upon Engine instantiation
   Engine() {
     //use websocket to connect instantly
-    
+    _websocketHandler = WebsocketHandler('wss://$address', _authManager);
     _httpHandler = HttpRequestHandler(
-        address: 'https://192.168.1.107:8080', authManager: _authManager);
+        address: 'https://$address', authManager: _authManager);
     print('HttpHandler initialized: $_httpHandler');
     //connect to the webserver.
   }
