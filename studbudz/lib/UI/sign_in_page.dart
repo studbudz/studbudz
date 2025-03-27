@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/notifier.dart';
+import 'package:studubdz/UI/recovery_page.dart';
 import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/Engine/engine.dart';
 

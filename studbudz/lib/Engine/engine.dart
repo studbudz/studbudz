@@ -1,29 +1,21 @@
 import 'package:studubdz/Engine/auth_manager.dart';
 import 'package:studubdz/notifier.dart';
 import 'http_request_handler.dart';
+import 'package:studubdz/config.dart';
+import 'package:studubdz/Engine/websocket_handler.dart';
 
 class Engine {
-  final AuthManager _authManager = AuthManager(); //handles token and uuid
-  late final Controller _controller; //
+  late final AuthManager _authManager;
+  late final Controller _controller;
+  late WebsocketHandler _websocketHandler;
   late final HttpRequestHandler _httpHandler;
 
-  // Constructor ensures HttpRequestHandler is initialized upon Engine instantiation
   Engine() {
+    _authManager = AuthManager();
     _httpHandler = HttpRequestHandler(
-        address: 'https://192.168.1.107:8080', authManager: _authManager);
+        address: 'https://$address', authManager: _authManager);
     print('HttpHandler initialized: $_httpHandler');
-    //connect to the webserver.
-  }
-
-  bool isLoggedIn() {
-    try {
-      //token needs to be verified by server.
-      _authManager.getToken();
-      _authManager.getUuid();
-      return true;
-    } catch (e) {
-      return false;
-    }
+    _websocketHandler = WebsocketHandler('ws://$address', _authManager);
   }
 
   void setController(Controller controller) {
@@ -31,13 +23,17 @@ class Engine {
     print('Controller set: $_controller');
   }
 
+  Future<bool> isLoggedIn() async {
+    return await _authManager.isLoggedIn();
+  }
+
   Future<bool> logIn(String username, String password) async {
-    print("Logging in.");
+    print("Logging in with: $username and $password");
 
     try {
       bool response = await _httpHandler.signInRequest(username, password);
       if (response) {
-        print("Success!");
+        print("Login Success!");
         return true;
       } else {
         print("Login failed.");
@@ -47,5 +43,12 @@ class Engine {
       print("Login failed.");
       return false;
     }
+  }
+
+  Future<Map<dynamic, dynamic>> autoSuggest(String query) async {
+    final response = await _httpHandler.fetchData('getUserSuggestionsFromName',
+        queryParams: {'query': '$query%'});
+    print(response);
+    return {"hi": "hi"};
   }
 }

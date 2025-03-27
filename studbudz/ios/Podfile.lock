@@ -1,29 +1,56 @@
 PODS:
+  - awesome_notifications (0.10.0):
+    - Flutter
+    - IosAwnCore (~> 0.10.0)
   - Flutter (1.0.0)
   - flutter_secure_storage (6.0.0):
     - Flutter
+  - flutter_webrtc (0.2.2):
+    - Flutter
+    - Libyuv (= 1703)
+    - WebRTC-SDK (= 92.4515.07)
+  - IosAwnCore (0.10.0)
+  - Libyuv (1703)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - WebRTC-SDK (92.4515.07)
 
 DEPENDENCIES:
+  - awesome_notifications (from `.symlinks/plugins/awesome_notifications/ios`)
   - Flutter (from `Flutter`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
+  - flutter_webrtc (from `.symlinks/plugins/flutter_webrtc/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
 
+SPEC REPOS:
+  trunk:
+    - IosAwnCore
+    - Libyuv
+    - WebRTC-SDK
+
 EXTERNAL SOURCES:
+  awesome_notifications:
+    :path: ".symlinks/plugins/awesome_notifications/ios"
   Flutter:
     :path: Flutter
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
+  flutter_webrtc:
+    :path: ".symlinks/plugins/flutter_webrtc/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
 
 SPEC CHECKSUMS:
+  awesome_notifications: 0f432b28098d193920b11a44cfa9d2d9313a3888
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
+  flutter_webrtc: 03d98c71fbdd3756460871ea7a0bed83752a2543
+  IosAwnCore: 653786a911089012092ce831f2945cd339855a89
+  Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  WebRTC-SDK: 540a44f2e30e89c75e331d5c4a372253ba668233
 
-PODFILE CHECKSUM: 4305caec6b40dde0ae97be1573c53de1882a07e5
+PODFILE CHECKSUM: 6d338c0ee5a937883811c6b75e80186b224007cd
 
 COCOAPODS: 1.16.2

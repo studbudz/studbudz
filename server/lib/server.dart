@@ -5,6 +5,12 @@ import 'package:server/token_validation.dart';
 import 'websocket_handler.dart';
 import 'package:bcrypt/bcrypt.dart';
 
+// Notifications -> websocket
+// image/asset retrieval and post -> https
+// signIn -> done ish
+// chat -> websocket, webrtc
+// coordinates -> idk
+
 class Server {
   late HttpServer _httpServer;
   late TokenHandler _tokenHandler;
@@ -18,7 +24,7 @@ class Server {
 
   Future<void> start() async {
     // Load SSL certificate and key
-    //cerificate is self signed and is seen as extremely risky. (is encrypted and works for our purposes.)
+    //certificate is self signed and is seen as extremely risky. (is encrypted and works for our purposes.)
     SecurityContext context =
         SecurityContext()
           ..useCertificateChain('certificate.pem')
@@ -34,7 +40,7 @@ class Server {
 
     // Handles incoming connections
     await for (HttpRequest request in _httpServer) {
-      print("Received request.");
+      print("Received request: ${request}");
 
       if (request.uri.path == '/signin') {
         print("Received Sign In request.");
@@ -43,8 +49,11 @@ class Server {
       } else if (request.uri.path == '/signup') {
         _handleSignUp(request);
         continue; // Prevent further processing.
+      } else if (request.uri.path == '/ping') {
+        request.response.statusCode = HttpStatus.accepted;
+        await request.response.close();
+        continue;
       }
-
       // Get token from request if the endpoint isn't sign in/up
       String? token = request.headers.value('Authorization')?.split(' ').last;
       if (token == null || !_tokenHandler.validateToken(token)) {
@@ -56,14 +65,19 @@ class Server {
       // Additional processing (e.g., WebSocket upgrade, POST/GET handling)
       String username = _tokenHandler.getInfo(token)['username'];
       if (WebSocketTransformer.isUpgradeRequest(request)) {
-        //for p2p and notifications
+        print('Upgrading to websocket connection.');
         WebSocket socket = await WebSocketTransformer.upgrade(request);
-        _webSocketHandler.handleConnection(socket, username);
-        print('Upgraded to websocket connection.');
+        _webSocketHandler.handleConnection(socket, token);
       } else if (request.method == 'POST') {
         // Handle POST requests
       } else if (request.method == 'GET') {
         // Handle GET requests
+        final uri = request.uri.path;
+        switch (uri) {
+          case '/getUserSuggestionsFromName':
+          default:
+            Exception('not valid...');
+        }
       } else {
         request.response.statusCode = HttpStatus.forbidden;
         await request.response.close();
@@ -86,6 +100,7 @@ class Server {
         username,
       ]);
 
+      print(data);
       String salt = data[0]['password_salt'];
       String passwordHash = data[0]['password_hash'];
 
@@ -133,5 +148,25 @@ class Server {
     } finally {
       await request.response.close();
     }
+  }
+
+  Future<void> suggestion(HttpRequest request) async {
+    final params = request.uri.queryParameters;
+    final data = await _getNameSuggestions(params['query']!);
+
+    request.response.headers.contentType = ContentType.json;
+    request.response.statusCode = HttpStatus.ok;
+
+    // Send the JSON encoded data as the response
+    request.response.write(jsonEncode(data));
+
+    await request.response.close();
+  }
+
+  Future<List<Map<String, dynamic>>> _getNameSuggestions(String query) async {
+    final data = await _sqlHandler.select("getUserSuggestionsFromName", [
+      query,
+    ]);
+    return data;
   }
 }
