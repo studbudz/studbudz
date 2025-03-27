@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/notifier.dart';
 import 'package:studubdz/UI/home_page.dart';
-import 'package:studubdz/UI/recovery_page.dart';
 import 'package:studubdz/Engine/engine.dart';
 
 class SignInPage extends StatefulWidget {
@@ -28,11 +27,12 @@ class _SignInPageState extends State<SignInPage> {
           ),
           // Middle Section: Username and Password Fields
           Expanded(
-              flex: 2,
-              child: SignInFormWidget(
-                  usernameController: _usernameController,
-                  passwordController: _passwordController)),
-
+            flex: 2,
+            child: SignInFormWidget(
+              usernameController: _usernameController,
+              passwordController: _passwordController,
+            ),
+          ),
           // Bottom Section: Sign In Button
           Expanded(
             flex: 2,
@@ -52,14 +52,10 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   void _handleSignIn() async {
-    //server.validate username and password.
-    //get uuid and token.
-    //set both.
-    //next page.
     String username = _usernameController.text;
     String password = _passwordController.text;
 
-    print("Validating log in details.");
+    print("Validating login details.");
 
     bool success = await Controller().engine.logIn(username, password);
 
@@ -68,8 +64,7 @@ class _SignInPageState extends State<SignInPage> {
         Controller().setPage(AppPage.home);
       });
     } else {
-      //return error
-      // ignore: use_build_context_synchronously
+      // Return error
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Invalid username or password'),
@@ -80,14 +75,9 @@ class _SignInPageState extends State<SignInPage> {
   }
 }
 
-class SignInHeaderWidget extends StatefulWidget {
+class SignInHeaderWidget extends StatelessWidget {
   const SignInHeaderWidget({super.key});
 
-  @override
-  State<SignInHeaderWidget> createState() => _SignInHeaderWidgetState();
-}
-
-class _SignInHeaderWidgetState extends State<SignInHeaderWidget> {
   @override
   Widget build(BuildContext context) {
     return const Column(
@@ -114,10 +104,11 @@ class _SignInHeaderWidgetState extends State<SignInHeaderWidget> {
 }
 
 class SignInFormWidget extends StatefulWidget {
-  const SignInFormWidget(
-      {super.key,
-      required this.usernameController,
-      required this.passwordController});
+  const SignInFormWidget({
+    super.key,
+    required this.usernameController,
+    required this.passwordController,
+  });
 
   final TextEditingController usernameController;
   final TextEditingController passwordController;
@@ -173,22 +164,10 @@ class _SignInFormWidgetState extends State<SignInFormWidget> {
             ),
             validator: (String? value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your username';
+                return 'Please enter your password';
               }
               return null;
             },
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const RecoveryPage()),
-                );
-              },
-              child: const Text('Forgot Password?'),
-            ),
           ),
         ],
       ),
