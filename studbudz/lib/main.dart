@@ -1,10 +1,10 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:studubdz/Engine/engine.dart';
-//import 'package:studubdz/UI/feed_page.dart';
+import 'package:studubdz/UI/feed_page.dart';
 import 'package:studubdz/UI/home_page.dart';
-//import 'package:studubdz/UI/post_widget.dart';
-//import 'package:studubdz/UI/recovery_page.dart'; // Import RecoveryPage
+import 'package:studubdz/UI/post_widget.dart';
+import 'package:studubdz/UI/recovery_page.dart';
 import 'package:studubdz/UI/settings_page.dart';
 import 'package:studubdz/UI/schedule_page.dart';
 import 'package:studubdz/UI/sign_up.dart';
@@ -13,21 +13,34 @@ import 'package:studubdz/UI/sign_in_page.dart';
 import 'package:studubdz/UI/profile_page.dart';
 import 'package:studubdz/UI/chat_page.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/services.dart';
 import 'notifier.dart';
+
+// Enum for app pages
+enum AppPage {
+  signIn,
+  signUp,
+  home,
+  schedule,
+  feed,
+  chat,
+  settings,  // Fixed enum name
+  profile,
+  postWidget
+}
 
 void main() {
   AwesomeNotifications().initialize(
       null,
       [
-        // channels for granular control and settings page.
         NotificationChannel(
-            channelKey: 'basic_channel',
-            channelName: 'basic notifications',
-            channelGroupKey: 'basic_group',
-            channelDescription: 'notification channel for basic notifications')
+          channelKey: 'basic_channel',  // Fixed mismatch here
+          channelName: 'Basic Notifications',
+          channelGroupKey: 'basic_group',
+          channelDescription: 'Notification channel for basic notifications',
+        )
       ],
       debug: true);
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => Controller(),
@@ -36,10 +49,8 @@ void main() {
   );
 }
 
-// placeholder code
-// use for testing each UI
 class MyApp extends StatefulWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -53,7 +64,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    // store decision so we don't spam them every time.
+
+    // Request notification permissions
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       if (!isAllowed) {
         AwesomeNotifications().requestPermissionToSendNotifications();
@@ -80,17 +92,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     print('AppLifecycleState: ${state.toString()}');
     if (state == AppLifecycleState.resumed) {
       controller.isInBackground = false;
-    } else if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused ||
-        state == AppLifecycleState.detached ||
-        state == AppLifecycleState.hidden) {
+    } else {
       controller.isInBackground = true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Use Provider.of with listen: true to rebuild the UI when Controller notifies listeners.
     final controller = Provider.of<Controller>(context);
     return MaterialApp(
       theme: theme.theme,
@@ -101,12 +109,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 
-  triggerNotification() {
-    controller.triggerNotification('basic_channel', 'basic_group',
-        'basic notification', 'Simple notification');
+  void triggerNotification() {
+    controller.triggerNotification(
+      'basic_channel',
+      'basic_group',
+      'Basic Notification',
+      'Simple notification',
+    );
   }
-
-  int index = 0;
 
   // Method to switch pages based on controller's page
   Widget _buildPage(Controller controller) {
@@ -125,22 +135,25 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         return const FeedPage();
       case AppPage.chat:
         return const ChatPage();
+      case AppPage.settings:
+        return const SettingsPage();  // Fixed syntax error
       case AppPage.profile:
         return const ProfilePage();
       case AppPage.postWidget:
         return const PostWidget();
       default:
         return TestWidget(
-          onTriggerNotificaiton: triggerNotification,
-        ); // Default to TestWidget
+          onTriggerNotification: triggerNotification,  // Fixed typo
+        );
     }
   }
 }
 
+// Test Widget with notification button
 class TestWidget extends StatefulWidget {
-  final VoidCallback onTriggerNotificaiton;
+  final VoidCallback onTriggerNotification;  // Fixed typo
 
-  const TestWidget({super.key, required this.onTriggerNotificaiton});
+  const TestWidget({super.key, required this.onTriggerNotification});
 
   @override
   State<TestWidget> createState() => _TestWidgetState();
@@ -152,8 +165,9 @@ class _TestWidgetState extends State<TestWidget> {
     return Scaffold(
       body: Center(
         child: ElevatedButton(
-            onPressed: widget.onTriggerNotificaiton,
-            child: const Text('Trigger Notification')),
+          onPressed: widget.onTriggerNotification,  // Fixed typo
+          child: const Text('Trigger Notification'),
+        ),
       ),
     );
   }
