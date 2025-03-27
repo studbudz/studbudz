@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 Future<String> generateMnemonic() async {
-  return bip39.generateMnemonic(strength: 256); // 24-word mnemonic
+  return bip39.generateMnemonic(strength: 256);
 }
 
 class SignUpPage extends StatefulWidget {
@@ -34,10 +34,14 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     switch (step) {
-      case 0: return AccountSetup(onStepContinue: nextStep);
-      case 1: return WordGeneration(words: words, onStep: nextStep);
-      case 2: return WordVerification(words: words, onStep: nextStep);
-      default: return const Placeholder();
+      case 0:
+        return AccountSetup(onStepContinue: nextStep);
+      case 1:
+        return WordGeneration(words: words, onStep: nextStep);
+      case 2:
+        return WordVerification(words: words, onStep: nextStep);
+      default:
+        return const Placeholder();
     }
   }
 }
@@ -136,10 +140,7 @@ class _WordGenerationState extends State<WordGeneration> {
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Row(
                         children: [
-                          Text(
-                            '${index + 1}.', // Numbering
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
+                          Text('${index + 1}.', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Container(
@@ -183,15 +184,12 @@ class _WordGenerationState extends State<WordGeneration> {
                     onPressed: copyToClipboard,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
-                      padding: const EdgeInsets.all(12), // Ensures even spacing
-                      shape: const CircleBorder(), // Makes it round and centers the icon
+                      padding: const EdgeInsets.all(12),
+                      shape: const CircleBorder(),
                     ),
-                    child: const Icon(Icons.copy, size: 20, color: Colors.white), // Centered icon
+                    child: const Icon(Icons.copy, size: 20, color: Colors.white),
                   ),
-
-
                   const SizedBox(width: 20),
-
                   ElevatedButton(
                     onPressed: widget.onStep,
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
@@ -226,7 +224,6 @@ class _WordVerificationState extends State<WordVerification> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     final wordsList = widget.words.split(' ');
 
@@ -237,19 +234,14 @@ class _WordVerificationState extends State<WordVerification> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Key Icon
               const Icon(Icons.key, size: 60, color: Colors.black),
               const SizedBox(height: 10),
-
-              // Title
               const Text(
                 'Confirm Recovery Phrase',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-
-              // Numbered Input Fields with Box Shadows
               Expanded(
                 child: ListView.builder(
                   itemCount: wordsList.length,
@@ -258,14 +250,8 @@ class _WordVerificationState extends State<WordVerification> {
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Row(
                         children: [
-                          // Numbering
-                          Text(
-                            '${index + 1}.',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
+                          Text('${index + 1}.', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                           const SizedBox(width: 10),
-
-                          // Input Field with Box Shadow
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(
@@ -299,8 +285,6 @@ class _WordVerificationState extends State<WordVerification> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Confirm Button
               ElevatedButton(
                 onPressed: widget.onStep,
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
@@ -311,4 +295,5 @@ class _WordVerificationState extends State<WordVerification> {
         ),
       ),
     );
-  }}
+  }
+}
