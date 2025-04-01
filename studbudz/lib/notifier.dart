@@ -2,19 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:studubdz/Engine/engine.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:studubdz/config.dart';
-
 enum AppPage {
   signIn,
   signUp,
   home,
-  profile,
-  settings,
- recovery, feed,
   schedule,
+  feed,
   chat,
-  post,
-  postWidget,
-  test,
+  settings,
+  recovery, // Fixed enum name
+  profile,
+  postWidget
 }
 
 class Controller extends ChangeNotifier {
@@ -25,7 +23,7 @@ class Controller extends ChangeNotifier {
   //technically shouldn't be public but
   //I wanted to avoid needing to access it via an intermediary function
   late Engine engine;
-  AppPage currentPage = AppPage.settings;
+  AppPage currentPage = AppPage.recovery;
   bool isInBackground = true;
   bool loggedIn = false;
   Map<String, int> notifications = {};
@@ -38,8 +36,7 @@ class Controller extends ChangeNotifier {
     loggedIn = await engine.isLoggedIn();
     if (!loggedIn && logInCheck) {
       currentPage = AppPage.signIn;
-    } else {
-      currentPage = AppPage.settings;
+  
     }
     print("Logged in is: $loggedIn and page is: $currentPage");
     notifyListeners();

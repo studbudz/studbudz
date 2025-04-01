@@ -16,17 +16,7 @@ import 'package:provider/provider.dart';
 import 'notifier.dart';
 
 // Enum for app pages
-enum AppPage {
-  signIn,
-  signUp,
-  home,
-  schedule,
-  feed,
-  chat,
-  settings,  // Fixed enum name
-  profile,
-  postWidget
-}
+
 
 void main() {
   AwesomeNotifications().initialize(
@@ -139,6 +129,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         return const SettingsPage();  // Fixed syntax error
       case AppPage.profile:
         return const ProfilePage();
+      case AppPage.recovery:
+        return const RecoveryPhrasePage();
       case AppPage.postWidget:
         return const PostWidget();
       default:

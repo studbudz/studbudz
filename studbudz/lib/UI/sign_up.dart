@@ -110,6 +110,7 @@ class _WordGenerationState extends State<WordGeneration> {
   @override
   Widget build(BuildContext context) {
     final wordList = widget.words.split(' ');
+    print(wordList.length);
 
     return Scaffold(
       body: Center(
