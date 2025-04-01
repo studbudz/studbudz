@@ -12,11 +12,7 @@ enum AppPage {
   recovery,
   feed,
   schedule,
-  feed,
   chat,
-  settings,
-  recovery, // Fixed enum name
-  profile,
   postWidget
 }
 
@@ -40,7 +36,7 @@ class Controller extends ChangeNotifier {
   Future<void> init() async {
     loggedIn = await engine.isLoggedIn();
     if (!loggedIn && logInCheck) {
-      currentPage = AppPage.signIn;
+      currentPage = AppPage.home;
     } else {
       currentPage = AppPage.settings;
     }
