@@ -9,7 +9,8 @@ enum AppPage {
   home,
   profile,
   settings,
- recovery, feed,
+  recovery,
+  feed,
   schedule,
   chat,
   post,
@@ -37,7 +38,7 @@ class Controller extends ChangeNotifier {
   Future<void> init() async {
     loggedIn = await engine.isLoggedIn();
     if (!loggedIn && logInCheck) {
-      currentPage = AppPage.signIn;
+      currentPage = AppPage.home;
     } else {
       currentPage = AppPage.settings;
     }

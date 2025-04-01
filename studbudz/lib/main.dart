@@ -15,25 +15,12 @@ import 'package:studubdz/UI/chat_page.dart';
 import 'package:provider/provider.dart';
 import 'notifier.dart';
 
-// Enum for app pages
-enum AppPage {
-  signIn,
-  signUp,
-  home,
-  schedule,
-  feed,
-  chat,
-  settings,  // Fixed enum name
-  profile,
-  postWidget
-}
-
 void main() {
   AwesomeNotifications().initialize(
       null,
       [
         NotificationChannel(
-          channelKey: 'basic_channel',  // Fixed mismatch here
+          channelKey: 'basic_channel', // Fixed mismatch here
           channelName: 'Basic Notifications',
           channelGroupKey: 'basic_group',
           channelDescription: 'Notification channel for basic notifications',
@@ -136,14 +123,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       case AppPage.chat:
         return const ChatPage();
       case AppPage.settings:
-        return const SettingsPage();  // Fixed syntax error
+        return const SettingsPage(); // Fixed syntax error
       case AppPage.profile:
         return const ProfilePage();
       case AppPage.postWidget:
         return const PostWidget();
       default:
         return TestWidget(
-          onTriggerNotification: triggerNotification,  // Fixed typo
+          onTriggerNotification: triggerNotification, // Fixed typo
         );
     }
   }
@@ -151,7 +138,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
 // Test Widget with notification button
 class TestWidget extends StatefulWidget {
-  final VoidCallback onTriggerNotification;  // Fixed typo
+  final VoidCallback onTriggerNotification; // Fixed typo
 
   const TestWidget({super.key, required this.onTriggerNotification});
 
@@ -165,7 +152,7 @@ class _TestWidgetState extends State<TestWidget> {
     return Scaffold(
       body: Center(
         child: ElevatedButton(
-          onPressed: widget.onTriggerNotification,  // Fixed typo
+          onPressed: widget.onTriggerNotification, // Fixed typo
           child: const Text('Trigger Notification'),
         ),
       ),

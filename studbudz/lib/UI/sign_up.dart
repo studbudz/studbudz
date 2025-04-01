@@ -62,15 +62,18 @@ class AccountSetup extends StatelessWidget {
             ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-              child: TextField(decoration: InputDecoration(labelText: 'Username *')),
+              child: TextField(
+                  decoration: InputDecoration(labelText: 'Username *')),
             ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-              child: TextField(decoration: InputDecoration(labelText: 'Password *')),
+              child: TextField(
+                  decoration: InputDecoration(labelText: 'Password *')),
             ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-              child: TextField(decoration: InputDecoration(labelText: 'Confirm Password *')),
+              child: TextField(
+                  decoration: InputDecoration(labelText: 'Confirm Password *')),
             ),
             ElevatedButton(
               onPressed: onStepContinue,
@@ -110,6 +113,7 @@ class _WordGenerationState extends State<WordGeneration> {
   @override
   Widget build(BuildContext context) {
     final wordList = widget.words.split(' ');
+    print(wordList.length);
 
     return Scaffold(
       body: Center(
@@ -122,13 +126,19 @@ class _WordGenerationState extends State<WordGeneration> {
               const SizedBox(height: 10),
               const Text(
                 'Your Recovery Phrase',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
               const Text(
                 'These words are your account recovery phrase. If you lose access, use them to restore your account. **Never share them with anyone!**',
-                style: TextStyle(fontSize: 16, color: Colors.red, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red,
+                    fontWeight: FontWeight.w600),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
@@ -140,7 +150,9 @@ class _WordGenerationState extends State<WordGeneration> {
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Row(
                         children: [
-                          Text('${index + 1}.', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text('${index + 1}.',
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Container(
@@ -158,13 +170,16 @@ class _WordGenerationState extends State<WordGeneration> {
                               ),
                               child: TextField(
                                 readOnly: true,
-                                controller: TextEditingController(text: wordList[index]),
+                                controller: TextEditingController(
+                                    text: wordList[index]),
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
                                 decoration: const InputDecoration(
                                   filled: true,
                                   fillColor: Colors.white,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 10),
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -187,13 +202,16 @@ class _WordGenerationState extends State<WordGeneration> {
                       padding: const EdgeInsets.all(12),
                       shape: const CircleBorder(),
                     ),
-                    child: const Icon(Icons.copy, size: 20, color: Colors.white),
+                    child:
+                        const Icon(Icons.copy, size: 20, color: Colors.white),
                   ),
                   const SizedBox(width: 20),
                   ElevatedButton(
                     onPressed: widget.onStep,
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                    child: const Text('Confirm', style: TextStyle(color: Colors.white)),
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                    child: const Text('Confirm',
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
@@ -206,7 +224,8 @@ class _WordGenerationState extends State<WordGeneration> {
 }
 
 class WordVerification extends StatefulWidget {
-  const WordVerification({super.key, required this.words, required this.onStep});
+  const WordVerification(
+      {super.key, required this.words, required this.onStep});
   final String words;
   final VoidCallback onStep;
 
@@ -220,7 +239,8 @@ class _WordVerificationState extends State<WordVerification> {
   @override
   void initState() {
     super.initState();
-    wordControllers = List.generate(widget.words.split(' ').length, (index) => TextEditingController());
+    wordControllers = List.generate(
+        widget.words.split(' ').length, (index) => TextEditingController());
   }
 
   @override
@@ -250,7 +270,9 @@ class _WordVerificationState extends State<WordVerification> {
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Row(
                         children: [
-                          Text('${index + 1}.', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text('${index + 1}.',
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Container(
@@ -272,7 +294,8 @@ class _WordVerificationState extends State<WordVerification> {
                                 decoration: const InputDecoration(
                                   filled: true,
                                   fillColor: Colors.white,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 10),
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -288,7 +311,8 @@ class _WordVerificationState extends State<WordVerification> {
               ElevatedButton(
                 onPressed: widget.onStep,
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                child: const Text('Confirm', style: TextStyle(color: Colors.white)),
+                child: const Text('Confirm',
+                    style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
