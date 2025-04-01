@@ -12,10 +12,12 @@ enum AppPage {
   recovery,
   feed,
   schedule,
+  feed,
   chat,
-  post,
-  postWidget,
-  test,
+  settings,
+  recovery, // Fixed enum name
+  profile,
+  postWidget
 }
 
 class Controller extends ChangeNotifier {
@@ -26,7 +28,7 @@ class Controller extends ChangeNotifier {
   //technically shouldn't be public but
   //I wanted to avoid needing to access it via an intermediary function
   late Engine engine;
-  AppPage currentPage = AppPage.settings;
+  AppPage currentPage = AppPage.recovery;
   bool isInBackground = true;
   bool loggedIn = false;
   Map<String, int> notifications = {};
@@ -38,7 +40,7 @@ class Controller extends ChangeNotifier {
   Future<void> init() async {
     loggedIn = await engine.isLoggedIn();
     if (!loggedIn && logInCheck) {
-      currentPage = AppPage.home;
+      currentPage = AppPage.signIn;
     } else {
       currentPage = AppPage.settings;
     }

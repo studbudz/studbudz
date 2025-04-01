@@ -126,6 +126,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         return const SettingsPage(); // Fixed syntax error
       case AppPage.profile:
         return const ProfilePage();
+      case AppPage.recovery:
+        return const RecoveryPhrasePage();
       case AppPage.postWidget:
         return const PostWidget();
       default:
