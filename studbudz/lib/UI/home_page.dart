@@ -11,6 +11,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool _isSearching = false;
+
+  void _toggleSearch(bool isActive) {
+    setState(() {
+      _isSearching = isActive;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Allows widgets to be placed above one another.
@@ -20,7 +28,7 @@ class _HomePageState extends State<HomePage> {
         //search bar
         Positioned(
           top: 70,
-          left: 0,
+          left: 20,
           right: 20,
           child: RoundedSearchBox(),
         ),
@@ -60,5 +68,70 @@ class RoundedSearchBox extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class SearchOverlay extends StatefulWidget {
+  final Function(bool) onFocusChange;
+
+  const SearchOverlay({super.key, required this.onFocusChange});
+
+  @override
+  State<SearchOverlay> createState() => _SearchOverlayState();
+}
+
+class _SearchOverlayState extends State<SearchOverlay> {
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: Container(
+        color: Colors.white,
+        child: const Placeholder(),
+      ),
+    );
+  }
+}
+
+//default layout
+//Find on Map
+//quick Add
+//locations
+//events
+
+class DefaultLayout extends StatelessWidget {
+  const DefaultLayout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [FindOnMap(), QuickAdd(), FindLocations()],
+    );
+  }
+}
+
+class FindOnMap extends StatelessWidget {
+  const FindOnMap({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
+class QuickAdd extends StatelessWidget {
+  const QuickAdd({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
+class FindLocations extends StatelessWidget {
+  const FindLocations({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }

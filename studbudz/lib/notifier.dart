@@ -24,7 +24,7 @@ class Controller extends ChangeNotifier {
   //technically shouldn't be public but
   //I wanted to avoid needing to access it via an intermediary function
   late Engine engine;
-  AppPage currentPage = AppPage.recovery;
+  AppPage currentPage = AppPage.signIn;
   bool isInBackground = true;
   bool loggedIn = false;
   Map<String, int> notifications = {};
@@ -36,9 +36,11 @@ class Controller extends ChangeNotifier {
   Future<void> init() async {
     loggedIn = await engine.isLoggedIn();
     if (!loggedIn && logInCheck) {
-      currentPage = AppPage.home;
+      currentPage =
+          AppPage.signIn; // if you are not logged in -> send to sign in
     } else {
-      currentPage = AppPage.settings;
+      currentPage = AppPage
+          .home; // if we do not check or you are logged in -> send to this page.
     }
     print("Logged in is: $loggedIn and page is: $currentPage");
     notifyListeners();
