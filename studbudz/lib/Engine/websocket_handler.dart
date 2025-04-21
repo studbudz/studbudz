@@ -8,7 +8,7 @@ class WebsocketHandler {
   late final WebSocketChannel _channel;
   late final AuthManager _authManager;
   late final String _address;
-  bool _connected = false;
+  final bool _connected = false;
 
   WebsocketHandler(String address, AuthManager authManager) {
     _authManager = authManager;

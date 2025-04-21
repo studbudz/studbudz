@@ -36,11 +36,19 @@ class Server {
       8080,
       context,
     );
+
     print('Server running on port 8080');
 
     // Handles incoming connections
     await for (HttpRequest request in _httpServer) {
       print("Received request: ${request}");
+      if (request.uri.path == '/') {
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..headers.contentType = ContentType.html
+          ..write('<h1>Hello, World!</h1>') // Response content
+          ..close(); // Close the response
+      }
 
       if (request.uri.path == '/signin') {
         print("Received Sign In request.");

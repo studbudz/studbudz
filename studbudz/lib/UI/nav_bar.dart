@@ -1,11 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:studubdz/UI/home_page.dart';
-import 'package:studubdz/UI/feed_page.dart';
 import 'package:studubdz/notifier.dart';
-import 'package:studubdz/UI/schedule_page.dart';
-import 'package:studubdz/UI/chat_page.dart';
-import 'package:studubdz/UI/profile_page.dart';
 
 class NavBarWidget extends StatefulWidget {
   final double height;

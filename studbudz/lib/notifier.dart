@@ -24,7 +24,7 @@ class Controller extends ChangeNotifier {
   //technically shouldn't be public but
   //I wanted to avoid needing to access it via an intermediary function
   late Engine engine;
-  AppPage currentPage = AppPage.signIn;
+  AppPage currentPage = AppPage.schedule;
   bool isInBackground = true;
   bool loggedIn = false;
   Map<String, int> notifications = {};
@@ -62,7 +62,7 @@ class Controller extends ChangeNotifier {
     } else {
       currentPage = page;
     }
-    print("set page to: ${currentPage}");
+    print("set page to: $currentPage");
     notifyListeners();
   }
 

@@ -31,7 +31,7 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (context) => Controller(),
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }

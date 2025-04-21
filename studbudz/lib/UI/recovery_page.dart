@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:bip39/bip39.dart' as bip39;
 
 class RecoveryPhrasePage extends StatefulWidget {
   const RecoveryPhrasePage({super.key});
