@@ -66,6 +66,7 @@ class Server {
       String? token = request.headers.value('Authorization')?.split(' ').last;
       if (token == null || !_tokenHandler.validateToken(token)) {
         request.response.statusCode = HttpStatus.unauthorized;
+        print("Connection refused.");
         await request.response.close();
         continue;
       }
@@ -77,7 +78,25 @@ class Server {
         WebSocket socket = await WebSocketTransformer.upgrade(request);
         _webSocketHandler.handleConnection(socket, token);
       } else if (request.method == 'POST') {
+        print("Post Request: ${request.uri.path}");
         // Handle POST requests
+        //create textPost-final data = {type, subject, post_content, post_private}
+
+        final uri = request.uri.path;
+
+        switch (uri) {
+          case '/textPost':
+            await _handleTextPost(request, username);
+            break;
+          case '/mediaPost':
+            await _handleMediaPost(request, username);
+            break;
+          case '/eventPost':
+            await _handlEventPost(request, username);
+          default:
+            request.response.statusCode = HttpStatus.notFound;
+            await request.response.close();
+        }
       } else if (request.method == 'GET') {
         // Handle GET requests
         final uri = request.uri.path;
@@ -89,6 +108,7 @@ class Server {
       } else {
         request.response.statusCode = HttpStatus.forbidden;
         await request.response.close();
+        print("Connection refused, other.");
       }
     }
   }
@@ -176,5 +196,66 @@ class Server {
       query,
     ]);
     return data;
+  }
+
+  Future<void> _handleTextPost(HttpRequest request, String username) async {
+    print("Handling text post for username: $username");
+
+    final String body = await utf8.decoder.bind(request).join();
+    print("Received body: $body");
+
+    final Map<String, dynamic> data = jsonDecode(body);
+    print("Decoded data: $data");
+
+    String content = data["post_content"];
+    bool isPrivate = data["post_private"];
+    print("Post content: $content");
+    print("Post privacy: ${isPrivate ? 'Private' : 'Public'}");
+
+    final userRows = await _sqlHandler.select("getUserIdByUsername", [
+      username,
+    ]);
+    print("User query result: $userRows");
+
+    if (userRows.isEmpty) {
+      print("No user found with username: $username");
+      request.response
+        ..statusCode = HttpStatus.unauthorized
+        ..write('Unknown user')
+        ..close();
+      return;
+    }
+
+    final int userId = userRows.first['user_id'] as int;
+    print("User ID resolved: $userId");
+
+    final inserted = await _sqlHandler.insert("createTextPost", [
+      userId,
+      content,
+      isPrivate,
+    ]);
+    print("Insert operation result: $inserted row(s) affected");
+
+    request.response
+      ..statusCode =
+          (inserted == 1) ? HttpStatus.created : HttpStatus.internalServerError
+      ..write(jsonEncode({'success': inserted == 1}))
+      ..close();
+
+    print(
+      "Response sent with status: ${(inserted == 1) ? 'Created' : 'Error'}",
+    );
+  }
+
+  Future<void> _handleMediaPost(HttpRequest request, String username) async {
+    final String body = await utf8.decoder.bind(request).join();
+    final Map<String, dynamic> data = jsonDecode(body);
+    return;
+  }
+
+  Future<void> _handlEventPost(HttpRequest request, String username) async {
+    final String body = await utf8.decoder.bind(request).join();
+    final Map<String, dynamic> data = jsonDecode(body);
+    return;
   }
 }

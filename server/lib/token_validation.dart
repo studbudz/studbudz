@@ -32,6 +32,7 @@ class TokenHandler {
       int expiry = payload['exp'];
       DateTime expiryDate = DateTime.fromMillisecondsSinceEpoch(expiry * 1000);
       if (DateTime.now().isAfter(expiryDate)) {
+        print("Token Expired.");
         return false;
       }
       return true;

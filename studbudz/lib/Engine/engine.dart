@@ -51,4 +51,31 @@ class Engine {
     print(response);
     return {"hi": "hi"};
   }
+
+  Future<bool> createPost(dynamic data) async {
+    bool success = false;
+
+    String postType = data["type"];
+    switch (postType) {
+      case 'text':
+        final response = await _httpHandler.sendData('textPost', data);
+        if (response["success"] == true) {
+          Controller().setPage(AppPage.feed);
+        } else {
+          //idk
+        }
+      case 'media':
+        // Handle media post submission
+        print('Media post submitted');
+        break;
+      case 'event':
+        // Handle event post submission
+        print('Event post submitted');
+        break;
+      default:
+        print('Unknown post type');
+    }
+
+    return success;
+  }
 }

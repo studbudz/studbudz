@@ -26,15 +26,15 @@ class HttpRequestHandler {
   // Method to send data (POST request)
   Future<Map<String, dynamic>> sendData(
       String endpoint, Map<String, dynamic> data) async {
-    //replace with get from auth manager
+    print("Sending data");
+    final token = await _authManager.getToken();
+    print(token);
     final url = Uri.parse('$_address/$endpoint');
     try {
       final request = await _httpClient.postUrl(url);
       request.headers.contentType = ContentType.json;
-      print("getting token2");
-      final token = await _authManager.getToken();
       request.headers
-          .set('Authorization', 'Bearer $token'); // Add the token in the header
+          .set('Authorization', 'Bearer $token'); // Set token in the header
       request.add(utf8.encode(jsonEncode(data)));
 
       //send and close
@@ -42,7 +42,7 @@ class HttpRequestHandler {
       final responseBody = await response.transform(utf8.decoder).join();
 
       //OK!
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return jsonDecode(responseBody);
       } else {
         throw Exception('Failed to send data: ${response.statusCode}');
@@ -74,7 +74,7 @@ class HttpRequestHandler {
       final responseBody = await response.transform(utf8.decoder).join();
 
       //OK!
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         // Decode the JSON response
         return jsonDecode(responseBody);
       } else {

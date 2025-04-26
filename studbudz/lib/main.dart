@@ -131,6 +131,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         return const RecoveryPhrasePage();
       case AppPage.postWidget:
         return const PostWidget();
+      case AppPage.createPost:
+        return const CreatePostPage();
       default:
         // return TestWidget(
         //   onTriggerNotification: triggerNotification, // Fixed typo

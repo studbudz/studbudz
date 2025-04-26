@@ -83,7 +83,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               IconButton(
                 onPressed: () {
                   if (currentPage == AppPage.home) {
-                    notifier.setPage(AppPage.postWidget);
+                    notifier.setPage(AppPage.createPost);
                   } else {
                     setState(() {
                       selectedIndex = 2;

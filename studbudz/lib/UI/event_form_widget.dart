@@ -66,7 +66,7 @@ class _EventFormWidgetState extends State<EventFormWidget> {
       'type': 'event',
       if (subject != null) 'subject': subject,
       'event_name': eventName,
-      'event_image': _eventImage?.path,
+      'event_image': _eventImage,
       'event_description': _eventDescriptionController.text.trim(),
       'event_location_name': _eventLocationController.text.trim(),
       'event_start_at': _eventStartAt?.toIso8601String(),

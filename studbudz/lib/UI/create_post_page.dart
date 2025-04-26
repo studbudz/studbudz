@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'text_form_widget.dart';
 import 'media_form_widget.dart';
 import 'event_form_widget.dart';
+import 'package:studubdz/notifier.dart';
 
 enum PostType { text, media, event }
 
@@ -18,6 +19,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   @override
   Widget build(BuildContext context) {
+    Controller notifier = Controller();
     return Column(
       children: [
         Padding(
@@ -27,7 +29,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
               IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  Navigator.of(context).maybePop();
+                  notifier.setPage(AppPage.home);
                 },
               ),
               Expanded(
@@ -88,10 +90,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 
   void submit(dynamic data) {
-    // Handle the submitted data from the form widgets.
-    // You can process or send the data to your backend here.
-    // For now, just print it for debugging.
-    print('Submitted data: $data');
+    Controller controller = Controller();
+    controller.engine.createPost(data);
   }
 
   Widget buildForm() {

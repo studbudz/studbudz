@@ -18,7 +18,7 @@ class _MediaFormWidgetState extends State<MediaFormWidget> {
   bool _isPrivate = false;
 
   Future<void> _pickMedia() async {
-    final picked = await _picker.pickImage(source: ImageSource.gallery);
+    final picked = await _picker.pickMedia();
     if (picked != null) {
       setState(() {
         _file = picked;
@@ -32,7 +32,7 @@ class _MediaFormWidgetState extends State<MediaFormWidget> {
     final data = <String, dynamic>{
       'type': 'media',
       'subject': subject,
-      'post_url': _file?.path,
+      'file': _file,
       'post_content': caption,
       'post_private': _isPrivate,
     };

@@ -1,2 +1,2 @@
-const String address = 'localhost:8080';
-bool logInCheck = false;
+const String address = '192.168.1.107:8080';
+bool logInCheck = true;

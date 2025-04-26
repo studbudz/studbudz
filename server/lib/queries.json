@@ -1,4 +1,7 @@
 {
     "getUserCredentialsByUsername": "SELECT password_salt, password_hash FROM user WHERE username = ?",
-    "getUserSuggestionsFromName": "SELECT user_id, username, user_avatar FROM user WHERE username LIKE ?"
+    "getUserSuggestionsFromName": "SELECT user_id, username, user_avatar FROM user WHERE username LIKE ?",
+    "getUserIdByUsername": "SELECT user_id FROM user WHERE username = ?",
+    "getSubjectIdByName":  "SELECT subject_id FROM subject WHERE subject_name = ?",
+    "createTextPost":      "INSERT INTO post (user_id, post_content, post_private) VALUES (?, ?, ?)"
 }
