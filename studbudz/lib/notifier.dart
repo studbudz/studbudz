@@ -13,7 +13,8 @@ enum AppPage {
   feed,
   schedule,
   chat,
-  postWidget
+  postWidget,
+  other
 }
 
 class Controller extends ChangeNotifier {
@@ -40,7 +41,7 @@ class Controller extends ChangeNotifier {
           AppPage.signIn; // if you are not logged in -> send to sign in
     } else {
       currentPage = AppPage
-          .home; // if we do not check or you are logged in -> send to this page.
+          .other; // if we do not check or you are logged in -> send to this page.
     }
     print("Logged in is: $loggedIn and page is: $currentPage");
     notifyListeners();

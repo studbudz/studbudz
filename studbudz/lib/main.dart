@@ -1,6 +1,7 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:studubdz/Engine/engine.dart';
+import 'package:studubdz/UI/create_post_page.dart';
 import 'package:studubdz/UI/feed_page.dart';
 import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/post_widget.dart';
@@ -131,9 +132,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       case AppPage.postWidget:
         return const PostWidget();
       default:
-        return TestWidget(
-          onTriggerNotification: triggerNotification, // Fixed typo
-        );
+        // return TestWidget(
+        //   onTriggerNotification: triggerNotification, // Fixed typo
+        // );
+        return CreatePostPage();
     }
   }
 }

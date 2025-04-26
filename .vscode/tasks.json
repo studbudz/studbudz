@@ -31,7 +31,7 @@
         {
             "label": "Run emulator",
             "type": "shell",
-            "command": "emulator -avd Medium_Phone_API_35",
+            "command": "emulator -avd Medium_Phone",
             "presentation": {
                 "reveal": "always",
                 "panel": "new"

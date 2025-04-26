@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.studubdz"
-    compileSdk = 34  // Updated compileSdkVersion to 34 (Android 14)
+    compileSdk = 35  // Updated compileSdkVersion to 34 (Android 14)
 
     ndkVersion = flutter.ndkVersion
 
