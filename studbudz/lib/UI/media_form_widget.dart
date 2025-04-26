@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 
 class MediaFormWidget extends StatefulWidget {
   final Function submit;
-  const MediaFormWidget({Key? key, required this.submit}) : super(key: key);
+  const MediaFormWidget({super.key, required this.submit});
 
   @override
   _MediaFormWidgetState createState() => _MediaFormWidgetState();

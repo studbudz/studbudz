@@ -36,9 +36,9 @@ class _FeedPageState extends State<FeedPage> {
           ),
         ),
         const Positioned(
-          bottom: 0,
           left: 0,
-          right: 20,
+          right: 0,
+          bottom: 20,
           child: NavBarWidget(),
         ),
       ],

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:image_picker/image_picker.dart';
 import 'package:studubdz/Engine/auth_manager.dart';
 
 class HttpRequestHandler {
@@ -49,6 +50,60 @@ class HttpRequestHandler {
       }
     } catch (e) {
       throw Exception('Error sending data: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> sendMultipartData(
+      String endpoint, Map<String, dynamic> data) async {
+    print("Sending multipart data");
+    final token = await _authManager.getToken();
+    final url = Uri.parse('$_address/$endpoint');
+    final boundary =
+        '----dart-http-boundary-${DateTime.now().millisecondsSinceEpoch}';
+
+    final request = await _httpClient.postUrl(url);
+    request.headers.contentType = ContentType('multipart', 'form-data',
+        parameters: {'boundary': boundary});
+    request.headers.set('Authorization', 'Bearer $token');
+
+    final transformer = utf8.encoder;
+    final multipartBody = BytesBuilder();
+
+    // Handle all fields except file
+    data.forEach((key, value) {
+      if (key == 'file') return; // Skip file
+      multipartBody.add(transformer.convert('--$boundary\r\n'));
+      multipartBody.add(transformer
+          .convert('Content-Disposition: form-data; name="$key"\r\n\r\n'));
+      multipartBody.add(transformer.convert('$value\r\n'));
+    });
+
+    // Now handle the file if it exists
+    final file = data['file'];
+    if (file is XFile) {
+      final fileBytes = await file.readAsBytes();
+      final filename = file.name;
+
+      multipartBody.add(transformer.convert('--$boundary\r\n'));
+      multipartBody.add(transformer.convert(
+          'Content-Disposition: form-data; name="file"; filename="$filename"\r\n'));
+      multipartBody.add(transformer.convert(
+          'Content-Type: ${file.mimeType ?? "application/octet-stream"}\r\n\r\n'));
+      multipartBody.add(fileBytes);
+      multipartBody.add(transformer.convert('\r\n'));
+    }
+
+    // Finish
+    multipartBody.add(transformer.convert('--$boundary--\r\n'));
+    request.add(multipartBody.takeBytes());
+
+    final response = await request.close();
+    final responseBody = await response.transform(utf8.decoder).join();
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return jsonDecode(responseBody);
+    } else {
+      throw Exception('Failed to send data: ${response.statusCode}');
     }
   }
 

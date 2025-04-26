@@ -32,10 +32,6 @@ class _ProfilePageState extends State<ProfilePage> {
     'assets/dummyPost.jpg',
     'assets/dummyPost.jpg',
     'assets/dummyPost.jpg',
-    
-
-
-
   ];
 
   @override
@@ -47,9 +43,11 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const SettingsPage()));
-              
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsPage()));
+
               // Navigate to settings page
             },
           ),
@@ -66,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Row(
                   children: [
                     // Profile Picture
-                    CircleAvatar(
+                    const CircleAvatar(
                       radius: 50,
                       backgroundImage: AssetImage('assets/profileIcon.jpg'),
                     ),
@@ -75,15 +73,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(username, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                        Text(username,
+                            style: const TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
-                        Text(bio, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                        Text(bio,
+                            style: const TextStyle(
+                                fontSize: 14, color: Colors.grey)),
                         const SizedBox(height: 16),
                         // Stats (Posts, Followers, Following)
                         Row(
                           children: [
                             _buildStatsColumn(postsCount, 'Posts'),
-                            _buildClickableStatsColumn(followersCount, 'Friends', context),
+                            _buildClickableStatsColumn(
+                                followersCount, 'Friends', context),
                           ],
                         ),
                       ],
@@ -102,7 +105,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     final updatedProfile = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditProfilePage(currentName: name, currentBio: bio),
+                        builder: (context) =>
+                            EditProfilePage(currentName: name, currentBio: bio),
                       ),
                     );
 
@@ -142,11 +146,11 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
           // Add the NavBarWidget at the bottom of the screen
-          Positioned(
-            bottom: 0,
+          const Positioned(
             left: 0,
-            right: 0, // Ensure the NavBarWidget spans the full width
-            child: NavBarWidget(), // Add your NavBarWidget here
+            right: 0,
+            bottom: 20,
+            child: NavBarWidget(),
           ),
         ],
       ),
@@ -168,7 +172,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Helper method for creating clickable "Friends" column
-  Widget _buildClickableStatsColumn(int count, String label, BuildContext context) {
+  Widget _buildClickableStatsColumn(
+      int count, String label, BuildContext context) {
     return GestureDetector(
       onTap: () {
         // Navigate to the FriendsPage when tapped

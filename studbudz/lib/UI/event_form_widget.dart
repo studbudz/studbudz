@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 
 class EventFormWidget extends StatefulWidget {
   final Function submit;
-  const EventFormWidget({Key? key, required this.submit}) : super(key: key);
+  const EventFormWidget({super.key, required this.submit});
 
   @override
   _EventFormWidgetState createState() => _EventFormWidgetState();
@@ -43,10 +43,11 @@ class _EventFormWidgetState extends State<EventFormWidget> {
     final dt =
         DateTime(date.year, date.month, date.day, time.hour, time.minute);
     setState(() {
-      if (isStart)
+      if (isStart) {
         _eventStartAt = dt;
-      else
+      } else {
         _eventEndAt = dt;
+      }
     });
   }
 
