@@ -41,7 +41,7 @@ class Server {
 
     // Handles incoming connections
     await for (HttpRequest request in _httpServer) {
-      print("Received request: ${request}");
+      print("Received request: $request");
       if (request.uri.path == '/') {
         request.response
           ..statusCode = HttpStatus.ok

@@ -88,7 +88,8 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  Widget buildChatTile(Map<String, dynamic> chat, List<Map<String, dynamic>> list, int index) {
+  Widget buildChatTile(
+      Map<String, dynamic> chat, List<Map<String, dynamic>> list, int index) {
     return Dismissible(
       key: UniqueKey(),
       direction: DismissDirection.endToStart,
@@ -148,7 +149,8 @@ class _ChatPageState extends State<ChatPage> {
                   children: [
                     const Text(
                       'Chats',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
                       icon: const Icon(Icons.add),
@@ -157,7 +159,8 @@ class _ChatPageState extends State<ChatPage> {
                           context: context,
                           builder: (context) => AlertDialog(
                             title: const Text("New Chat"),
-                            content: const Text("Who do you want to start a new chat with?"),
+                            content: const Text(
+                                "Who do you want to start a new chat with?"),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
@@ -199,11 +202,10 @@ class _ChatPageState extends State<ChatPage> {
               }),
             ],
           ),
-
           const Positioned(
-            bottom: 0,
             left: 0,
             right: 0,
+            bottom: 20,
             child: NavBarWidget(),
           ),
         ],

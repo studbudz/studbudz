@@ -65,8 +65,8 @@ class Engine {
           //idk
         }
       case 'media':
-        // Handle media post submission
-        print('Media post submitted');
+        print(data);
+        final response = await _httpHandler.sendData('mediaPost', data);
         break;
       case 'event':
         // Handle event post submission
@@ -75,7 +75,6 @@ class Engine {
       default:
         print('Unknown post type');
     }
-
     return success;
   }
 }

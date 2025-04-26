@@ -137,7 +137,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         // return TestWidget(
         //   onTriggerNotification: triggerNotification, // Fixed typo
         // );
-        return CreatePostPage();
+        return const CreatePostPage();
     }
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'text_form_widget.dart';
 import 'media_form_widget.dart';
 import 'event_form_widget.dart';
