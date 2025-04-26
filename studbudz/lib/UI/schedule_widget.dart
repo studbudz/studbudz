@@ -22,12 +22,6 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
           "Join us for an intellectually stimulating cup of coffee at Starbucks. Let's talk all things physics, from quantum mechanics to the mysteries of the universe!",
       'eventLocationName': 'Starbucks Café',
       'eventAddress': 'Whiteley Wy, Whiteley, Fareham PO15 7LJ',
-      'eventCity': 'Fareham',
-      'eventState': 'Hampshire',
-      'eventCountry': 'United Kingdom',
-      'eventPostalCode': 'PO15 7LJ',
-      'eventLatitude': 50.885417,
-      'eventLongitude': -1.245500,
       'eventStartAt': DateTime.parse('2025-03-05 10:00:00'),
       'eventEndAt': DateTime.parse('2025-03-05 12:00:00'),
     },
@@ -40,12 +34,6 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
           "Come join us at The Isambard Kingdom Brunel in Portsmouth for a great blend of caffeine and computer science talk. Whether you're a coding newbie or a seasoned developer, there's something for everyone!",
       'eventLocationName': 'The Isambard Kingdom Brunel',
       'eventAddress': '2 Guildhall Walk, Portsmouth PO1 2DD',
-      'eventCity': 'Portsmouth',
-      'eventState': 'Hampshire',
-      'eventCountry': 'United Kingdom',
-      'eventPostalCode': 'PO1 2DD',
-      'eventLatitude': 50.796917,
-      'eventLongitude': -1.092528,
       'eventStartAt': DateTime.parse('2025-03-06 14:00:00'),
       'eventEndAt': DateTime.parse('2025-03-06 16:00:00'),
     },
@@ -55,15 +43,9 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
       'eventName': 'Italian Bear Chocolate Meetup',
       'eventImage': 'chocolate_meetup_image.jpg',
       'eventDescription':
-          "A casual meetup for all chocolate lovers in the heart of Fitzrovia. Meet new people, chat, and enjoy delicious Italian Bear Chocolate together. Let's make it a sweet day in London!",
+          "A casual meetup for all chocolate lovers in the heart of Fitzrovia. Meet new people, chat, and enjoy delicious Italian Bear Chocolate together.",
       'eventLocationName': 'Italian Bear Chocolate',
       'eventAddress': '29 Rathbone Pl, London W1T 1JG',
-      'eventCity': 'London',
-      'eventState': 'England',
-      'eventCountry': 'United Kingdom',
-      'eventPostalCode': 'W1T 1JG',
-      'eventLatitude': 51.517889,
-      'eventLongitude': -0.134472,
       'eventStartAt': DateTime.parse('2025-03-07 18:00:00'),
       'eventEndAt': DateTime.parse('2025-03-07 20:00:00'),
     },
@@ -93,37 +75,64 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   Widget build(BuildContext context) {
     final double centerY = MediaQuery.of(context).size.height / 2 - 20;
 
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        PageView.builder(
-          controller: _pageController,
-          itemCount: eventData.length,
-          physics: const BouncingScrollPhysics(),
-          itemBuilder: (context, index) {
-            double scale =
-                (1.1 - 0.2 * (currentPage - index).abs()).clamp(0.9, 1.1);
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0.8),
-              child: Transform.scale(
-                scale: scale,
-                child: Center(
-                  child: EventCard(event: eventData[index], height: widget.height ?? 0.5,),
-                ),
+        // Title at the top, centered
+        Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 40),
+            child: Text(
+              "Upcoming Events",
+              style: TextStyle(
+                fontSize: 34,
+                fontWeight: FontWeight.w700,
+                color: Colors.blue[900],
+                fontFamily: 'Roboto',
               ),
-            );
-          },
+            ),
+          ),
         ),
-        Positioned(
-          left: 20,
-          top: centerY,
-          child: IconButton(
-              onPressed: previousPage, icon: const Icon(Icons.arrow_back)),
-        ),
-        Positioned(
-          right: 20,
-          top: centerY,
-          child: IconButton(
-              onPressed: nextPage, icon: const Icon(Icons.arrow_forward)),
+        const SizedBox(height: 15),
+        // Stack for the event cards and navigation buttons
+        Expanded(
+          child: Stack(
+            children: [
+              PageView.builder(
+                controller: _pageController,
+                itemCount: eventData.length,
+                physics: const BouncingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  double scale =
+                      (1.1 - 0.2 * (currentPage - index).abs()).clamp(0.9, 1.1);
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Transform.scale(
+                      scale: scale,
+                      child: Center(
+                        child: EventCard(event: eventData[index], height: widget.height ?? 0.5),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Positioned(
+                left: 20,
+                top: centerY,
+                child: IconButton(
+                    onPressed: previousPage,
+                    icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 30)),
+              ),
+              Positioned(
+                right: 20,
+                top: centerY,
+                child: IconButton(
+                    onPressed: nextPage,
+                    icon: Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 30)),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -168,44 +177,125 @@ class _EventCardState extends State<EventCard> {
     );
   }
 
+  // Front of the card displaying basic information
   Widget _buildFront() {
+    String eventName = widget.event['eventName'] ?? 'Event Name';
+    String eventLocation = widget.event['eventLocationName'] ?? 'Location';
+    DateTime eventStartAt = widget.event['eventStartAt'] ?? DateTime.now();
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blue,
+        gradient: LinearGradient(
+          colors: [Colors.blueAccent, Colors.lightBlueAccent],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 15,
+            offset: Offset(0, 10),
+          ),
+        ],
       ),
-      child: const Center(child: Text('hello')),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              eventName,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Roboto',
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              eventLocation,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Starts at: ${eventStartAt.toLocal()}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
+  // Back of the card showing more detailed information
   Widget _buildBack() {
+    String eventDescription = widget.event['eventDescription'] ?? 'No description available.';
+    String eventAddress = widget.event['eventAddress'] ?? 'Unknown Address';
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blue,
+        color: Colors.blueAccent,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            offset: Offset(0, 6),
+          ),
+        ],
       ),
-      child: const Center(child: Text('hiLo')),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Description:',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              eventDescription,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 3,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Address:',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              eventAddress,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
-
-
-  Widget _buildFront() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Center(child: Text('hello')),
-    );
-  }
-
-  Widget _buildBack() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Center(child: Text('hiLo')),
-    );
-  }

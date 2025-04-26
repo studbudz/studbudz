@@ -51,6 +51,7 @@ class HttpRequestHandler {
       throw Exception('Error sending data: $e');
     }
   }
+  
 
   Future<Map<String, dynamic>> fetchData(String endpoint,
       {Map<String, String>? queryParams}) async {
