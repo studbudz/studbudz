@@ -26,7 +26,7 @@ class Controller extends ChangeNotifier {
   //technically shouldn't be public but
   //I wanted to avoid needing to access it via an intermediary function
   late Engine engine;
-  AppPage currentPage = AppPage.schedule;
+  AppPage currentPage = AppPage.feed;
   bool isInBackground = true;
   bool loggedIn = false;
   Map<String, int> notifications = {};
