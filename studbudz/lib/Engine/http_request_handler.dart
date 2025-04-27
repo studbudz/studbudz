@@ -1,23 +1,29 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:studubdz/Engine/auth_manager.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
+import 'package:http_parser/http_parser.dart';
 
 class HttpRequestHandler {
   late String _address;
   late AuthManager _authManager;
-  final HttpClient _httpClient;
+  late HttpClient _httpClient;
+  late http.Client _client;
 
-  HttpRequestHandler(
-      {required String address, required AuthManager authManager})
-      : _httpClient = HttpClient() {
+  HttpRequestHandler({
+    required String address,
+    required AuthManager authManager,
+  }) {
     print("Initialised");
 
-    _httpClient.badCertificateCallback =
-        (X509Certificate cert, String host, int port) {
-      return true; // Accept all certificates, including self-signed
-    };
+    _httpClient = HttpClient()
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+    _client = IOClient(_httpClient); // <<< this is the key change!
+
     _address = address;
     _authManager = authManager;
 
@@ -25,85 +31,76 @@ class HttpRequestHandler {
   }
 
   // Method to send data (POST request)
+  //send arbitrary
+  //return response
   Future<Map<String, dynamic>> sendData(
-      String endpoint, Map<String, dynamic> data) async {
+    String endpoint,
+    Map<String, dynamic> data,
+  ) async {
     print("Sending data");
     final token = await _authManager.getToken();
-    print(token);
-    final url = Uri.parse('$_address/$endpoint');
-    try {
-      final request = await _httpClient.postUrl(url);
-      request.headers.contentType = ContentType.json;
-      request.headers
-          .set('Authorization', 'Bearer $token'); // Set token in the header
-      request.add(utf8.encode(jsonEncode(data)));
+    final uri = Uri.parse('$_address/$endpoint');
 
-      //send and close
-      final response = await request.close();
-      final responseBody = await response.transform(utf8.decoder).join();
+    // If there's at least one XFile in the map, do multipart/form-data
+    if (data.values.any((v) => v is XFile)) {
+      final req = http.MultipartRequest('POST', uri)
+        ..headers['Authorization'] = 'Bearer $token';
 
-      //OK!
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return jsonDecode(responseBody);
-      } else {
-        throw Exception('Failed to send data: ${response.statusCode}');
+      // Populate fields & files
+      for (final entry in data.entries) {
+        if (entry.value is XFile) {
+          final file = entry.value as XFile;
+          String contentType = 'application/octet-stream'; // Default
+
+          // Check for file type and adjust content type
+          if (file.name.toLowerCase().endsWith('.mp4')) {
+            contentType = 'video/mp4';
+          } else if (file.name.toLowerCase().endsWith('.mp3')) {
+            contentType = 'audio/mpeg';
+          }
+
+          req.files.add(
+            await http.MultipartFile.fromPath(
+              entry.key,
+              file.path,
+              filename: file.name,
+              contentType: MediaType.parse(contentType),
+            ),
+          );
+        } else {
+          req.fields[entry.key] = entry.value?.toString() ?? '';
+        }
       }
-    } catch (e) {
-      throw Exception('Error sending data: $e');
-    }
-  }
 
-  Future<Map<String, dynamic>> sendMultipartData(
-      String endpoint, Map<String, dynamic> data) async {
-    print("Sending multipart data");
-    final token = await _authManager.getToken();
-    final url = Uri.parse('$_address/$endpoint');
-    final boundary =
-        '----dart-http-boundary-${DateTime.now().millisecondsSinceEpoch}';
+      // **Use your IOClient** so the badCertificateCallback applies here:
+      final streamed = await _client.send(req);
+      final resp = await http.Response.fromStream(streamed);
 
-    final request = await _httpClient.postUrl(url);
-    request.headers.contentType = ContentType('multipart', 'form-data',
-        parameters: {'boundary': boundary});
-    request.headers.set('Authorization', 'Bearer $token');
-
-    final transformer = utf8.encoder;
-    final multipartBody = BytesBuilder();
-
-    // Handle all fields except file
-    data.forEach((key, value) {
-      if (key == 'file') return; // Skip file
-      multipartBody.add(transformer.convert('--$boundary\r\n'));
-      multipartBody.add(transformer
-          .convert('Content-Disposition: form-data; name="$key"\r\n\r\n'));
-      multipartBody.add(transformer.convert('$value\r\n'));
-    });
-
-    // Now handle the file if it exists
-    final file = data['file'];
-    if (file is XFile) {
-      final fileBytes = await file.readAsBytes();
-      final filename = file.name;
-
-      multipartBody.add(transformer.convert('--$boundary\r\n'));
-      multipartBody.add(transformer.convert(
-          'Content-Disposition: form-data; name="file"; filename="$filename"\r\n'));
-      multipartBody.add(transformer.convert(
-          'Content-Type: ${file.mimeType ?? "application/octet-stream"}\r\n\r\n'));
-      multipartBody.add(fileBytes);
-      multipartBody.add(transformer.convert('\r\n'));
+      if (resp.statusCode == 200 || resp.statusCode == 201) {
+        return jsonDecode(resp.body);
+      } else {
+        throw Exception(
+          'Failed to upload media: ${resp.statusCode} ${resp.body}',
+        );
+      }
     }
 
-    // Finish
-    multipartBody.add(transformer.convert('--$boundary--\r\n'));
-    request.add(multipartBody.takeBytes());
-
-    final response = await request.close();
-    final responseBody = await response.transform(utf8.decoder).join();
+    // Otherwise: plain JSON POST
+    final response = await _client.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(data),
+    );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return jsonDecode(responseBody);
+      return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to send data: ${response.statusCode}');
+      throw Exception(
+        'Failed to send data: ${response.statusCode} ${response.body}',
+      );
     }
   }
 

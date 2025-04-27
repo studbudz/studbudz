@@ -1,7 +1,12 @@
 {
+    "createEvent": "INSERT INTO event (user_id, subject_id, event_name, event_description, event_location_name, event_start_at, event_end_at, event_private) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    "createTextPost": "INSERT INTO post (user_id, post_content, post_private) VALUES (?, ?, ?)",
+    "getLastInsertedEventId": "SELECT LAST_INSERT_ID() AS event_id",
+    "getLastInsertedPostId": "SELECT LAST_INSERT_ID() AS post_id",
+    "getSubjectIdByName": "SELECT subject_id FROM subject WHERE subject_name = ?",
     "getUserCredentialsByUsername": "SELECT password_salt, password_hash FROM user WHERE username = ?",
-    "getUserSuggestionsFromName": "SELECT user_id, username, user_avatar FROM user WHERE username LIKE ?",
     "getUserIdByUsername": "SELECT user_id FROM user WHERE username = ?",
-    "getSubjectIdByName":  "SELECT subject_id FROM subject WHERE subject_name = ?",
-    "createTextPost":      "INSERT INTO post (user_id, post_content, post_private) VALUES (?, ?, ?)"
+    "getUserSuggestionsFromName": "SELECT user_id, username, user_avatar FROM user WHERE username LIKE ?",
+    "updateEventImage": "UPDATE event SET event_image = ? WHERE event_id = ?",
+    "updateMediaPost": "UPDATE post SET post_url = ? WHERE post_id = ?"
 }

@@ -64,13 +64,25 @@ class Engine {
         } else {
           //idk
         }
+        break;
+      // Both functions below require separate sendData Functions because they contain media
       case 'media':
         print(data);
         final response = await _httpHandler.sendData('mediaPost', data);
+        if (response["success"] == true) {
+          Controller().setPage(AppPage.feed);
+        } else {
+          //idk
+        }
         break;
       case 'event':
-        // Handle event post submission
-        print('Event post submitted');
+        print(data);
+        final response = await _httpHandler.sendData('eventPost', data);
+        if (response["success"] == true) {
+          Controller().setPage(AppPage.feed);
+        } else {
+          //idk
+        }
         break;
       default:
         print('Unknown post type');
