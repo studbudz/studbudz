@@ -39,6 +39,10 @@ dependencies:
   flutter_webrtc: ^0.12.12+hotfix.1 # p2p
   web_socket_channel: ^2.1.0 # websocket
   image_picker: ^1.1.2 # create post
+  http: ^1.1.0  # Use the latest version
+  http_parser: ^4.0.2
+  path: ^1.8.3
+  mime: ^1.0.4
 
 dev_dependencies:
   flutter_test:

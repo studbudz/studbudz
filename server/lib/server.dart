@@ -4,6 +4,9 @@ import 'package:server/sql_handler.dart';
 import 'package:server/token_validation.dart';
 import 'websocket_handler.dart';
 import 'package:bcrypt/bcrypt.dart';
+import 'package:http_server/http_server.dart';
+import 'package:path/path.dart' as p;
+import 'utils.dart';
 
 // Notifications -> websocket
 // image/asset retrieval and post -> https
@@ -92,7 +95,7 @@ class Server {
             await _handleMediaPost(request, username);
             break;
           case '/eventPost':
-            await _handlEventPost(request, username);
+            await _handleEventPost(request, username);
           default:
             request.response.statusCode = HttpStatus.notFound;
             await request.response.close();
@@ -198,64 +201,209 @@ class Server {
     return data;
   }
 
-  Future<void> _handleTextPost(HttpRequest request, String username) async {
-    print("Handling text post for username: $username");
+  Future<Map<String, dynamic>> _parseJsonBody(HttpRequest request) async {
+    final body = await utf8.decoder.bind(request).join();
+    return jsonDecode(body) as Map<String, dynamic>;
+  }
 
-    final String body = await utf8.decoder.bind(request).join();
-    print("Received body: $body");
-
-    final Map<String, dynamic> data = jsonDecode(body);
-    print("Decoded data: $data");
-
-    String content = data["post_content"];
-    bool isPrivate = data["post_private"];
-    print("Post content: $content");
-    print("Post privacy: ${isPrivate ? 'Private' : 'Public'}");
-
-    final userRows = await _sqlHandler.select("getUserIdByUsername", [
-      username,
-    ]);
-    print("User query result: $userRows");
-
-    if (userRows.isEmpty) {
-      print("No user found with username: $username");
-      request.response
-        ..statusCode = HttpStatus.unauthorized
-        ..write('Unknown user')
-        ..close();
-      return;
+  Future<MultipartData> _parseMultipartBody(HttpRequest request) async {
+    final body = await HttpBodyHandler.processRequest(request);
+    if (body.body is! Map<String, dynamic>) {
+      throw HttpException('Expected multipart/form-data');
     }
+    final parts = body.body as Map<String, dynamic>;
+    HttpBodyFileUpload? upload;
+    final fields = <String, String>{};
+    for (final entry in parts.entries) {
+      final value = entry.value;
+      if (value is HttpBodyFileUpload && upload == null) {
+        upload = value;
+      } else if (value is String) {
+        fields[entry.key] = value;
+      }
+    }
+    return MultipartData(fields: fields, file: upload);
+  }
 
-    final int userId = userRows.first['user_id'] as int;
-    print("User ID resolved: $userId");
+  // --- Helper database functions ---
 
-    final inserted = await _sqlHandler.insert("createTextPost", [
-      userId,
-      content,
-      isPrivate,
-    ]);
-    print("Insert operation result: $inserted row(s) affected");
+  Future<int> _resolveUserId(String username) async {
+    final rows = await _sqlHandler.select('getUserIdByUsername', [username]);
+    if (rows.isEmpty) {
+      throw HttpException('Unknown user');
+    }
+    return rows.first['user_id'] as int;
+  }
 
-    request.response
-      ..statusCode =
-          (inserted == 1) ? HttpStatus.created : HttpStatus.internalServerError
-      ..write(jsonEncode({'success': inserted == 1}))
-      ..close();
+  Future<int> _insertAndGetId(
+    String insertQuery,
+    List<dynamic> params,
+    String lastIdQuery,
+    String idKey,
+  ) async {
+    final count = await _sqlHandler.insert(insertQuery, params);
+    if (count != 1) {
+      throw HttpException('Insert failed');
+    }
+    final idRows = await _sqlHandler.select(lastIdQuery, []);
+    return idRows.first[idKey] as int;
+  }
 
-    print(
-      "Response sent with status: ${(inserted == 1) ? 'Created' : 'Error'}",
-    );
+  Future<void> _updateRecordUrl(String updateQuery, String url, int id) async {
+    final count = await _sqlHandler.update(updateQuery, [url, id]);
+    if (count != 1) {
+      throw HttpException('URL update failed');
+    }
+  }
+
+  // --- Helper file I/O function ---
+
+  Future<String> _saveMediaFile(
+    HttpBodyFileUpload upload,
+    String directory, {
+    String? filenameOverride,
+  }) async {
+    final original = upload.filename!;
+    final filename = filenameOverride ?? original;
+    final dir = Directory(directory);
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
+    final savePath = p.join(directory, filename);
+    await File(savePath).writeAsBytes(upload.content as List<int>);
+    return filename;
+  }
+
+  // --- Handlers ---
+
+  Future<void> _handleTextPost(HttpRequest request, String username) async {
+    try {
+      final data = await _parseJsonBody(request);
+      final userId = await _resolveUserId(username);
+      final content = data['post_content'] as String;
+      final isPrivate = data['post_private'] as bool;
+      final postId = await _insertAndGetId(
+        'createTextPost',
+        [userId, content, isPrivate],
+        'getLastInsertedPostId',
+        'post_id',
+      );
+      request.response
+        ..statusCode = HttpStatus.created
+        ..write(jsonEncode({'success': true, 'post_id': postId}))
+        ..close();
+    } on HttpException catch (e) {
+      request.response
+        ..statusCode = HttpStatus.badRequest
+        ..write(e.message)
+        ..close();
+    }
   }
 
   Future<void> _handleMediaPost(HttpRequest request, String username) async {
-    final String body = await utf8.decoder.bind(request).join();
-    final Map<String, dynamic> data = jsonDecode(body);
-    return;
+    try {
+      final multipart = await _parseMultipartBody(request);
+      final upload = multipart.file;
+      if (upload == null) throw HttpException('No media file provided');
+
+      final userId = await _resolveUserId(username);
+      final content = multipart.fields['post_content'] ?? '';
+      final isPrivate =
+          multipart.fields['post_private']?.toLowerCase() == 'true';
+      final postId = await _insertAndGetId(
+        'createTextPost',
+        [userId, content, isPrivate],
+        'getLastInsertedPostId',
+        'post_id',
+      );
+
+      final ext = p.extension(upload.filename!);
+      final filename = await _saveMediaFile(
+        upload,
+        'assets/posts',
+        filenameOverride: '$postId$ext',
+      );
+      final mediaUrl = 'posts/$filename';
+      await _updateRecordUrl('updateMediaPost', mediaUrl, postId);
+
+      request.response
+        ..statusCode = HttpStatus.created
+        ..write(
+          jsonEncode({
+            'success': true,
+            'post_id': postId,
+            'media_url': mediaUrl,
+          }),
+        )
+        ..close();
+    } on HttpException catch (e) {
+      request.response
+        ..statusCode = HttpStatus.badRequest
+        ..write(e.message)
+        ..close();
+    }
   }
 
-  Future<void> _handlEventPost(HttpRequest request, String username) async {
-    final String body = await utf8.decoder.bind(request).join();
-    final Map<String, dynamic> data = jsonDecode(body);
-    return;
+  Future<void> _handleEventPost(HttpRequest request, String username) async {
+    try {
+      final multipart = await _parseMultipartBody(request);
+      final userId = await _resolveUserId(username);
+
+      final subjectId =
+          multipart.fields['subject'] != null
+              ? int.tryParse(multipart.fields['subject']!)
+              : null;
+      final eventName = multipart.fields['event_name']!;
+      final eventDesc = multipart.fields['event_description']!;
+      final eventLoc = multipart.fields['event_location_name']!;
+      final startAt = multipart.fields['event_start_at']!;
+      final endAt = multipart.fields['event_end_at']!;
+      final isPrivate =
+          multipart.fields['event_private']?.toLowerCase() == 'true';
+
+      final eventId = await _insertAndGetId(
+        'createEvent',
+        [
+          userId,
+          subjectId,
+          eventName,
+          eventDesc,
+          eventLoc,
+          startAt,
+          endAt,
+          isPrivate,
+        ],
+        'getLastInsertedEventId',
+        'event_id',
+      );
+
+      String? imageUrl;
+      if (multipart.file != null) {
+        final ext = p.extension(multipart.file!.filename);
+        final filename = await _saveMediaFile(
+          multipart.file!,
+          'assets/events',
+          filenameOverride: '$eventId$ext',
+        );
+        imageUrl = 'events/$filename';
+        await _updateRecordUrl('updateEventImage', imageUrl, eventId);
+      }
+
+      request.response
+        ..statusCode = HttpStatus.created
+        ..write(
+          jsonEncode({
+            'success': true,
+            'event_id': eventId,
+            'event_image_url': imageUrl,
+          }),
+        )
+        ..close();
+    } on HttpException catch (e) {
+      request.response
+        ..statusCode = HttpStatus.badRequest
+        ..write(e.message)
+        ..close();
+    }
   }
 }
