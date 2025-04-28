@@ -375,7 +375,7 @@ VALUES
 (10, 'Leonhard Euler', FALSE),
 (11, 'Rafael Bombelli', TRUE),
 (11, 'René Descartes', FALSE),
-(11, 'Carl Friedrich Gauss', FALSE),
+(11, 'Carl Friedrich Gauss', FALSE);
 
 INSERT INTO post (user_id, post_content, post_url, subject_id, poll_id, quiz_id, event_id, post_created_at)
 VALUES
