@@ -270,7 +270,8 @@ VALUES
 ('Sociology'), -- 11
 ('Philosophy'),-- 12
 ('Art History'),-- 13
-('Music Theory');-- 14
+('Photography'), -- 14
+('Music Theory');-- 15
 
 /*user_subject*/
 INSERT INTO user_subject (user_id, subject_id)
@@ -284,9 +285,10 @@ VALUES
 /* images not correct yet*/
 INSERT INTO event (user_id, subject_id, event_name, event_image, event_description, event_location_name, event_address, event_city, event_state, event_country, event_postal_code, event_latitude, event_longitude, event_start_at, event_end_at)
 VALUES
-(1, 2, 'Physics Café at Starbucks', 'starbucks_physics_image.jpg', 'Join us for an intellectually stimulating cup of coffee at Starbucks. Let''s talk all things physics, from quantum mechanics to the mysteries of the universe!', 'Starbucks Café', 'Whiteley Wy, Whiteley, Fareham PO15 7LJ', 'Fareham', 'Hampshire', 'United Kingdom', 'PO15 7LJ', 50.885417, -1.245500, '2025-03-05 10:00:00', '2025-03-05 12:00:00'),
-(2, 5, 'Computer Science & Coffee at The Isambard', 'isambard_computer_science_image.jpg', 'Come join us at The Isambard Kingdom Brunel in Portsmouth for a great blend of caffeine and computer science talk. Whether you''re a coding newbie or a seasoned developer, there''s something for everyone!', 'The Isambard Kingdom Brunel', '2 Guildhall Walk, Portsmouth PO1 2DD', 'Portsmouth', 'Hampshire', 'United Kingdom', 'PO1 2DD', 50.796917, -1.092528, '2025-03-06 14:00:00', '2025-03-06 16:00:00'),
-(4, NULL, 'Italian Bear Chocolate Meetup', 'chocolate_meetup_image.jpg', 'A casual meetup for all chocolate lovers in the heart of Fitzrovia. Meet new people, chat, and enjoy delicious Italian Bear Chocolate together. Let''s make it a sweet day in London!', 'Italian Bear Chocolate', '29 Rathbone Pl, London W1T 1JG', 'London', 'England', 'United Kingdom', 'W1T 1JG', 51.517889, -0.134472, '2025-03-07 18:00:00', '2025-03-07 20:00:00');
+(1, 14, 'Photo shoot', 'events/1.jpg', 'Capture the beauty of nature with a group of photography enthusiasts. Bring your cameras and creativity!', 'Central Park', '59th St to 110th St, Manhattan', 'New York', 'New York', 'United States', '10022', 40.785091, -73.968285, '2025-03-05 10:00:00', '2025-03-05 12:00:00'),
+(2, 5, 'Coding Workshop', NULL, 'Learn the basics of Python programming in this hands-on workshop. No prior experience required!', 'Tech Hub', '123 Innovation Drive', 'San Francisco', 'California', 'United States', '94107', 37.774929, -122.419416, '2025-03-10 14:00:00', '2025-03-10 16:00:00'),
+(3, 6, 'History Lecture', NULL, 'Dive into the fascinating history of ancient civilizations with our guest historian.', 'City Library', '456 Knowledge Lane', 'Chicago', 'Illinois', 'United States', '60601', 41.878113, -87.629799, '2025-03-15 11:00:00', '2025-03-15 13:00:00'),
+(4, 2, 'Astronomy Night', NULL, 'Join us for a night under the stars as we explore constellations and discuss the latest in astrophysics.', 'Observatory Hill', '789 Starry Way', 'Los Angeles', 'California', 'United States', '90012', 34.052235, -118.243683, '2025-03-20 20:00:00', '2025-03-20 22:00:00');
 
 INSERT INTO user_event (user_id, event_id)
 VALUES
@@ -374,18 +376,20 @@ VALUES
 (11, 'Rafael Bombelli', TRUE),
 (11, 'René Descartes', FALSE),
 (11, 'Carl Friedrich Gauss', FALSE),
-(11, 'John Wallis', FALSE);
 
 INSERT INTO post (user_id, post_content, post_url, subject_id, poll_id, quiz_id, event_id, post_created_at)
 VALUES
-(1, 'Just finished reading about the latest advancements in quantum mechanics. Excited to share my thoughts soon!', NULL, 2, NULL, NULL, NULL, '2025-03-01 09:30:00'),
-(2, 'Check out this awesome image of a black hole simulation I came across! This is what modern physics looks like.', 'https://example.com/blackhole.jpg', 2, NULL, NULL, NULL, '2025-03-01 10:00:00'),
-(3, 'Poll: What do you think about AI’s role in modern technology? Vote and share your thoughts!', NULL, 5, 1, NULL, NULL, '2025-03-01 10:30:00'),
-(4, 'A stunning photo from our latest meetup at Starbucks. Great discussions on the napoleonic wars!', 'https://example.com/meetup.jpg', 6, NULL, NULL, NULL, '2025-03-01 11:00:00'),
-(5, 'Sharing an interesting article on how technology is shaping the future of education. Worth a read!', NULL, 5, NULL, NULL, NULL, '2025-03-01 11:30:00'),
-(2, 'AI POLL.', NULL, 5, 1, NULL, NULL, '2025-03-01 11:30:00'),
-(1, 'Quiz- Maths history.', NULL, 5, NULL, 1, NULL, '2025-03-01 11:30:00'),
-(3, 'Come Join!', NULL, 5, NULL, NULL, 1, '2025-03-01 11:30:00');
+(1, 'Excited to share my thoughts on AI in modern technology!', 'posts/1.jpg', 5, 1, NULL, NULL, '2025-03-01 09:00:00'),
+(2, 'Just attended an amazing coding workshop. Learned so much!', NULL, 5, NULL, NULL, 2, '2025-03-01 10:00:00'),
+(3, 'History lecture was fascinating. Ancient civilizations are incredible.', 'posts/3.mp4', 6, NULL, NULL, 3, '2025-03-01 11:00:00'),
+(4, 'Captured this amazing moment during the photo shoot!', NULL, 14, NULL, NULL, 1, '2025-03-01 12:00:00'),
+(5, 'Astronomy night was breathtaking. The stars were so clear!', NULL, 2, NULL, NULL, 4, '2025-03-01 13:00:00'),
+(1, 'Physics enthusiasts, what are your thoughts on quantum mechanics?', NULL, 2, NULL, NULL, NULL, '2025-03-01 14:00:00'),
+(2, 'Computer science club is the best! Let’s discuss cybersecurity.', NULL, 5, NULL, NULL, NULL, '2025-03-01 15:00:00'),
+(3, 'History buffs, what’s your favorite historical event?', NULL, 6, NULL, NULL, NULL, '2025-03-01 16:00:00'),
+(4, 'Music theory is so interesting. Learning about chord progressions.', NULL, 15, NULL, NULL, NULL, '2025-03-01 17:00:00'),
+(5, 'Art history is fascinating. The Renaissance period is my favorite.', NULL, 13, NULL, NULL, NULL, '2025-03-01 18:00:00');
+
 
 INSERT INTO comment (user_id, post_id, parent_comment_id, comment_content, comment_created_at)
 VALUES
