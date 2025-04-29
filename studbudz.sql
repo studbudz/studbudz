@@ -255,23 +255,7 @@ VALUES
 (5, TRUE, TRUE, FALSE, 'medium', 'active');
 
 /*yes I numbered them, I can't be bothered to count each time*/
-INSERT INTO subject (subject_name)
-VALUES 
-('Mathematics'), -- 1
-('Physics'), -- 2
-('Chemistry'), -- 3
-('Biology'), -- 4
-('Computer Science'), -- 5
-('History'), -- 6
-('Geography'), -- 7
-('English'), -- 8
-('Economics'), -- 9
-('Psychology'), -- 10
-('Sociology'), -- 11
-('Philosophy'),-- 12
-('Art History'),-- 13
-('Photography'), -- 14
-('Music Theory');-- 15
+
 
 /*user_subject*/
 INSERT INTO user_subject (user_id, subject_id)
