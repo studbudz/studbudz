@@ -163,7 +163,6 @@ CREATE TABLE message_report (
 
 CREATE TABLE settings (
     user_id INT PRIMARY KEY,
-    email_notifications BOOLEAN DEFAULT TRUE NOT NULL,
     push_notifications BOOLEAN DEFAULT TRUE NOT NULL,
     dark_mode BOOLEAN DEFAULT FALSE NOT NULL,
     font_size ENUM('small', 'medium', 'large') DEFAULT 'medium' NOT NULL,
@@ -223,13 +222,13 @@ CREATE TABLE quiz_option (
 );
 
 /*data here*/
-INSERT INTO user (username, account_type, password_salt, password_hash, word_salt, word_hash)
+INSERT INTO user (username, account_type, user_avatar, password_salt, password_hash, word_salt, word_hash)
 VALUES
-('SophiaMiller', 'admin', 'FQN4mCv8eImiEpGEgvO7WYiXRVEEb5He', '$2a$12$iU6MWEn9GfW4YYALuv/3fuDd5XmVf0AqR9Ce8Qhvy37LGdvBjPFJu', 'CBQKcDCvwco2IgfjtOSxTPVFvGjHzGID', '$2a$12$3.HEtdugDGZukDTJdvOTQu.D77NQynqkiWEG.l1u8mkkygapkDQyG'), -- x|i0IS7IM$0K
-('JamesAnderso', 'tutor', '4ggUIehMMldAiLosbnSPHU1ffTXk97zq', '$2a$12$Jv0X83adMgI5n6ezTBsfq.tG9cqRZAItSSidi2sjVjDLtpWqBuIYi', 'IKrLJQlcmGelcDTCaBPOMo3TcLZiF26n', '$2a$12$tlQwUrunbzXT.uKQSdaBJOuV0TkMhh/W8lt7CVM4CkpQW0tY7eIIu'), -- 8qIe?]=L0e15
-('LiamJohnson', 'regular', 'H8fdUHmf4nSqm2OZTGB2D6XXxSHEgNYx', '$2a$12$YddGua7gTQDJZ6EWpbjDs.JJOHLJHw5thFo/Jl9UuBjG.RJ68Yy/i', 'ApgdwBcF8sLMvrwRlnysjAeyj1WWCHjK', '$2a$12$z2bb2WTfGpaF9AtyhvMdcOWzzi7mAsgfAVyTGDVGu6e59aq0dFIRi'), -- Cz9#B300#)'p
-('OliviaSmith', 'regular', 'evLgiV6IVBc6gRFyXYHnQlEoM0AB91ua', '$2a$12$GgUpLGwt2wF3fod3LSILWelNHbU33dDPhXdaeLNnVJl/mmVCGQi1.', 'wHKgLfIwChNb4voiNQQC4pCyIzkY5sMv', '$2a$12$tC5BsxhpItiBdiL74dojoOg2CZJyVauy6vP.5anSCDw0iRI5nKHIO'), -- PcPt[052Z?I(
-('NoahBrown', 'tutor', 'Pawz6gvEvuJfdTnaWGDoanMJmjHzcHK8', '$2a$12$I52DE6o/DEAWYi9TGjr1kug9H2zY7e81J2o4d5K.DIUN/SUhs6a/y', 'WXK7wVbNvm4Q3F27WXngH6igzUi8ukAX', '$2a$12$ekepdk./GquMca64Kkt1Q.r53UoGyvywLuJ/nY/nomAb.lNQOzFnK'); -- zP!103%t&N8M
+('SophiaMiller', 'admin', 'profiles/1.jpg', 'FQN4mCv8eImiEpGEgvO7WYiXRVEEb5He', '$2a$12$iU6MWEn9GfW4YYALuv/3fuDd5XmVf0AqR9Ce8Qhvy37LGdvBjPFJu', 'CBQKcDCvwco2IgfjtOSxTPVFvGjHzGID', '$2a$12$3.HEtdugDGZukDTJdvOTQu.D77NQynqkiWEG.l1u8mkkygapkDQyG'), -- x|i0IS7IM$0K
+('JamesAnderson', 'regular', NULL, '4ggUIehMMldAiLosbnSPHU1ffTXk97zq', '$2a$12$Jv0X83adMgI5n6ezTBsfq.tG9cqRZAItSSidi2sjVjDLtpWqBuIYi', 'IKrLJQlcmGelcDTCaBPOMo3TcLZiF26n', '$2a$12$tlQwUrunbzXT.uKQSdaBJOuV0TkMhh/W8lt7CVM4CkpQW0tY7eIIu'), -- 8qIe?]=L0e15
+('FrankDelano', 'Tutor', 'profiles/3.jpg', 'H8fdUHmf4nSqm2OZTGB2D6XXxSHEgNYx', '$2a$12$YddGua7gTQDJZ6EWpbjDs.JJOHLJHw5thFo/Jl9UuBjG.RJ68Yy/i', 'ApgdwBcF8sLMvrwRlnysjAeyj1WWCHjK', '$2a$12$z2bb2WTfGpaF9AtyhvMdcOWzzi7mAsgfAVyTGDVGu6e59aq0dFIRi'), -- Cz9#B300#)'p
+('LiamJohnson', 'regular', 'profiles/4.jpg', 'evLgiV6IVBc6gRFyXYHnQlEoM0AB91ua', '$2a$12$GgUpLGwt2wF3fod3LSILWelNHbU33dDPhXdaeLNnVJl/mmVCGQi1.', 'wHKgLfIwChNb4voiNQQC4pCyIzkY5sMv', '$2a$12$tC5BsxhpItiBdiL74dojoOg2CZJyVauy6vP.5anSCDw0iRI5nKHIO'), -- PcPt[052Z?I(
+('NoahBrown', 'Admin', 'profiles/5.jpg', 'Pawz6gvEvuJfdTnaWGDoanMJmjHzcHK8', '$2a$12$I52DE6o/DEAWYi9TGjr1kug9H2zY7e81J2o4d5K.DIUN/SUhs6a/y', 'WXK7wVbNvm4Q3F27WXngH6igzUi8ukAX', '$2a$12$ekepdk./GquMca64Kkt1Q.r53UoGyvywLuJ/nY/nomAb.lNQOzFnK'); -- zP!103%t&N8M
 
 INSERT INTO follower (user_id, follower_id) 
 VALUES
@@ -246,15 +245,17 @@ VALUES
 (5, 2),
 (5, 4);
 
-INSERT INTO settings (user_id, email_notifications, push_notifications, dark_mode, font_size, paused_status)
+INSERT INTO settings (user_id, push_notifications, dark_mode, font_size, paused_status)
 VALUES
-(1, TRUE, TRUE, FALSE, 'medium', 'active'),
-(2, TRUE, TRUE, FALSE, 'medium', 'active'),
-(3, TRUE, TRUE, FALSE, 'medium', 'active'),
-(4, TRUE, TRUE, FALSE, 'medium', 'active'),
-(5, TRUE, TRUE, FALSE, 'medium', 'active');
+(1, TRUE, FALSE, 'medium', 'active'),
+(2, TRUE, FALSE, 'medium', 'active'),
+(3, TRUE, FALSE, 'medium', 'active'),
+(4, TRUE, FALSE, 'medium', 'active'),
+(5, TRUE, FALSE, 'medium', 'active');
 
-/*done programatically*/
+/*done programatically through
+https://en.wikipedia.org/wiki/List_of_academic_disciplines
+Not checked and probably more than required.*/
 INSERT INTO subject (subject_name) VALUES ('Performing arts');
 INSERT INTO subject (subject_name) VALUES ('Visual arts');
 INSERT INTO subject (subject_name) VALUES ('History');
@@ -680,7 +681,6 @@ INSERT INTO subject (subject_name) VALUES ('Counter-intelligence');
 INSERT INTO subject (subject_name) VALUES ('Counter-offensive');
 INSERT INTO subject (subject_name) VALUES ('Counter-terrorism');
 INSERT INTO subject (subject_name) VALUES ('Covert operation');
-INSERT INTO subject (subject_name) VALUES ('Creative Commons Attribution-ShareAlike 4.0 License');
 INSERT INTO subject (subject_name) VALUES ('Creative writing');
 INSERT INTO subject (subject_name) VALUES ('Criminal justice');
 INSERT INTO subject (subject_name) VALUES ('Criminal law');
@@ -811,7 +811,6 @@ INSERT INTO subject (subject_name) VALUES ('Edaphology');
 INSERT INTO subject (subject_name) VALUES ('Education and training');
 INSERT INTO subject (subject_name) VALUES ('Education economics');
 INSERT INTO subject (subject_name) VALUES ('Education policy');
-INSERT INTO subject (subject_name) VALUES ('Education-related lists');
 INSERT INTO subject (subject_name) VALUES ('Educational classification systems');
 INSERT INTO subject (subject_name) VALUES ('Educational leadership');
 INSERT INTO subject (subject_name) VALUES ('Educational philosophy');
@@ -1032,8 +1031,6 @@ INSERT INTO subject (subject_name) VALUES ('Herpetology');
 INSERT INTO subject (subject_name) VALUES ('Heterosexism');
 INSERT INTO subject (subject_name) VALUES ('High-energy astrophysics');
 INSERT INTO subject (subject_name) VALUES ('High-performance computing');
-INSERT INTO subject (subject_name) VALUES ('Higher education');
-INSERT INTO subject (subject_name) VALUES ('Higher education-related lists');
 INSERT INTO subject (subject_name) VALUES ('Highway engineering');
 INSERT INTO subject (subject_name) VALUES ('Highway safety');
 INSERT INTO subject (subject_name) VALUES ('Hindu ethics');
@@ -1234,8 +1231,6 @@ INSERT INTO subject (subject_name) VALUES ('Linear programming');
 INSERT INTO subject (subject_name) VALUES ('Linguistic anthropology');
 INSERT INTO subject (subject_name) VALUES ('Linguistic typology');
 INSERT INTO subject (subject_name) VALUES ('Linnaean taxonomy');
-INSERT INTO subject (subject_name) VALUES ('List of academic fields');
-INSERT INTO subject (subject_name) VALUES ('List of fields of doctoral studies in the United States');
 INSERT INTO subject (subject_name) VALUES ('Literary criticism');
 INSERT INTO subject (subject_name) VALUES ('Literary journalism');
 INSERT INTO subject (subject_name) VALUES ('Literary theory');
@@ -1771,7 +1766,6 @@ INSERT INTO subject (subject_name) VALUES ('Science education');
 INSERT INTO subject (subject_name) VALUES ('Science policy');
 INSERT INTO subject (subject_name) VALUES ('Science software');
 INSERT INTO subject (subject_name) VALUES ('Science studies');
-INSERT INTO subject (subject_name) VALUES ('Science-related lists');
 INSERT INTO subject (subject_name) VALUES ('Scientific classification');
 INSERT INTO subject (subject_name) VALUES ('Scientific computing');
 INSERT INTO subject (subject_name) VALUES ('Scientific history');
@@ -1796,7 +1790,6 @@ INSERT INTO subject (subject_name) VALUES ('Semiotics');
 INSERT INTO subject (subject_name) VALUES ('Set theory');
 INSERT INTO subject (subject_name) VALUES ('Sex education');
 INSERT INTO subject (subject_name) VALUES ('Sexology');
-INSERT INTO subject (subject_name) VALUES ('Short description is different from Wikidata');
 INSERT INTO subject (subject_name) VALUES ('Siege');
 INSERT INTO subject (subject_name) VALUES ('Silviculture');
 INSERT INTO subject (subject_name) VALUES ('Simulation');
@@ -2082,50 +2075,58 @@ INSERT INTO subject (subject_name) VALUES ('Zoology');
 INSERT INTO subject (subject_name) VALUES ('Zoosemiotics');
 INSERT INTO subject (subject_name) VALUES ('Zootomy');
 INSERT INTO subject (subject_name) VALUES ('aerobics');
-INSERT INTO subject (subject_name) VALUES ('mathematics');
 INSERT INTO subject (subject_name) VALUES ('p-adic analysis');
 INSERT INTO subject (subject_name) VALUES ('social sciences');
 
 /*user_subject*/
+--indices calculated manually so there may be faults.
+--1. photography(1313), architecture & design(27), art history(154)
+--2. astronomy(22), sociology(18), environmental science(603)
+--3. philosophy(6), maths(25) and logic(984)
+--4. comp sci(24), psychology(1410), economics(13)
+--5. physics(23), literature(4), political science(16).
 INSERT INTO user_subject (user_id, subject_id)
 VALUES
-(1, 2),
-(1, 5),
-(1, 6),
-(2, 5),
-(2, 14),
-(2, 15),
+(1, 1313),
+(1, 27),
+(1, 154),
+(2, 22),
+(2, 18),
+(2, 603),
 (3, 6),
-(3, 13),
-(3, 14),
-(4, 5),
-(4, 2),
-(4, 15),
-(5, 2),
-(5, 6),
-(5, 13),
-(5, 14),
-(5, 15);
+(3, 25),
+(3, 984),
+(4, 24),
+(4, 1410),
+(4, 13),
+(5, 23),
+(5, 4),
+(5, 16);
 
 /* images not correct yet*/
 INSERT INTO event (user_id, subject_id, event_name, event_image, event_description, event_location_name, event_address, event_city, event_state, event_country, event_postal_code, event_latitude, event_longitude, event_start_at, event_end_at)
 VALUES
-(1, 14, 'Photo shoot', 'events/1.jpg', 'Capture the beauty of nature with a group of photography enthusiasts. Bring your cameras and creativity!', 'Central Park', '59th St to 110th St, Manhattan', 'New York', 'New York', 'United States', '10022', 40.785091, -73.968285, '2025-03-05 10:00:00', '2025-03-05 12:00:00'),
-(2, 5, 'Coding Workshop', NULL, 'Learn the basics of Python programming in this hands-on workshop. No prior experience required!', 'Tech Hub', '123 Innovation Drive', 'San Francisco', 'California', 'United States', '94107', 37.774929, -122.419416, '2025-03-10 14:00:00', '2025-03-10 16:00:00'),
-(3, 6, 'History Lecture', NULL, 'Dive into the fascinating history of ancient civilizations with our guest historian.', 'City Library', '456 Knowledge Lane', 'Chicago', 'Illinois', 'United States', '60601', 41.878113, -87.629799, '2025-03-15 11:00:00', '2025-03-15 13:00:00'),
-(4, 2, 'Astronomy Night', NULL, 'Join us for a night under the stars as we explore constellations and discuss the latest in astrophysics.', 'Observatory Hill', '789 Starry Way', 'Los Angeles', 'California', 'United States', '90012', 34.052235, -118.243683, '2025-03-20 20:00:00', '2025-03-20 22:00:00');
+(1, 1313, 'Photography Outing', 'events/1.jpg', 'Capture the beauty of nature with a group of photography enthusiasts. Bring your cameras and creativity!', 'Central Park', '59th St to 110th St, Manhattan', 'New York', 'New York', 'United States', '10022', 40.785091, -73.968285, '2025-03-05 10:00:00', '2025-03-05 12:00:00'),
+(2, 22, 'Coding Workshop', 'events/2.jpeg', 'Learn the basics of Python programming in this hands-on workshop. No prior experience required!', 'Tech Hub', '123 Innovation Drive', 'San Francisco', 'California', 'United States', '94107', 37.774929, -122.419416, '2025-03-10 14:00:00', '2025-03-10 16:00:00'),
+(3, 154, 'History Lecture', 'events/3.jpg', 'Dive into the fascinating history of ancient civilizations with our guest historian.', 'City Library', '456 Knowledge Lane', 'Chicago', 'Illinois', 'United States', '60601', 41.878113, -87.629799, '2025-03-15 11:00:00', '2025-03-15 13:00:00'),
+(4, 603, 'Astronomy Night', 'events/4.jpeg', 'Join us for a night under the stars as we explore constellations and discuss the latest in astrophysics.', 'Observatory Hill', '789 Starry Way', 'Los Angeles', 'California', 'United States', '90012', 34.052235, -118.243683, '2025-03-20 20:00:00', '2025-03-20 22:00:00'),
+(1, 27, 'Design Thinking Workshop', 'events/1.jpg', 'A hands-on workshop where participants will explore creative solutions to real-world design challenges.', 'Design Studio', '987 Creativity Blvd', 'Austin', 'Texas', 'United States', '73301', 30.267153, -97.743060, '2025-03-25 09:00:00', '2025-03-25 12:00:00'),
+(2, 18, 'Sociology Seminar', 'events/2.jpeg', 'Join us for a deep dive into social behavior and the dynamics of modern society.', 'University Hall', '321 Sociology Street', 'Boston', 'Massachusetts', 'United States', '02115', 42.360081, -71.058884, '2025-03-30 13:00:00', '2025-03-30 15:00:00'),
+(3, 984, 'Mathematics and Logic Discussion', 'events/3.jpg', 'Engage in stimulating discussions about mathematical theories and logical reasoning.', 'Coffee Shop', '101 Logical Lane', 'Seattle', 'Washington', 'United States', '98101', 47.606209, -122.332069, '2025-04-05 10:00:00', '2025-04-05 12:00:00'),
+(4, 24, 'Psychology Meetup', 'events/4.jpeg', 'Join fellow psychology enthusiasts for a casual meetup and discussion about the latest research in human behavior.', 'Coffee Shop', '555 Mental Health Ave', 'New York', 'New York', 'United States', '10001', 40.712776, -74.005974, '2025-04-10 14:00:00', '2025-04-10 16:00:00'),
+(5, 4, 'Literature Book Club', 'events/2.jpeg', 'Discuss the most influential literary works and dive deep into the art of storytelling.', 'Public Library', '123 Booklover Rd', 'San Francisco', 'California', 'United States', '94110', 37.774929, -122.419416, '2025-04-15 16:00:00', '2025-04-15 18:00:00');
 
 INSERT INTO user_event (user_id, event_id)
 VALUES
 (1, 1),
-(2, 1),
-(3, 1),
 (2, 2),
-(3, 2),
-(4, 2),
-(4, 3),
-(1, 3),
-(5, 3);
+(3, 3),
+(4, 4),
+(1, 5),
+(2, 6),
+(3, 7),
+(4, 8),
+(5, 9);
 
 INSERT INTO poll (poll_name, poll_description)
 VALUES
@@ -2204,30 +2205,40 @@ VALUES
 
 INSERT INTO post (user_id, post_content, post_url, subject_id, poll_id, quiz_id, event_id, post_created_at)
 VALUES
-(1, 'Excited to share my thoughts on AI in modern technology!', 'posts/1.jpg', 23, 1, NULL, NULL, '2025-03-01 09:00:00'),
-(2, 'Just attended an amazing coding workshop. Learned so much!', NULL, 23, NULL, NULL, 2, '2025-03-01 10:00:00'),
-(3, 'History lecture was fascinating. Ancient civilizations are incredible.', 'posts/3.mp4', 3, NULL, NULL, 3, '2025-03-01 11:00:00'),
-(4, 'Captured this amazing moment during the photo shoot!', NULL, 14, NULL, NULL, 1, '2025-03-01 12:00:00'),
-(5, 'Astronomy night was breathtaking. The stars were so clear!', NULL, 22, NULL, NULL, 4, '2025-03-01 13:00:00'),
-(1, 'Physics enthusiasts, what are your thoughts on quantum mechanics?', NULL, 22, NULL, NULL, NULL, '2025-03-01 14:00:00'),
-(2, 'Computer science club is the best! Let’s discuss cybersecurity.', NULL, 23, NULL, NULL, NULL, '2025-03-01 15:00:00'),
-(3, 'History buffs, what’s your favorite historical event?', NULL, 3, NULL, NULL, NULL, '2025-03-01 16:00:00'),
-(4, 'Music theory is so interesting. Learning about chord progressions.', NULL, 4, NULL, NULL, NULL, '2025-03-01 17:00:00'),
-(5, 'Art history is fascinating. The Renaissance period is my favorite.', NULL, 3, NULL, NULL, NULL, '2025-03-01 18:00:00');
-
+VALUES
+  (1, 'Check out this stunning photography shot!', 'events/1.jpg', 1313, NULL, NULL, NULL, '2025-04-29 10:00:00'),
+  (2, 'I’m excited for the upcoming study sessions!', NULL, 18, NULL, NULL, NULL, '2025-04-29 11:00:00'),
+  (3, 'John Cena’s “Bing Chilling” ice cream meme – enjoy!', 'events/3.mp4', 984, NULL, NULL, NULL, '2025-04-29 12:00:00'),
+  (2, 'A look at the moon – one of our most fascinating celestial bodies.', 'events/4.jpg', 22, NULL, NULL, NULL, '2025-04-29 13:00:00'),
+  (3, 'Differentiating cos(x) from first principles – a quick tutorial.', 'events/5.mp4', 25, NULL, NULL, NULL, '2025-04-29 14:00:00'),
+  (5, 'Check out this new electronic smart knob prototype in action.', 'events/6.mp4', 23, NULL, NULL, NULL, '2025-04-29 15:00:00'),
+  (2, 'The longest running experiment – a glimpse into scientific history.', 'events/7.jpg', 603, NULL, NULL, NULL, '2025-04-29 16:00:00'),
+  (1, 'Frank Lloyd Wright’s spiral house for his son – architectural brilliance.', 'events/8.mp4', 27, NULL, NULL, NULL, '2025-04-29 17:00:00'),
+  (2, 'Check out this video on Messier 8 – one of the most beautiful nebulae.', 'events/10.mp4', 22, NULL, NULL, NULL, '2025-04-29 18:00:00'),
+  (4, 'The simplest backpropagation example – a key concept in neural networks.', 'events/12.mp4', 24, NULL, NULL, NULL, '2025-04-29 19:00:00');
 
 INSERT INTO comment (user_id, post_id, parent_comment_id, comment_content, comment_created_at)
 VALUES
-(1, 1, NULL, 'Can''t wait to hear your thoughts!', '2025-03-01 09:45:00'),
-(2, 1, NULL, 'Sounds interesting! Looking forward to it.', '2025-03-01 09:50:00'),
-(3, 1, NULL, 'I''m excited to learn more about quantum mechanics!', '2025-03-01 09:55:00'),
-(4, 1, 1, 'Same here!', '2025-03-01 10:00:00'),
-(5, 1, 1, 'This is going to be great!', '2025-03-01 10:05:00'),
-(1, 2, NULL, 'Wow, that''s amazing!', '2025-03-01 10:15:00'),
-(2, 2, NULL, 'Incredible image!', '2025-03-01 10:20:00'),
-(3, 2, NULL, 'I love this!', '2025-03-01 10:25:00'),
-(4, 2, 6, 'I agree, it''s fascinating!', '2025-03-01 10:30:00'),
-(5, 2, 6, 'This is so cool!', '2025-03-01 10:35:00');
+(2, 1, NULL, 'Amazing capture!',                       '2025-04-29 20:00:00'),
+(5, 1, 1,    'Love the color palette!',                '2025-04-29 20:01:00'),
+(4, 2, NULL, 'Looking forward to these sessions!',      '2025-04-29 20:02:00'),
+(1, 2, 3,    'Me too! Any study topics yet?',           '2025-04-29 20:03:00'),
+(3, 3, NULL, 'That meme made my day!',                '2025-04-29 20:04:00'),
+(2, 3, 5,    'Classic indeed!',                         '2025-04-29 20:05:00'),
+(1, 4, NULL, 'Wow, stunning view!',                     '2025-04-29 20:06:00'),
+(3, 4, 7,    'Is that the full moon?',                  '2025-04-29 20:07:00'),
+(5, 5, NULL, 'Clear explanation, thanks!',              '2025-04-29 20:08:00'),
+(4, 5, 9,    'Glad it helped!',                         '2025-04-29 20:09:00'),
+(2, 6, NULL, 'This gadget looks futuristic!',           '2025-04-29 20:10:00'),
+(1, 6, 11,   'Where can I get one?',                    '2025-04-29 20:11:00'),
+(5, 7, NULL, 'This experiment is fascinating.',         '2025-04-29 20:12:00'),
+(2, 7, 13,   'Do you know how long it’s been running?', '2025-04-29 20:13:00'),
+(4, 8, NULL, 'Incredible design!',                      '2025-04-29 20:14:00'),
+(3, 8, 15,   'I wonder how old his son was then.',      '2025-04-29 20:15:00'),
+(1, 9, NULL, 'Stunning nebula footage!',                '2025-04-29 20:16:00'),
+(5, 9, 17,   'Space is amazing!',                       '2025-04-29 20:17:00'),
+(3, 10, NULL,'Backpropagation demystified!',            '2025-04-29 20:18:00'),
+(4, 10, 19,  'Thanks, this helps a lot.',                '2025-04-29 20:19:00');
 
 INSERT INTO `like` (user_id, post_id) VALUES
 (1, 1),
