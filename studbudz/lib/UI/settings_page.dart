@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:studubdz/notifier.dart';
 //change username inside account section and password\
 //
 
@@ -32,7 +33,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 ListTile(
                   leading: const Icon(Icons.person),
                   title: const Text('Account'),
-                  subtitle: Text(_isProfilePublic ? 'Public Profile' : 'Private Profile'),
+                  subtitle: Text(
+                      _isProfilePublic ? 'Public Profile' : 'Private Profile'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -66,7 +68,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 ListTile(
                   leading: const Icon(Icons.delete, color: Colors.red),
                   title: const Text('Delete Account'),
-                  subtitle: const Text('Permanently remove your account and all associated data'),
+                  subtitle: const Text(
+                      'Permanently remove your account and all associated data'),
                   onTap: () => _confirmDeleteAccount(context),
                 ),
                 const Divider(),
@@ -74,7 +77,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   leading: const Icon(Icons.exit_to_app, color: Colors.red),
                   title: const Text('Log Out'),
                   onTap: () {
-
+                    setState(() {
+                      Controller().engine.logOut();
+                      Controller().setPage(AppPage.signIn);
+                    });
                   },
                 ),
               ],
@@ -108,7 +114,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _deleteAccount(BuildContext context) async {
     try {
-
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -147,7 +152,6 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   void _saveChanges() {
     widget.onProfileVisibilityChanged(_isProfilePublic);
 
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(_isProfilePublic
@@ -170,7 +174,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
               leading: const Icon(Icons.visibility),
               title: const Text('Profile Visibility'),
               subtitle:
-              Text(_isProfilePublic ? 'Public Profile' : 'Private Profile'),
+                  Text(_isProfilePublic ? 'Public Profile' : 'Private Profile'),
               trailing: Switch(
                 value: _isProfilePublic,
                 onChanged: (val) {

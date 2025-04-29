@@ -45,6 +45,7 @@ class Engine {
     }
   }
 
+  //auto suggest for home page.
   Future<Map<dynamic, dynamic>> autoSuggest(String query) async {
     final response = await _httpHandler.fetchData('getUserSuggestionsFromName',
         queryParams: {'query': '$query%'});
@@ -88,5 +89,18 @@ class Engine {
         print('Unknown post type');
     }
     return success;
+  }
+
+  Future<dynamic> getFeed({required int page}) async {
+    final params = {'page': '$page'};
+
+    //makes the http request only
+    final response = await _httpHandler.fetchData('feed', queryParams: params);
+    print("response: ${response}");
+    return response;
+  }
+
+  void logOut() {
+    _authManager.logOut();
   }
 }

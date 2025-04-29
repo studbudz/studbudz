@@ -31,7 +31,7 @@ CREATE TABLE subject(
 CREATE TABLE poll (
     poll_id INT AUTO_INCREMENT PRIMARY KEY,
     poll_name VARCHAR(50) NOT NULL,
-    poll_description TEXT
+    poll_description VARCHAR(1000)
 );
 
 CREATE TABLE poll_value (
@@ -46,7 +46,7 @@ CREATE TABLE poll_value (
 CREATE TABLE quiz (
     quiz_id INT AUTO_INCREMENT PRIMARY KEY,
     quiz_name VARCHAR(50) NOT NULL,
-    quiz_description TEXT
+    quiz_description VARCHAR(1000)
 );
 
 CREATE TABLE `event` ( 
@@ -55,7 +55,7 @@ CREATE TABLE `event` (
     subject_id INT,
     event_name VARCHAR(50) NOT NULL,
     event_image VARCHAR(255),
-    event_description TEXT,
+    event_description VARCHAR(1000),
     event_location_name VARCHAR(100) NOT NULL,
     event_address VARCHAR(255),
     event_city VARCHAR(50),
@@ -75,7 +75,7 @@ CREATE TABLE `event` (
 CREATE TABLE post (
     post_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    post_content TEXT,
+    post_content VARCHAR(1000),
     post_url VARCHAR(255), -- image or video URL
     subject_id INT,
     poll_id INT,
@@ -94,7 +94,7 @@ CREATE TABLE user_report (
     report_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     report_reason ENUM('spam', 'inappropriate', 'harassment', 'other') NOT NULL,
-    report_description TEXT,
+    report_description VARCHAR(1000),
     report_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY(user_id) REFERENCES user(user_id)
 );
@@ -104,7 +104,7 @@ CREATE TABLE post_report (
     post_id INT NOT NULL,
     user_id INT NOT NULL,
     report_reason ENUM('spam', 'inappropriate', 'harassment', 'other') NOT NULL,
-    report_description TEXT,
+    report_description VARCHAR(1000),
     report_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY(post_id) REFERENCES post(post_id),
     FOREIGN KEY(user_id) REFERENCES user(user_id)
@@ -123,7 +123,7 @@ CREATE TABLE `group` (
     subject_id INT NOT NULL,
     admin_id INT NOT NULL,
     group_name VARCHAR(50) NOT NULL,
-    group_description TEXT,
+    group_description VARCHAR(1000),
     group_avatar VARCHAR(255),
     group_public BOOLEAN DEFAULT FALSE NOT NULL,
     group_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -141,7 +141,7 @@ CREATE TABLE message (
     message_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     group_id INT NOT NULL,
-    message_content TEXT NOT NULL,
+    message_content VARCHAR(1000) NOT NULL,
     mesage_url VARCHAR(255),
     event_id INT,
     message_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -155,7 +155,7 @@ CREATE TABLE message_report (
     message_id INT NOT NULL,
     user_id INT NOT NULL,
     report_reason ENUM('spam', 'inappropriate', 'harassment', 'other') NOT NULL,
-    report_description TEXT,
+    report_description VARCHAR(1000),
     report_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY(message_id) REFERENCES message(message_id),
     FOREIGN KEY(user_id) REFERENCES user(user_id)
@@ -183,7 +183,7 @@ CREATE TABLE comment (
     user_id INT NOT NULL,
     post_id INT,
     parent_comment_id INT, -- NULL if comment is not a reply
-    comment_content TEXT NOT NULL,
+    comment_content VARCHAR(1000) NOT NULL,
     comment_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY(user_id) REFERENCES user(user_id),
     FOREIGN KEY(post_id) REFERENCES post(post_id),
@@ -193,7 +193,7 @@ CREATE TABLE comment (
 CREATE TABLE notification (
     notification_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    message TEXT NOT NULL,
+    message VARCHAR(1000) NOT NULL,
     notified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES user(user_id)
 );
@@ -209,14 +209,14 @@ CREATE TABLE `like` (
 CREATE TABLE quiz_question (
     quiz_question_id INT AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT NOT NULL,
-    quiz_question TEXT NOT NULL,
+    quiz_question VARCHAR(1000) NOT NULL,
     FOREIGN KEY(quiz_id) REFERENCES quiz(quiz_id)
 );
 
 CREATE TABLE quiz_option (
     quiz_option_id INT AUTO_INCREMENT PRIMARY KEY,
     quiz_question_id INT NOT NULL,
-    quiz_option TEXT NOT NULL,
+    quiz_option VARCHAR(1000) NOT NULL,
     quiz_is_correct BOOLEAN DEFAULT FALSE NOT NULL,
     FOREIGN KEY(quiz_question_id) REFERENCES quiz_question(quiz_question_id)
 );
@@ -2052,11 +2052,8 @@ INSERT INTO subject (subject_name) VALUES ('War');
 INSERT INTO subject (subject_name) VALUES ('War crimes');
 INSERT INTO subject (subject_name) VALUES ('Warrior');
 INSERT INTO subject (subject_name) VALUES ('Waste management');
-INSERT INTO subject (subject_name) VALUES ('Webarchive template wayback links');
 INSERT INTO subject (subject_name) VALUES ('Welfare economics');
 INSERT INTO subject (subject_name) VALUES ('Welsh literature');
-INSERT INTO subject (subject_name) VALUES ('What links here');
-INSERT INTO subject (subject_name) VALUES ('Whiteness studies');
 INSERT INTO subject (subject_name) VALUES ('Wildlife management');
 INSERT INTO subject (subject_name) VALUES ('Wildlife observation');
 INSERT INTO subject (subject_name) VALUES ('Wind ensemble conducting');
@@ -2078,13 +2075,13 @@ INSERT INTO subject (subject_name) VALUES ('aerobics');
 INSERT INTO subject (subject_name) VALUES ('p-adic analysis');
 INSERT INTO subject (subject_name) VALUES ('social sciences');
 
-/*user_subject*/
+/*user_subject
 --indices calculated manually so there may be faults.
 --1. photography(1313), architecture & design(27), art history(154)
 --2. astronomy(22), sociology(18), environmental science(603)
 --3. philosophy(6), maths(25) and logic(984)
 --4. comp sci(24), psychology(1410), economics(13)
---5. physics(23), literature(4), political science(16).
+--5. physics(23), literature(4), political science(16).*/
 INSERT INTO user_subject (user_id, subject_id)
 VALUES
 (1, 1313),
@@ -2204,7 +2201,6 @@ VALUES
 (11, 'Carl Friedrich Gauss', FALSE);
 
 INSERT INTO post (user_id, post_content, post_url, subject_id, poll_id, quiz_id, event_id, post_created_at)
-VALUES
 VALUES
   (1, 'Check out this stunning photography shot!', 'events/1.jpg', 1313, NULL, NULL, NULL, '2025-04-29 10:00:00'),
   (2, 'I’m excited for the upcoming study sessions!', NULL, 18, NULL, NULL, NULL, '2025-04-29 11:00:00'),

@@ -15,6 +15,8 @@ enum AppPage {
   chat,
   postWidget,
   createPost,
+  editProfile,
+  friendsPage,
   other
 }
 
@@ -52,13 +54,7 @@ class Controller extends ChangeNotifier {
     this.engine = engine;
   }
 
-  Future<void> isLoggedIn() async {
-    loggedIn = await engine.isLoggedIn();
-    print("are we logged in? $loggedIn");
-  }
-
-  void setPage(AppPage page) {
-    isLoggedIn();
+  void setPage(AppPage page) async {
     if (!loggedIn && logInCheck) {
       currentPage = AppPage.signIn;
     } else {

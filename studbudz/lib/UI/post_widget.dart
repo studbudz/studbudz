@@ -172,13 +172,12 @@ class HeaderWidget extends StatelessWidget {
               }
             },
             itemBuilder: (BuildContext context) {
-              return {'Report', 'Block User'}
-                  .map((String choice) {
-                    return PopupMenuItem<String>(
-                      value: choice,
-                      child: Text(choice),
-                    );
-                  }).toList();
+              return {'Report', 'Block User'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
             },
             icon: Icon(Icons.more_vert),
           ),

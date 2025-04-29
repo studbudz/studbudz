@@ -8,5 +8,9 @@
     "getUserIdByUsername": "SELECT user_id FROM user WHERE username = ?",
     "getUserSuggestionsFromName": "SELECT user_id, username, user_avatar FROM user WHERE username LIKE ?",
     "updateEventImage": "UPDATE event SET event_image = ? WHERE event_id = ?",
-    "updateMediaPost": "UPDATE post SET post_url = ? WHERE post_id = ?"
+    "updateMediaPost": "UPDATE post SET post_url = ? WHERE post_id = ?",
+    "getPostsByFollowedUsers": "SELECT post.*, user.username, user.profile_image, subject.subject_name FROM post JOIN user ON post.user_id = user.user_id JOIN subject ON post.subject_id = subject.subject_id WHERE post.user_id IN (SELECT user_id FROM follower WHERE follower_id = ?) ORDER BY post_created_at DESC LIMIT ? OFFSET ?",
+    "getSuggestedEvents": "SELECT event.*, subject.subject_name FROM event JOIN subject ON event.subject_id = subject.subject_id WHERE event.event_private = FALSE AND event.event_start_at > NOW() ORDER BY RAND() LIMIT ?",
+    "getSuggestedUsers": "SELECT user.user_id, user.username, user.profile_image FROM user WHERE user.user_id NOT IN (SELECT user_id FROM follower WHERE follower_id = ?) ORDER BY RAND() LIMIT ?",
+    "getNewPostsByNonFollowedUsers": "SELECT post.*, user.username, user.profile_image, subject.subject_name FROM post JOIN user ON post.user_id = user.user_id JOIN subject ON post.subject_id = subject.subject_id WHERE post.user_id NOT IN (SELECT user_id FROM follower WHERE follower_id = ?) ORDER BY post_created_at DESC LIMIT ? OFFSET ?"
 }

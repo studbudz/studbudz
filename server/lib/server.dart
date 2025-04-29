@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:server/sql_handler.dart';
 import 'package:server/token_validation.dart';
 import 'websocket_handler.dart';
@@ -27,7 +28,7 @@ class Server {
 
   Future<void> start() async {
     // Load SSL certificate and key
-    //certificate is self signed and is seen as extremely risky. (is encrypted and works for our purposes.)
+    //certificate is self signed and is seen as extremely risky from the client side. (is encrypted and works for our purposes.)
     SecurityContext context =
         SecurityContext()
           ..useCertificateChain('certificate.pem')
@@ -105,6 +106,9 @@ class Server {
         final uri = request.uri.path;
         switch (uri) {
           case '/getUserSuggestionsFromName':
+            break;
+          case '/feed':
+            await _handleGetFeed(request, username);
           default:
             Exception('not valid...');
         }
@@ -263,7 +267,7 @@ class Server {
     String directory, {
     String? filenameOverride,
   }) async {
-    final original = upload.filename!;
+    final original = upload.filename;
     final filename = filenameOverride ?? original;
     final dir = Directory(directory);
     if (!await dir.exists()) {
@@ -317,7 +321,7 @@ class Server {
         'post_id',
       );
 
-      final ext = p.extension(upload.filename!);
+      final ext = p.extension(upload.filename);
       final filename = await _saveMediaFile(
         upload,
         'assets/posts',
@@ -404,6 +408,83 @@ class Server {
         ..statusCode = HttpStatus.badRequest
         ..write(e.message)
         ..close();
+    }
+  }
+
+  Future<void> _handleGetFeed(HttpRequest request, String username) async {
+    print("Received request at /getfeed for user: $username");
+
+    try {
+      // Parse 'page' query parameter (default to 1 if not provided or invalid)
+      final page =
+          int.tryParse(request.uri.queryParameters['page'] ?? '1') ?? 1;
+      final limit = 10;
+      final offset = (page - 1) * limit;
+      print("Parsed page: $page, limit: $limit, offset: $offset");
+
+      // Get the user's ID
+      final userRow = await _sqlHandler.select("getUserIdByUsername", [
+        username,
+      ]);
+      if (userRow.isEmpty) throw HttpException('User not found');
+      final userId = userRow.first['user_id'] as int;
+      print("User ID resolved: $userId");
+
+      // Fetch all data
+      final followedPosts = await _sqlHandler.select(
+        "getPostsByFollowedUsers",
+        [userId, limit, offset],
+      );
+      final suggestedEvents = await _sqlHandler.select("getSuggestedEvents", [
+        5,
+      ]);
+      final suggestedUsers = await _sqlHandler.select("getSuggestedUsers", [
+        userId,
+        5,
+      ]);
+      final newPosts = await _sqlHandler.select(
+        "getNewPostsByNonFollowedUsers",
+        [userId, 5, 0],
+      );
+
+      // === Handle DateTime conversion ===
+      // Convert DateTime to ISO string for serialization
+      void convertDateTime(Map<String, dynamic> data) {
+        data.forEach((key, val) {
+          if (val is DateTime) {
+            data[key] = val.toIso8601String(); // Convert DateTime to ISO string
+          }
+        });
+      }
+
+      // Apply conversion to all data lists
+      followedPosts.forEach(convertDateTime);
+      suggestedEvents.forEach(convertDateTime);
+      suggestedUsers.forEach(convertDateTime);
+      newPosts.forEach(convertDateTime);
+
+      // Combine data into response
+      final response = {
+        'followed_posts': followedPosts,
+        'suggested_events': suggestedEvents,
+        'suggested_users': suggestedUsers,
+        'new_posts': newPosts,
+      };
+
+      // Send response
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode(response));
+      print("Response sent successfully");
+    } catch (e) {
+      print("Error occurred in _handleGetFeed: $e");
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..write('Error: $e');
+    } finally {
+      await request.response.close();
+      print("Request processing completed for /getfeed");
     }
   }
 }

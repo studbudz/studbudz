@@ -97,4 +97,13 @@ class AuthManager {
       return false; // Error decoding or validating token
     }
   }
+
+  Future<void> logOut() async {
+    try {
+      await _secureStorage.delete(key: 'token');
+      await _secureStorage.delete(key: 'uuid');
+    } catch (e) {
+      throw Exception('Error during logout: $e');
+    }
+  }
 }

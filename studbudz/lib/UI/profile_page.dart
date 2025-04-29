@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:studubdz/UI/friends_page.dart';
 import 'package:studubdz/UI/nav_bar.dart';
 import 'package:studubdz/UI/settings_page.dart';
+import 'package:studubdz/notifier.dart';
 import 'edit_profile_page.dart'; // Import the EditProfilePage
 
 class ProfilePage extends StatefulWidget {
@@ -43,12 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SettingsPage()));
-
-              // Navigate to settings page
+              Controller().setPage(AppPage.settings);
             },
           ),
         ],
@@ -176,11 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
       int count, String label, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to the FriendsPage when tapped
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const FriendsPage()),
-        );
+        Controller().setPage(AppPage.friendsPage);
       },
       child: Column(
         children: [

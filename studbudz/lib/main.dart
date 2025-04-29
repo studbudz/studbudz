@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:studubdz/Engine/engine.dart';
 import 'package:studubdz/UI/create_post_page.dart';
 import 'package:studubdz/UI/feed_page.dart';
+import 'package:studubdz/UI/friends_page.dart';
 import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/UI/post_widget.dart';
 import 'package:studubdz/UI/recovery_page.dart';
@@ -133,6 +134,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         return const PostWidget();
       case AppPage.createPost:
         return const CreatePostPage();
+      case AppPage.friendsPage:
+        return const FriendsPage();
       default:
         // return TestWidget(
         //   onTriggerNotification: triggerNotification, // Fixed typo
