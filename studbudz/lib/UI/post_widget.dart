@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:studubdz/notifier.dart';
+import 'package:video_player/video_player.dart';
 
 class PostWidget extends StatefulWidget {
   final dynamic data;
@@ -11,15 +14,48 @@ class PostWidget extends StatefulWidget {
 
 class _PostWidgetState extends State<PostWidget> {
   bool isLiked = false; // Track the state of the heart icon
+  XFile? _downloadedFile;
+  VideoPlayerController? _videoController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initiate media download when the widget is created
+    if (widget.data['type'] == 'media') {
+      _downloadMedia(widget.data['file']);
+    }
+  }
+
+  Future<void> _downloadMedia(String url) async {
+    if (url.isNotEmpty) {
+      final file = await Controller().engine.downloadMedia(endpoint: url);
+
+      if (!mounted) return; // Ensure the widget is still in the tree
+      setState(() {
+        _downloadedFile = file; // Store the downloaded file
+
+        // If it's a video, initialize the video player controller
+        if (url.endsWith('.mp4')) {
+          _videoController =
+              VideoPlayerController.file(File(_downloadedFile!.path))
+                ..initialize().then((_) {
+                  setState(() {});
+                  _videoController!
+                      .play(); // Automatically play the video when it's ready
+                });
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 6,
@@ -35,7 +71,7 @@ class _PostWidgetState extends State<PostWidget> {
             isLiked: isLiked,
             onLikePressed: () {
               setState(() {
-                isLiked = !isLiked; // Toggle the heart icon state
+                isLiked = !isLiked;
               });
             },
           ),
@@ -54,7 +90,7 @@ class _PostWidgetState extends State<PostWidget> {
       case 'event':
         return buildEventPost(data);
       default:
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
     }
   }
 
@@ -68,7 +104,7 @@ class _PostWidgetState extends State<PostWidget> {
             data['subject'],
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             data['post_content'],
             style: TextStyle(fontSize: 16),
@@ -79,6 +115,8 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   Widget buildMediaPost(dynamic data) {
+    final url = data['file'] as String?;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -89,12 +127,25 @@ class _PostWidgetState extends State<PostWidget> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          Image.asset(
-            'assets/dummyPost.jpg', // Use the image from assets
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 250,
-          ),
+          // Check if it's a video
+          _videoController != null && url!.endsWith('.mp4')
+              ? AspectRatio(
+                  aspectRatio: _videoController!.value.aspectRatio,
+                  child: VideoPlayer(_videoController!),
+                )
+              : _downloadedFile != null
+                  ? Image.file(
+                      File(_downloadedFile!.path),
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 250,
+                    )
+                  : Image.asset(
+                      'assets/dummyPost.jpg', // Use a fallback image while downloading
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 250,
+                    ),
           SizedBox(height: 8),
           Text(
             data['post_content'],
@@ -125,16 +176,16 @@ class _PostWidgetState extends State<PostWidget> {
           SizedBox(height: 8),
           Text(
             data['event_description'],
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Location: ${data['event_location_name']}',
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
           Text(
             'Time: ${data['event_start_at']} - ${data['event_end_at']}',
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
         ],
       ),
@@ -142,9 +193,38 @@ class _PostWidgetState extends State<PostWidget> {
   }
 }
 
-class HeaderWidget extends StatelessWidget {
+class HeaderWidget extends StatefulWidget {
   final dynamic data;
   const HeaderWidget({super.key, required this.data});
+
+  @override
+  State<HeaderWidget> createState() => _HeaderWidgetState();
+}
+
+class _HeaderWidgetState extends State<HeaderWidget> {
+  XFile? _avatarFile;
+
+  @override
+  void initState() {
+    super.initState();
+    _downloadAvatar();
+  }
+
+  Future<void> _downloadAvatar() async {
+    final url = widget.data['user_avatar'] as String?;
+
+    // If URL is not empty, try to download the avatar
+    if (url != null && url.isNotEmpty) {
+      final file = await Controller().engine.downloadMedia(endpoint: url);
+
+      // Check if the widget is still mounted before updating the state
+      if (!mounted) return;
+
+      setState(() {
+        _avatarFile = file;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,12 +235,21 @@ class HeaderWidget extends StatelessWidget {
           CircleAvatar(
             radius: 20,
             backgroundColor: Colors.blue,
-            child: Icon(Icons.person, color: Colors.white),
+            child: _avatarFile != null
+                ? CircleAvatar(
+                    backgroundImage: FileImage(File(_avatarFile!.path)),
+                    radius: 25,
+                  )
+                : const Icon(
+                    Icons.person, // Default user icon
+                    size: 25,
+                    color: Colors.white, // Icon color
+                  ),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Text(
-            'Username', // Placeholder for username (can be dynamic)
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            '${widget.data["username"]}', // Placeholder for username (can be dynamic)
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           Spacer(),
           PopupMenuButton<String>(
@@ -179,7 +268,7 @@ class HeaderWidget extends StatelessWidget {
                 );
               }).toList();
             },
-            icon: Icon(Icons.more_vert),
+            icon: const Icon(Icons.more_vert),
           ),
         ],
       ),
@@ -217,13 +306,13 @@ class FooterWidget extends StatelessWidget {
             // Comment button
             IconButton(
               onPressed: () {},
-              icon: Icon(Icons.comment_outlined),
+              icon: const Icon(Icons.comment_outlined),
               iconSize: 30,
             ),
             // Share button
             IconButton(
               onPressed: () {},
-              icon: Icon(Icons.share_outlined),
+              icon: const Icon(Icons.share_outlined),
               iconSize: 30,
             ),
           ],

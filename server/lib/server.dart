@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:server/sql_handler.dart';
 import 'package:server/token_validation.dart';
@@ -45,7 +46,7 @@ class Server {
 
     // Handles incoming connections
     await for (HttpRequest request in _httpServer) {
-      print("Received request: $request");
+      print("Received request: ${request.uri.path}");
       if (request.uri.path == '/') {
         request.response
           ..statusCode = HttpStatus.ok
@@ -104,13 +105,18 @@ class Server {
       } else if (request.method == 'GET') {
         // Handle GET requests
         final uri = request.uri.path;
-        switch (uri) {
-          case '/getUserSuggestionsFromName':
-            break;
-          case '/feed':
-            await _handleGetFeed(request, username);
-          default:
-            Exception('not valid...');
+        print(uri);
+        if (uri.startsWith('/profiles/') || uri.startsWith('/posts/')) {
+          await _getMedia(request);
+        } else if (uri == '/getUserSuggestionsFromName') {
+          // handle
+        } else if (uri == '/feed') {
+          await _handleGetFeed(request, username);
+        } else {
+          request.response
+            ..statusCode = HttpStatus.notFound
+            ..write('Not Found')
+            ..close();
         }
       } else {
         request.response.statusCode = HttpStatus.forbidden;
@@ -416,11 +422,11 @@ class Server {
 
     try {
       // Parse 'page' query parameter (default to 1 if not provided or invalid)
-      final page =
-          int.tryParse(request.uri.queryParameters['page'] ?? '1') ?? 1;
-      final limit = 10;
-      final offset = (page - 1) * limit;
-      print("Parsed page: $page, limit: $limit, offset: $offset");
+      // final page =
+      //     int.tryParse(request.uri.queryParameters['page'] ?? '1') ?? 1;
+      // final limit = 10;
+      // final offset = (page - 1) * limit;
+      // print("Parsed page: $page, limit: $limit, offset: $offset");
 
       // Get the user's ID
       final userRow = await _sqlHandler.select("getUserIdByUsername", [
@@ -433,18 +439,15 @@ class Server {
       // Fetch all data
       final followedPosts = await _sqlHandler.select(
         "getPostsByFollowedUsers",
-        [userId, limit, offset],
+        [userId],
       );
-      final suggestedEvents = await _sqlHandler.select("getSuggestedEvents", [
-        5,
-      ]);
       final suggestedUsers = await _sqlHandler.select("getSuggestedUsers", [
         userId,
         5,
       ]);
       final newPosts = await _sqlHandler.select(
         "getNewPostsByNonFollowedUsers",
-        [userId, 5, 0],
+        [userId],
       );
 
       // === Handle DateTime conversion ===
@@ -459,23 +462,18 @@ class Server {
 
       // Apply conversion to all data lists
       followedPosts.forEach(convertDateTime);
-      suggestedEvents.forEach(convertDateTime);
       suggestedUsers.forEach(convertDateTime);
       newPosts.forEach(convertDateTime);
 
-      // Combine data into response
-      final response = {
-        'followed_posts': followedPosts,
-        'suggested_events': suggestedEvents,
-        'suggested_users': suggestedUsers,
-        'new_posts': newPosts,
-      };
+      final data = formatPosts(followedPosts, suggestedUsers, newPosts);
+
+      final output = {'posts': data};
 
       // Send response
       request.response
         ..statusCode = HttpStatus.ok
         ..headers.contentType = ContentType.json
-        ..write(jsonEncode(response));
+        ..write(jsonEncode(output));
       print("Response sent successfully");
     } catch (e) {
       print("Error occurred in _handleGetFeed: $e");
@@ -485,6 +483,71 @@ class Server {
     } finally {
       await request.response.close();
       print("Request processing completed for /getfeed");
+    }
+  }
+
+  formatPosts(
+    List<Map<String, dynamic>> followedPosts,
+    List<Map<String, dynamic>> suggestedUsers,
+    List<Map<String, dynamic>> newPosts,
+  ) {
+    final output = [];
+
+    for (var user in suggestedUsers) {
+      user["type"] = "user";
+    }
+
+    output
+      ..addAll(followedPosts)
+      ..addAll(suggestedUsers)
+      ..addAll(newPosts);
+
+    //shuffle with fixed seed so that there are pages.
+    output.shuffle(Random(42));
+
+    for (var item in output) {
+      print(jsonEncode(item));
+    }
+
+    return output;
+  }
+
+  Future<void> _getMedia(HttpRequest request) async {
+    // Extract the requested URI from the request path
+    final uri =
+        request.uri.path.startsWith('/')
+            ? request.uri.path.substring(1)
+            : request.uri.path;
+
+    // Ensure the path starts with "profiles/" and points to a valid file in the "assets/" folder
+    if (uri.startsWith('profiles/') || uri.startsWith('posts/')) {
+      final filePath = 'assets/$uri'; // Files stored in the "assets" folder
+      print("path: $filePath");
+      final file = File(filePath);
+
+      // Check if the file exists
+      if (await file.exists()) {
+        final bytes = await file.readAsBytes(); // Read the file as bytes
+
+        print("done");
+        // Respond with the file content
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..add(bytes)
+          ..close();
+      } else {
+        // Return a 404 error if the file doesn't exist
+        request.response
+          ..statusCode = HttpStatus.notFound
+          ..write('File not found at $filePath')
+          ..close();
+      }
+    } else {
+      // Return a 400 error if the request path doesn't match the expected format
+      request.response
+        ..statusCode = HttpStatus.badRequest
+        ..write('Invalid media path: $uri')
+        ..close();
     }
   }
 }

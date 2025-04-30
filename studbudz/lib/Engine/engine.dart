@@ -1,3 +1,4 @@
+import 'package:image_picker/image_picker.dart';
 import 'package:studubdz/Engine/auth_manager.dart';
 import 'package:studubdz/notifier.dart';
 import 'http_request_handler.dart';
@@ -98,6 +99,13 @@ class Engine {
     final response = await _httpHandler.fetchData('feed', queryParams: params);
     print("response: ${response}");
     return response;
+  }
+
+  Future<XFile> downloadMedia({required endpoint}) async {
+    print("downloading at ");
+    final file = await _httpHandler.saveMedia(endpoint);
+    print("downloaded");
+    return file;
   }
 
   void logOut() {

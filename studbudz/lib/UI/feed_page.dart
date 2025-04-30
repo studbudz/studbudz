@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:studubdz/UI/nav_bar.dart';
 import 'package:studubdz/UI/post_widget.dart';
 import 'package:studubdz/notifier.dart';
@@ -16,76 +20,20 @@ class _FeedPageState extends State<FeedPage> {
 
   @override
   void initState() {
+    if (!mounted) return;
+
     super.initState();
     getData();
   }
 
-  List<Map<String, dynamic>> formatFeedData(Map<String, dynamic> response) {
-    final List<Map<String, dynamic>> formatted = [];
-
-    // Format followed posts
-    for (var post in response['followed_posts'] ?? []) {
-      final hasFile =
-          post['post_url'] != null && post['post_url'].toString().isNotEmpty;
-      formatted.add({
-        'type': hasFile ? 'media' : 'text',
-        'subject': post['subject_name'] ?? 'General',
-        'post_content': post['post_content'],
-        if (hasFile) 'file': post['post_url'],
-        'post_private': post['post_private'] == 1,
-        'username': post['username'] ?? '',
-        'profile_image': post['profile_image'] ?? '',
-      });
-    }
-
-    // Format new posts by non-followed users
-    for (var post in response['new_posts'] ?? []) {
-      final hasFile =
-          post['post_url'] != null && post['post_url'].toString().isNotEmpty;
-      formatted.add({
-        'type': hasFile ? 'media' : 'text',
-        'subject': post['subject_name'] ?? 'General',
-        'post_content': post['post_content'],
-        if (hasFile) 'file': post['post_url'],
-        'post_private': post['post_private'] == 1,
-        'username': post['username'] ?? '',
-        'profile_image': post['profile_image'] ?? '',
-      });
-    }
-
-    // Format suggested events
-    for (var event in response['suggested_events'] ?? []) {
-      formatted.add({
-        'type': 'event',
-        'subject': event['subject_name'] ?? 'General',
-        'event_name': event['event_name'],
-        'event_image': event['event_image'],
-        'event_description': event['event_description'],
-        'event_location_name': event['event_location_name'],
-        'event_start_at': event['event_start_at'],
-        'event_end_at': event['event_end_at'],
-        'event_private': event['event_private'] == 1,
-      });
-    }
-
-    // Format suggested users as user-type entries
-    for (var user in response['suggested_users'] ?? []) {
-      formatted.add({
-        'type': 'user',
-        'user_id': user['user_id'],
-        'username': user['username'],
-        'profile_image': user['profile_image'] ?? '',
-      });
-    }
-
-    return formatted;
-  }
-
   getData() async {
     final result = await Controller().engine.getFeed(page: 1);
+    print("length: ${result["posts"].length}");
+
+    if (!mounted) return;
 
     setState(() {
-      data = formatFeedData(result);
+      data = result["posts"];
       isLoading = false;
     });
   }
@@ -104,6 +52,7 @@ class _FeedPageState extends State<FeedPage> {
                 itemCount: data.length,
                 itemBuilder: (context, index) {
                   final item = data[index];
+                  print("current item: $item");
                   if (item['type'] == 'user') {
                     return Padding(
                       padding: const EdgeInsets.symmetric(
@@ -133,10 +82,39 @@ class _FeedPageState extends State<FeedPage> {
   }
 }
 
-class UserRecommendationWidget extends StatelessWidget {
+class UserRecommendationWidget extends StatefulWidget {
   final Map<String, dynamic> userData;
 
   const UserRecommendationWidget({super.key, required this.userData});
+
+  @override
+  State<UserRecommendationWidget> createState() =>
+      _UserRecommendationWidgetState();
+}
+
+class _UserRecommendationWidgetState extends State<UserRecommendationWidget> {
+  XFile? _avatarFile;
+
+  @override
+  void initState() {
+    super.initState();
+    _downloadAvatar();
+  }
+
+  Future<void> _downloadAvatar() async {
+    final url = widget.userData['user_avatar'] as String?;
+
+    // If URL is not empty, try to download the avatar
+    if (url != null && url.isNotEmpty) {
+      final file = await Controller().engine.downloadMedia(endpoint: url);
+
+      if (!mounted) return;
+
+      setState(() {
+        _avatarFile = file;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,18 +128,28 @@ class UserRecommendationWidget extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(userData['profile_image']),
-            radius: 25,
+            radius: 20,
+            backgroundColor: Colors.blue,
+            child: _avatarFile != null
+                ? CircleAvatar(
+                    backgroundImage: FileImage(File(_avatarFile!.path)),
+                    radius: 25,
+                  )
+                : const Icon(
+                    Icons.person, // Default user icon
+                    size: 25,
+                    color: Colors.white, // Icon color
+                  ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text('@${userData['username']}',
+            child: Text('@${widget.userData['username']}',
                 style: const TextStyle(fontWeight: FontWeight.w500)),
           ),
           ElevatedButton(
             onPressed: () {},
             child: const Text('Follow'),
-          )
+          ),
         ],
       ),
     );

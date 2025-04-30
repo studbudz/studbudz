@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
 import 'package:studubdz/Engine/auth_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:path_provider/path_provider.dart';
 
 class HttpRequestHandler {
   late String _address;
@@ -135,6 +137,56 @@ class HttpRequestHandler {
     } catch (e) {
       throw Exception('Error fetching data $e');
     }
+  }
+
+  Future<XFile> saveMedia(String endpoint) async {
+    // 1) Build URI & get token
+    final uri = Uri.parse('$_address/$endpoint');
+    final token = await _authManager.getToken();
+
+    // 2) Prepare a safe base name (slashes → underscores)
+    final baseName = 'media_${endpoint.replaceAll('/', '_')}';
+
+    // 3) Try to grab an extension from the URL path
+    var ext = p.extension(uri.path);
+
+    // 4) Prepare temp directory
+    final dir = await getTemporaryDirectory();
+
+    // 5) If we already know ext, check cache first
+    if (ext.isNotEmpty) {
+      final cachedPath = p.join(dir.path, '$baseName$ext');
+      final cachedFile = File(cachedPath);
+      if (await cachedFile.exists()) {
+        print('Returning cached file: $cachedPath');
+        return XFile(cachedPath, name: '$baseName$ext');
+      }
+    }
+
+    // 6) Download the bytes (only now)
+    final resp = await _client.get(
+      uri,
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (resp.statusCode != 200) {
+      throw Exception('Failed to download media: ${resp.statusCode}');
+    }
+
+    // 7) If we didn’t know the ext, derive it from content-type
+    if (ext.isEmpty) {
+      final ct = resp.headers['content-type'];
+      if (ct != null && ct.contains('/')) {
+        ext = '.${ct.split('/').last}';
+      }
+    }
+
+    // 8) Final filename & write to disk
+    final finalName = '$baseName$ext';
+    final finalPath = p.join(dir.path, finalName);
+    await File(finalPath).writeAsBytes(resp.bodyBytes);
+
+    print('Downloaded and saved: $finalPath');
+    return XFile(finalPath, name: finalName);
   }
 
   Future<bool> signInRequest(String username, String password) async {

@@ -2202,16 +2202,16 @@ VALUES
 
 INSERT INTO post (user_id, post_content, post_url, subject_id, poll_id, quiz_id, event_id, post_created_at)
 VALUES
-  (1, 'Check out this stunning photography shot!', 'events/1.jpg', 1313, NULL, NULL, NULL, '2025-04-29 10:00:00'),
+  (1, 'Check out this stunning photography shot!', 'posts/1.jpg', 1313, NULL, NULL, NULL, '2025-04-29 10:00:00'),
   (2, 'I’m excited for the upcoming study sessions!', NULL, 18, NULL, NULL, NULL, '2025-04-29 11:00:00'),
-  (3, 'John Cena’s “Bing Chilling” ice cream meme – enjoy!', 'events/3.mp4', 984, NULL, NULL, NULL, '2025-04-29 12:00:00'),
-  (2, 'A look at the moon – one of our most fascinating celestial bodies.', 'events/4.jpg', 22, NULL, NULL, NULL, '2025-04-29 13:00:00'),
-  (3, 'Differentiating cos(x) from first principles – a quick tutorial.', 'events/5.mp4', 25, NULL, NULL, NULL, '2025-04-29 14:00:00'),
-  (5, 'Check out this new electronic smart knob prototype in action.', 'events/6.mp4', 23, NULL, NULL, NULL, '2025-04-29 15:00:00'),
-  (2, 'The longest running experiment – a glimpse into scientific history.', 'events/7.jpg', 603, NULL, NULL, NULL, '2025-04-29 16:00:00'),
-  (1, 'Frank Lloyd Wright’s spiral house for his son – architectural brilliance.', 'events/8.mp4', 27, NULL, NULL, NULL, '2025-04-29 17:00:00'),
-  (2, 'Check out this video on Messier 8 – one of the most beautiful nebulae.', 'events/10.mp4', 22, NULL, NULL, NULL, '2025-04-29 18:00:00'),
-  (4, 'The simplest backpropagation example – a key concept in neural networks.', 'events/12.mp4', 24, NULL, NULL, NULL, '2025-04-29 19:00:00');
+  (3, 'John Cena’s “Bing Chilling” ice cream meme – enjoy!', 'posts/3.mp4', 984, NULL, NULL, NULL, '2025-04-29 12:00:00'),
+  (2, 'A look at the moon – one of our most fascinating celestial bodies.', 'posts/4.jpg', 22, NULL, NULL, NULL, '2025-04-29 13:00:00'),
+  (3, 'Differentiating cos(x) from first principles – a quick tutorial.', 'posts/5.mp4', 25, NULL, NULL, NULL, '2025-04-29 14:00:00'),
+  (5, 'Check out this new electronic smart knob prototype in action.', 'posts/6.mp4', 23, NULL, NULL, NULL, '2025-04-29 15:00:00'),
+  (2, 'The longest running experiment – a glimpse into scientific history.', 'posts/7.jpg', 603, NULL, NULL, NULL, '2025-04-29 16:00:00'),
+  (1, 'Frank Lloyd Wright’s spiral house for his son – architectural brilliance.', 'posts/8.mp4', 27, NULL, NULL, NULL, '2025-04-29 17:00:00'),
+  (2, 'Check out this video on Messier 8 – one of the most beautiful nebulae.', 'posts/10.mp4', 22, NULL, NULL, NULL, '2025-04-29 18:00:00'),
+  (4, 'The simplest backpropagation example – a key concept in neural networks.', 'posts/12.mp4', 24, NULL, NULL, NULL, '2025-04-29 19:00:00');
 
 INSERT INTO comment (user_id, post_id, parent_comment_id, comment_content, comment_created_at)
 VALUES
