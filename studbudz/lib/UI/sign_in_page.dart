@@ -58,6 +58,7 @@ class _SignInPageState extends State<SignInPage> {
     bool success = await Controller().engine.logIn(username, password);
 
     if (success) {
+      print("switching page");
       setState(() {
         Controller().setPage(AppPage.home);
       });
