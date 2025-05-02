@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:studubdz/UI/subject_widget.dart';
 
 class TextFormWidget extends StatefulWidget {
   final Function submit;
@@ -10,14 +11,14 @@ class TextFormWidget extends StatefulWidget {
 
 class _TextFormWidgetState extends State<TextFormWidget> {
   final TextEditingController _controller = TextEditingController();
-  final TextEditingController _subjectController = TextEditingController();
   bool _isPrivate = false;
+  int? subject;
 
   void _submitIfNotEmpty() {
     if (_controller.text.trim().isNotEmpty) {
       final data = {
         'type': 'text',
-        'subject': _subjectController.text.trim(),
+        'subject': subject,
         'post_content': _controller.text.trim(),
         'post_private': _isPrivate,
       };
@@ -32,17 +33,10 @@ class _TextFormWidgetState extends State<TextFormWidget> {
         return Column(
           children: [
             // Subject input box
-            TextFormField(
-              controller: _subjectController,
-              decoration: const InputDecoration(
-                labelText: 'Subject',
-                border: OutlineInputBorder(),
-              ),
-              maxLength: 100,
-              onChanged: (value) {
-                setState(() {});
-              },
-            ),
+            SubjectWidget(
+                onSubjectSelected: (value) => setState(() {
+                      subject = value;
+                    })),
             const SizedBox(height: 16),
             // Private toggle
             Row(

@@ -98,6 +98,10 @@ class Server {
             break;
           case '/eventPost':
             await _handleEventPost(request, username);
+          case '/follow':
+            await _handleFollow(request, username);
+          case '/unfollow':
+            await _handleUnfollow(request, username);
           default:
             request.response.statusCode = HttpStatus.notFound;
             await request.response.close();
@@ -106,12 +110,17 @@ class Server {
         // Handle GET requests
         final uri = request.uri.path;
         print(uri);
+        //idk why it's different don't ask me.
         if (uri.startsWith('/profiles/') || uri.startsWith('/posts/')) {
           await _getMedia(request);
         } else if (uri == '/getUserSuggestionsFromName') {
           // handle
         } else if (uri == '/feed') {
           await _handleGetFeed(request, username);
+        } else if (uri == '/profile') {
+          await _handleGetProfile(request, username);
+        } else if (uri == '/subjects') {
+          await _handleGetSubjects(request, username);
         } else {
           request.response
             ..statusCode = HttpStatus.notFound
@@ -160,7 +169,11 @@ class Server {
         request.response.statusCode = HttpStatus.ok;
         request.response.headers.contentType = ContentType.json;
         request.response.write(
-          jsonEncode({'token': values[0], 'uuid': values[1]}),
+          jsonEncode({
+            'token': values[0],
+            'uuid': values[1],
+            'user_id': data[0]["user_id"],
+          }),
         );
       } else {
         request.response.statusCode = HttpStatus.unauthorized;
@@ -235,8 +248,6 @@ class Server {
     return MultipartData(fields: fields, file: upload);
   }
 
-  // --- Helper database functions ---
-
   Future<int> _resolveUserId(String username) async {
     final rows = await _sqlHandler.select('getUserIdByUsername', [username]);
     if (rows.isEmpty) {
@@ -266,8 +277,6 @@ class Server {
     }
   }
 
-  // --- Helper file I/O function ---
-
   Future<String> _saveMediaFile(
     HttpBodyFileUpload upload,
     String directory, {
@@ -284,11 +293,12 @@ class Server {
     return filename;
   }
 
-  // --- Handlers ---
-
   Future<void> _handleTextPost(HttpRequest request, String username) async {
     try {
       final data = await _parseJsonBody(request);
+
+      print(data);
+
       final userId = await _resolveUserId(username);
       final content = data['post_content'] as String;
       final isPrivate = data['post_private'] as bool;
@@ -443,8 +453,11 @@ class Server {
       );
       final suggestedUsers = await _sqlHandler.select("getSuggestedUsers", [
         userId,
-        5,
+        userId,
       ]);
+      // print("");
+      // print("Suggested: ${suggestedUsers}");
+      // print("");
       final newPosts = await _sqlHandler.select(
         "getNewPostsByNonFollowedUsers",
         [userId],
@@ -466,6 +479,10 @@ class Server {
       newPosts.forEach(convertDateTime);
 
       final data = formatPosts(followedPosts, suggestedUsers, newPosts);
+
+      for (var x in data) {
+        print(x);
+      }
 
       final output = {'posts': data};
 
@@ -505,9 +522,9 @@ class Server {
     //shuffle with fixed seed so that there are pages.
     output.shuffle(Random(42));
 
-    for (var item in output) {
-      print(jsonEncode(item));
-    }
+    // for (var item in output) {
+    //   print(jsonEncode(item));
+    // }
 
     return output;
   }
@@ -549,5 +566,144 @@ class Server {
         ..write('Invalid media path: $uri')
         ..close();
     }
+  }
+
+  Future<void> _handleFollow(HttpRequest request, String username) async {
+    String content = await utf8.decodeStream(request);
+    Map<String, dynamic> requestBody = jsonDecode(content);
+
+    final followingId = requestBody["userID"];
+
+    final userRow = await _sqlHandler.select("getUserIdByUsername", [username]);
+    if (userRow.isEmpty) throw HttpException('User not found');
+    final followerId = userRow.first['user_id'] as int;
+
+    final count = await _sqlHandler.insert('followUser', [
+      followingId,
+      followerId,
+    ]);
+    if (count != 1) {
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..write(jsonEncode({'success': false, 'error': 'Insert failed'}))
+        ..close();
+      return;
+    }
+    request.response
+      ..statusCode = HttpStatus.ok
+      ..write(jsonEncode({'success': true}))
+      ..close();
+  }
+
+  Future<void> _handleUnfollow(HttpRequest request, String username) async {
+    String content = await utf8.decodeStream(request);
+    Map<String, dynamic> requestBody = jsonDecode(content);
+
+    final unfollowingId = requestBody["userID"];
+
+    final userRow = await _sqlHandler.select("getUserIdByUsername", [username]);
+    if (userRow.isEmpty) throw HttpException('User not found');
+    final followerId = userRow.first['user_id'] as int;
+
+    final count = await _sqlHandler.delete('unfollowUser', [
+      unfollowingId,
+      followerId,
+    ]);
+    if (count != 1) {
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..write(jsonEncode({'success': false, 'error': 'Delete failed'}))
+        ..close();
+      return;
+    }
+    request.response
+      ..statusCode = HttpStatus.ok
+      ..write(jsonEncode({'success': true}))
+      ..close();
+  }
+
+  Future<void> _handleGetProfile(HttpRequest request, String username) async {
+    final userID = int.tryParse(request.uri.queryParameters['user_id'] ?? '');
+    if (userID == null) {
+      request.response
+        ..statusCode = HttpStatus.badRequest
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'error': 'Invalid or missing user_id'}))
+        ..close();
+      return;
+    }
+
+    try {
+      final userRows = await _sqlHandler.select('getUserById', [
+        userID,
+        userID,
+      ]);
+      if (userRows.isEmpty) {
+        request.response
+          ..statusCode = HttpStatus.notFound
+          ..headers.contentType = ContentType.json
+          ..write(jsonEncode({'error': 'User not found'}))
+          ..close();
+        return;
+      }
+
+      final posts = await _sqlHandler.select('getUserPosts', [userID]);
+
+      // Convert DateTime objects to ISO 8601 string format
+      var user = userRows.first;
+      user['joined_at'] = (user['joined_at'] as DateTime).toIso8601String();
+
+      // Convert DateTime objects for posts
+      for (var post in posts) {
+        post['post_created_at'] =
+            (post['post_created_at'] as DateTime).toIso8601String();
+      }
+
+      // Directly return the raw values with DateTime converted to string
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.json
+        ..write(
+          jsonEncode({
+            'user': user, // Use the raw data with formatted DateTime
+            'posts': posts, // Use the raw posts data with formatted DateTime
+          }),
+        )
+        ..close();
+    } catch (e) {
+      print('[_handleGetProfile] ERROR: $e');
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'error': 'Server error'}))
+        ..close();
+    }
+  }
+
+  Future<void> _handleGetSubjects(HttpRequest request, String username) async {
+    print("getting subjects");
+    final userRows = await _sqlHandler.select('getAllSubjects', []);
+
+    //DO NOT PRINT (unless debugging)
+    // print(userRows);
+
+    if (userRows.isEmpty) {
+      request.response
+        ..statusCode = HttpStatus.notFound
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'error': 'User not found'}))
+        ..close();
+      return;
+    }
+    // Directly return the raw values with DateTime converted to string
+    request.response
+      ..statusCode = HttpStatus.ok
+      ..headers.contentType = ContentType.json
+      ..write(
+        jsonEncode({
+          'subjects': userRows, // Use the raw data with formatted DateTime
+        }),
+      )
+      ..close();
   }
 }

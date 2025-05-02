@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/notifier.dart';
 //change username inside account section and password\
 //
@@ -20,6 +21,12 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: const Text('Settings'),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Controller().setPage(AppPage.home);
+          },
+        ),
       ),
       body: Column(
         children: [

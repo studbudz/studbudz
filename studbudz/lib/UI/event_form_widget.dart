@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:studubdz/UI/subject_widget.dart';
 
 class EventFormWidget extends StatefulWidget {
   final Function submit;
@@ -10,7 +11,6 @@ class EventFormWidget extends StatefulWidget {
 }
 
 class _EventFormWidgetState extends State<EventFormWidget> {
-  final _subjectController = TextEditingController();
   final _eventNameController = TextEditingController();
   final _eventDescriptionController = TextEditingController();
   final _eventLocationController = TextEditingController();
@@ -19,6 +19,8 @@ class _EventFormWidgetState extends State<EventFormWidget> {
   DateTime? _eventStartAt;
   DateTime? _eventEndAt;
   XFile? _eventImage;
+
+  int? subject;
 
   final _picker = ImagePicker();
 
@@ -52,8 +54,6 @@ class _EventFormWidgetState extends State<EventFormWidget> {
   }
 
   void _submit() {
-    final subjectText = _subjectController.text.trim();
-    final subject = subjectText.isNotEmpty ? subjectText : null;
     final eventName = _eventNameController.text.trim();
 
     // if (eventName.isEmpty) {
@@ -65,7 +65,7 @@ class _EventFormWidgetState extends State<EventFormWidget> {
 
     final data = <String, dynamic>{
       'type': 'event',
-      if (subject != null) 'subject': subject,
+      'subject': subject,
       'event_name': eventName,
       'event_image': _eventImage,
       'event_description': _eventDescriptionController.text.trim(),
@@ -80,7 +80,6 @@ class _EventFormWidgetState extends State<EventFormWidget> {
 
   @override
   void dispose() {
-    _subjectController.dispose();
     _eventNameController.dispose();
     _eventDescriptionController.dispose();
     _eventLocationController.dispose();
@@ -94,14 +93,10 @@ class _EventFormWidgetState extends State<EventFormWidget> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Subject input (optional)
-          TextFormField(
-            controller: _subjectController,
-            decoration: const InputDecoration(
-              labelText: 'Subject (optional)',
-              border: OutlineInputBorder(),
-            ),
-            maxLength: 100,
-          ),
+          SubjectWidget(
+              onSubjectSelected: (value) => setState(() {
+                    subject = value;
+                  })),
           const SizedBox(height: 16),
 
           // Private toggle

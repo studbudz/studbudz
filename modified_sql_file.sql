@@ -7,6 +7,7 @@ CREATE TABLE user(
     account_type ENUM('regular', 'tutor', 'admin') NOT NULL,
     user_avatar VARCHAR(255),
     password_salt VARCHAR(32) NOT NULL,
+    user_bio VARCHAR (255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     user_private BOOLEAN DEFAULT FALSE NOT NULL,
     word_salt VARCHAR(32) NOT NULL,
@@ -222,13 +223,13 @@ CREATE TABLE quiz_option (
 );
 
 /*data here*/
-INSERT INTO user (username, account_type, user_avatar, password_salt, password_hash, word_salt, word_hash)
+INSERT INTO user (username, account_type, password_salt, password_hash, word_salt, word_hash)
 VALUES
-('SophiaMiller', 'admin', 'profiles/1.jpg', 'FQN4mCv8eImiEpGEgvO7WYiXRVEEb5He', '$2a$12$iU6MWEn9GfW4YYALuv/3fuDd5XmVf0AqR9Ce8Qhvy37LGdvBjPFJu', 'CBQKcDCvwco2IgfjtOSxTPVFvGjHzGID', '$2a$12$3.HEtdugDGZukDTJdvOTQu.D77NQynqkiWEG.l1u8mkkygapkDQyG'), -- x|i0IS7IM$0K
-('JamesAnderson', 'regular', NULL, '4ggUIehMMldAiLosbnSPHU1ffTXk97zq', '$2a$12$Jv0X83adMgI5n6ezTBsfq.tG9cqRZAItSSidi2sjVjDLtpWqBuIYi', 'IKrLJQlcmGelcDTCaBPOMo3TcLZiF26n', '$2a$12$tlQwUrunbzXT.uKQSdaBJOuV0TkMhh/W8lt7CVM4CkpQW0tY7eIIu'), -- 8qIe?]=L0e15
-('FrankDelano', 'Tutor', 'profiles/3.jpg', 'H8fdUHmf4nSqm2OZTGB2D6XXxSHEgNYx', '$2a$12$YddGua7gTQDJZ6EWpbjDs.JJOHLJHw5thFo/Jl9UuBjG.RJ68Yy/i', 'ApgdwBcF8sLMvrwRlnysjAeyj1WWCHjK', '$2a$12$z2bb2WTfGpaF9AtyhvMdcOWzzi7mAsgfAVyTGDVGu6e59aq0dFIRi'), -- Cz9#B300#)'p
-('LiamJohnson', 'regular', 'profiles/4.jpg', 'evLgiV6IVBc6gRFyXYHnQlEoM0AB91ua', '$2a$12$GgUpLGwt2wF3fod3LSILWelNHbU33dDPhXdaeLNnVJl/mmVCGQi1.', 'wHKgLfIwChNb4voiNQQC4pCyIzkY5sMv', '$2a$12$tC5BsxhpItiBdiL74dojoOg2CZJyVauy6vP.5anSCDw0iRI5nKHIO'), -- PcPt[052Z?I(
-('NoahBrown', 'Admin', 'profiles/5.jpg', 'Pawz6gvEvuJfdTnaWGDoanMJmjHzcHK8', '$2a$12$I52DE6o/DEAWYi9TGjr1kug9H2zY7e81J2o4d5K.DIUN/SUhs6a/y', 'WXK7wVbNvm4Q3F27WXngH6igzUi8ukAX', '$2a$12$ekepdk./GquMca64Kkt1Q.r53UoGyvywLuJ/nY/nomAb.lNQOzFnK'); -- zP!103%t&N8M
+('SophiaMiller', 'admin', 'FQN4mCv8eImiEpGEgvO7WYiXRVEEb5He', '$2a$12$iU6MWEn9GfW4YYALuv/3fuDd5XmVf0AqR9Ce8Qhvy37LGdvBjPFJu', 'CBQKcDCvwco2IgfjtOSxTPVFvGjHzGID', '$2a$12$3.HEtdugDGZukDTJdvOTQu.D77NQynqkiWEG.l1u8mkkygapkDQyG'), -- x|i0IS7IM$0K
+('JamesAnderso', 'tutor', '4ggUIehMMldAiLosbnSPHU1ffTXk97zq', '$2a$12$Jv0X83adMgI5n6ezTBsfq.tG9cqRZAItSSidi2sjVjDLtpWqBuIYi', 'IKrLJQlcmGelcDTCaBPOMo3TcLZiF26n', '$2a$12$tlQwUrunbzXT.uKQSdaBJOuV0TkMhh/W8lt7CVM4CkpQW0tY7eIIu'), -- 8qIe?]=L0e15
+('LiamJohnson', 'regular', 'H8fdUHmf4nSqm2OZTGB2D6XXxSHEgNYx', '$2a$12$YddGua7gTQDJZ6EWpbjDs.JJOHLJHw5thFo/Jl9UuBjG.RJ68Yy/i', 'ApgdwBcF8sLMvrwRlnysjAeyj1WWCHjK', '$2a$12$z2bb2WTfGpaF9AtyhvMdcOWzzi7mAsgfAVyTGDVGu6e59aq0dFIRi'), -- Cz9#B300#)'p
+('OliviaSmith', 'regular', 'evLgiV6IVBc6gRFyXYHnQlEoM0AB91ua', '$2a$12$GgUpLGwt2wF3fod3LSILWelNHbU33dDPhXdaeLNnVJl/mmVCGQi1.', 'wHKgLfIwChNb4voiNQQC4pCyIzkY5sMv', '$2a$12$tC5BsxhpItiBdiL74dojoOg2CZJyVauy6vP.5anSCDw0iRI5nKHIO'), -- PcPt[052Z?I(
+('NoahBrown', 'tutor', 'Pawz6gvEvuJfdTnaWGDoanMJmjHzcHK8', '$2a$12$I52DE6o/DEAWYi9TGjr1kug9H2zY7e81J2o4d5K.DIUN/SUhs6a/y', 'WXK7wVbNvm4Q3F27WXngH6igzUi8ukAX', '$2a$12$ekepdk./GquMca64Kkt1Q.r53UoGyvywLuJ/nY/nomAb.lNQOzFnK'); -- zP!103%t&N8M
 
 INSERT INTO follower (user_id, follower_id) 
 VALUES
@@ -237,11 +238,9 @@ VALUES
 (1, 4),
 (2, 1),
 (2, 3),
-(3, 1),
 (3, 2),
 (4, 1),
 (4, 5),
-(5, 1),
 (5, 2),
 (5, 4);
 
@@ -299,7 +298,6 @@ INSERT INTO subject (subject_name) VALUES ('Public policy');
 INSERT INTO subject (subject_name) VALUES ('Social work');
 INSERT INTO subject (subject_name) VALUES ('Transportation');
 INSERT INTO subject (subject_name) VALUES ('Abnormal psychology');
-INSERT INTO subject (subject_name) VALUES ('About Wikipedia');
 INSERT INTO subject (subject_name) VALUES ('Academia');
 INSERT INTO subject (subject_name) VALUES ('Academic disciplines');
 INSERT INTO subject (subject_name) VALUES ('Accompanying');
@@ -1028,7 +1026,6 @@ INSERT INTO subject (subject_name) VALUES ('Hematopathology');
 INSERT INTO subject (subject_name) VALUES ('Hepatology');
 INSERT INTO subject (subject_name) VALUES ('Hermeneutics');
 INSERT INTO subject (subject_name) VALUES ('Herpetology');
-INSERT INTO subject (subject_name) VALUES ('Heterosexism');
 INSERT INTO subject (subject_name) VALUES ('High-energy astrophysics');
 INSERT INTO subject (subject_name) VALUES ('High-performance computing');
 INSERT INTO subject (subject_name) VALUES ('Highway engineering');
@@ -1075,8 +1072,6 @@ INSERT INTO subject (subject_name) VALUES ('Human geography');
 INSERT INTO subject (subject_name) VALUES ('Human performance technology');
 INSERT INTO subject (subject_name) VALUES ('Human physiology');
 INSERT INTO subject (subject_name) VALUES ('Human resources');
-INSERT INTO subject (subject_name) VALUES ('Human sexual behavior');
-INSERT INTO subject (subject_name) VALUES ('Human sexuality');
 INSERT INTO subject (subject_name) VALUES ('Human subject research');
 INSERT INTO subject (subject_name) VALUES ('Human-computer interaction');
 INSERT INTO subject (subject_name) VALUES ('Humanism');
@@ -1788,8 +1783,6 @@ INSERT INTO subject (subject_name) VALUES ('Semantics');
 INSERT INTO subject (subject_name) VALUES ('Semiconductors');
 INSERT INTO subject (subject_name) VALUES ('Semiotics');
 INSERT INTO subject (subject_name) VALUES ('Set theory');
-INSERT INTO subject (subject_name) VALUES ('Sex education');
-INSERT INTO subject (subject_name) VALUES ('Sexology');
 INSERT INTO subject (subject_name) VALUES ('Siege');
 INSERT INTO subject (subject_name) VALUES ('Silviculture');
 INSERT INTO subject (subject_name) VALUES ('Simulation');

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:studubdz/UI/subject_widget.dart';
 
 class MediaFormWidget extends StatefulWidget {
   final Function submit;
@@ -10,12 +11,11 @@ class MediaFormWidget extends StatefulWidget {
 }
 
 class _MediaFormWidgetState extends State<MediaFormWidget> {
-  final _subjectController = TextEditingController();
   final _captionController = TextEditingController();
   final _picker = ImagePicker();
-  // multi-platform file format.
   XFile? _file;
   bool _isPrivate = false;
+  int? subject;
 
   Future<void> _pickMedia() async {
     final picked = await _picker.pickMedia();
@@ -27,7 +27,6 @@ class _MediaFormWidgetState extends State<MediaFormWidget> {
   }
 
   void _submit() {
-    final subject = _subjectController.text.trim();
     final caption = _captionController.text.trim();
     final data = <String, dynamic>{
       'type': 'media',
@@ -41,7 +40,6 @@ class _MediaFormWidgetState extends State<MediaFormWidget> {
 
   @override
   void dispose() {
-    _subjectController.dispose();
     _captionController.dispose();
     super.dispose();
   }
@@ -53,18 +51,10 @@ class _MediaFormWidgetState extends State<MediaFormWidget> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Subject input
-            TextField(
-              controller: _subjectController,
-              decoration: const InputDecoration(
-                labelText: 'Subject',
-                border: OutlineInputBorder(),
-              ),
-              maxLength: 100,
-              onChanged: (_) {
-                setState(() {});
-              },
-            ),
+            SubjectWidget(
+                onSubjectSelected: (value) => setState(() {
+                      subject = value;
+                    })),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _pickMedia,
@@ -77,7 +67,6 @@ class _MediaFormWidgetState extends State<MediaFormWidget> {
                 child: Text('Selected: ${_file!.name}'),
               ),
             const SizedBox(height: 16),
-            // Private toggle
             Row(
               children: [
                 Switch(
@@ -92,7 +81,6 @@ class _MediaFormWidgetState extends State<MediaFormWidget> {
               ],
             ),
             const SizedBox(height: 16),
-            // Caption input
             TextField(
               controller: _captionController,
               decoration: const InputDecoration(
@@ -105,7 +93,6 @@ class _MediaFormWidgetState extends State<MediaFormWidget> {
               },
             ),
             const SizedBox(height: 16),
-            // Submit button
             ElevatedButton(
               onPressed: _submit,
               child: const Text('Submit'),

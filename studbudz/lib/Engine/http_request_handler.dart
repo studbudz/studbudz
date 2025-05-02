@@ -212,6 +212,8 @@ class HttpRequestHandler {
           String token = jsonResponse['token'];
           String uuid = jsonResponse['uuid'];
           _authManager.saveAuthData(token, uuid);
+
+          _authManager.saveUserId(jsonResponse["user_id"].toString());
           return true;
         } else {
           throw Exception('Invalid response structure: missing token or uuid');

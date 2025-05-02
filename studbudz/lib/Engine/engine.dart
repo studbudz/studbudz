@@ -10,6 +10,7 @@ class Engine {
   late final Controller _controller;
   late WebsocketHandler _websocketHandler;
   late final HttpRequestHandler _httpHandler;
+  late final int userId;
 
   Engine() {
     _authManager = AuthManager();
@@ -25,6 +26,8 @@ class Engine {
   }
 
   Future<bool> isLoggedIn() async {
+    String fetchedUserId = await getUserId();
+    userId = int.parse(fetchedUserId);
     return await _authManager.isLoggedIn();
   }
 
@@ -35,6 +38,8 @@ class Engine {
       bool response = await _httpHandler.signInRequest(username, password);
       if (response) {
         print("Login Success!");
+        String fetchedUserId = await getUserId();
+        print("userID was init");
         return true;
       } else {
         print("Login failed.");
@@ -101,6 +106,24 @@ class Engine {
     return response;
   }
 
+  Future<dynamic> getUserProfile({required int userID}) async {
+    final params = {'user_id': '$userID'};
+
+    // Call fetchData with the 'profile' endpoint and pass query params
+    try {
+      final response =
+          await _httpHandler.fetchData('profile', queryParams: params);
+
+      // Assuming the response is a map with profile data
+      print('User profile data: $response');
+      return response;
+    } catch (e) {
+      // Handle the error if the request fails
+      print('Error fetching profile data: $e');
+      throw Exception('Failed to fetch user profile');
+    }
+  }
+
   Future<XFile> downloadMedia({required endpoint}) async {
     print("downloading at ");
     final file = await _httpHandler.saveMedia(endpoint);
@@ -110,5 +133,22 @@ class Engine {
 
   void logOut() {
     _authManager.logOut();
+  }
+
+  Future<void> followUser(userId) async {
+    final response = await _httpHandler.sendData('follow', {'userID': userId});
+  }
+
+  Future<void> unfollowUser(userId) async {
+    final response =
+        await _httpHandler.sendData('unfollow', {'userID': userId});
+  }
+
+  Future<String> getUserId() async {
+    return _authManager.getUserId();
+  }
+
+  Future<dynamic> getSubjects() async {
+    return _httpHandler.fetchData('subjects');
   }
 }

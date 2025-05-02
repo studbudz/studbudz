@@ -1,187 +1,101 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:studubdz/UI/feed_widget.dart';
 import 'package:studubdz/UI/friends_page.dart';
 import 'package:studubdz/UI/nav_bar.dart';
 import 'package:studubdz/UI/settings_page.dart';
 import 'package:studubdz/notifier.dart';
 import 'edit_profile_page.dart'; // Import the EditProfilePage
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final int? userId; // null means it's the current user
+  const ProfilePage({super.key, this.userId});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final currentUserId = Controller().engine.userId;
+  bool isLoading = true;
+  dynamic userData;
+  List<dynamic> userPosts = [];
   String username = "john_doe";
-  String name = "John Doe";
   String bio = "Loving life. Photographer. Traveler.";
-  final int postsCount = 34;
-  final int followersCount = 1200;
-  final int followingCount = 350;
+  int postsCount = 34;
+  int followersCount = 1200;
 
-  final List<String> posts = [
-    'assets/dummyPost.jpg',
-    'assets/dummyPost.jpg',
-    'assets/dummyPost.jpg',
-    'assets/dummyPost.jpg',
-    'assets/dummyPost.jpg',
-    'assets/dummyPost.jpg',
-    'assets/dummyPost.jpg',
-    'assets/dummyPost.jpg',
-    'assets/dummyPost.jpg',
-    'assets/dummyPost.jpg',
-    'assets/dummyPost.jpg',
-    'assets/dummyPost.jpg',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  Future<void> getUserData() async {
+    try {
+      final result = await Controller()
+          .engine
+          .getUserProfile(userID: widget.userId ?? currentUserId);
+      userData = result["user"];
+      userPosts = result["posts"];
+
+      setState(() {
+        username = userData["username"];
+        bio = userData["user_bio"] ?? "";
+        followersCount = userData["followers_count"] ?? 0;
+        postsCount = userPosts.length;
+
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(''),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Controller().setPage(AppPage.settings);
-            },
-          ),
-        ],
+        title: Text(username),
       ),
       body: Stack(
         children: [
-          // Main content (Profile details and posts)
-          ListView(
-            children: [
-              // Profile Header
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: [
-                    // Profile Picture
-                    const CircleAvatar(
-                      radius: 50,
-                      backgroundImage: AssetImage('assets/profileIcon.jpg'),
-                    ),
-                    const SizedBox(width: 20),
-                    // User Info (Username, Name, Stats)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(username,
-                            style: const TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 4),
-                        Text(bio,
-                            style: const TextStyle(
-                                fontSize: 14, color: Colors.grey)),
-                        const SizedBox(height: 16),
-                        // Stats (Posts, Followers, Following)
-                        Row(
-                          children: [
-                            _buildStatsColumn(postsCount, 'Posts'),
-                            _buildClickableStatsColumn(
-                                followersCount, 'Friends', context),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(),
-
-              // Edit Profile Button
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // Navigate to the Edit Profile screen
-                    final updatedProfile = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            EditProfilePage(currentName: name, currentBio: bio),
+          if (isLoading)
+            const Center(child: CircularProgressIndicator())
+          else
+            ListView(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(username,
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold)),
+                      Text(bio,
+                          style: TextStyle(fontSize: 14, color: Colors.grey)),
+                      Row(
+                        children: [
+                          Text('$postsCount posts'),
+                          SizedBox(width: 20),
+                          Text('$followersCount followers'),
+                        ],
                       ),
-                    );
-
-                    if (updatedProfile != null) {
-                      setState(() {
-                        name = updatedProfile['name'];
-                        bio = updatedProfile['bio'];
-                      });
-                    }
-                  },
-                  child: const Text('Edit Profile'),
+                    ],
+                  ),
                 ),
-              ),
-
-              const Divider(),
-
-              // Posts Grid
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 5.0,
-                  mainAxisSpacing: 5.0,
-                  childAspectRatio: 1,
+                FeedWidget(
+                  posts: userPosts,
+                  isLoading: isLoading,
+                  onLoadMore: getUserData,
                 ),
-                itemCount: posts.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      // View post details or go to a detailed page
-                    },
-                    child: Image.network(posts[index], fit: BoxFit.cover),
-                  );
-                },
-              ),
-            ],
-          ),
-          // Add the NavBarWidget at the bottom of the screen
-          const Positioned(
-            left: 0,
-            right: 0,
-            bottom: 20,
-            child: NavBarWidget(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Helper method to create Stats columns (Posts, Followers, Following)
-  Widget _buildStatsColumn(int count, String label) {
-    return Column(
-      children: [
-        Text(
-          '$count',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 14, color: Colors.grey)),
-      ],
-    );
-  }
-
-  // Helper method for creating clickable "Friends" column
-  Widget _buildClickableStatsColumn(
-      int count, String label, BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Controller().setPage(AppPage.friendsPage);
-      },
-      child: Column(
-        children: [
-          Text(
-            '$count',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          Text(label, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+              ],
+            ),
         ],
       ),
     );

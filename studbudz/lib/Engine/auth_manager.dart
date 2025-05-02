@@ -14,6 +14,27 @@ class AuthManager {
     }
   }
 
+  Future<void> saveUserId(String userID) async {
+    try {
+      await _secureStorage.write(key: 'userID', value: userID);
+    } catch (e) {
+      throw Exception('Error saving userID data: $e');
+    }
+  }
+
+  Future<String> getUserId() async {
+    try {
+      final userID = await _secureStorage.read(key: 'userID');
+      if (userID == null) {
+        //send user to sign in page.
+        throw Exception('userID not found or is empty');
+      }
+      return userID;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // Method to retrieve the token from secure storage
   Future<String> getToken() async {
     try {
