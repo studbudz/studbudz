@@ -7,7 +7,6 @@ import 'package:studubdz/UI/nav_bar.dart';
 import 'package:studubdz/UI/settings_page.dart';
 import 'package:studubdz/notifier.dart';
 import 'edit_profile_page.dart'; // Import the EditProfilePage
-import 'package:video_thumbnail/video_thumbnail.dart';
 
 class ProfilePage extends StatefulWidget {
   final int? userId;
@@ -29,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int postsCount = 34;
   int followersCount = 1200;
   List<String> posts = [];
-  late XFile _avatarFile;
+  XFile? _avatarFile;
 
   bool get isCurrentUserProfile =>
       widget.userId == null || widget.userId == currentUserId;
@@ -78,23 +77,19 @@ class _ProfilePageState extends State<ProfilePage> {
     if (url != null && url.isNotEmpty) {
       final file = await Controller().engine.downloadMedia(endpoint: url);
 
+      print("downloaded avatar: ${file.path}");
+
       if (!mounted) return;
 
       setState(() {
         _avatarFile = file;
       });
+    } else {
+      print("no avatar found");
+      setState(() {
+        _avatarFile = null; // Set to null if no avatar is found
+      });
     }
-  }
-
-  Future<String> getThumbnail(String videoPath) async {
-    final file = await Controller().engine.downloadMedia(endpoint: videoPath);
-    final thumbnail = await VideoThumbnail.thumbnailFile(
-      video: file.path,
-      imageFormat: ImageFormat.PNG,
-      maxHeight: 150, // You can adjust the height to control thumbnail size
-      quality: 75,
-    );
-    return thumbnail ?? '';
   }
 
   @override
@@ -128,8 +123,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       // Profile Picture
                       CircleAvatar(
                         radius: 50,
-                        backgroundImage: FileImage(File(_avatarFile.path)),
+                        backgroundImage: _avatarFile != null
+                            ? FileImage(File(_avatarFile!.path))
+                            : null,
+                        child: _avatarFile == null
+                            ? Icon(Icons.person, size: 50, color: Colors.white)
+                            : null,
                       ),
+
                       const SizedBox(width: 20),
                       Expanded(
                         child: Column(

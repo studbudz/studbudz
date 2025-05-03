@@ -223,13 +223,13 @@ CREATE TABLE quiz_option (
 );
 
 /*data here*/
-INSERT INTO user (username, account_type, password_salt, password_hash, word_salt, word_hash)
+INSERT INTO user (username, account_type, user_avatar, password_salt, password_hash, word_salt, word_hash)
 VALUES
-('SophiaMiller', 'admin', 'FQN4mCv8eImiEpGEgvO7WYiXRVEEb5He', '$2a$12$iU6MWEn9GfW4YYALuv/3fuDd5XmVf0AqR9Ce8Qhvy37LGdvBjPFJu', 'CBQKcDCvwco2IgfjtOSxTPVFvGjHzGID', '$2a$12$3.HEtdugDGZukDTJdvOTQu.D77NQynqkiWEG.l1u8mkkygapkDQyG'), -- x|i0IS7IM$0K
-('JamesAnderso', 'tutor', '4ggUIehMMldAiLosbnSPHU1ffTXk97zq', '$2a$12$Jv0X83adMgI5n6ezTBsfq.tG9cqRZAItSSidi2sjVjDLtpWqBuIYi', 'IKrLJQlcmGelcDTCaBPOMo3TcLZiF26n', '$2a$12$tlQwUrunbzXT.uKQSdaBJOuV0TkMhh/W8lt7CVM4CkpQW0tY7eIIu'), -- 8qIe?]=L0e15
-('LiamJohnson', 'regular', 'H8fdUHmf4nSqm2OZTGB2D6XXxSHEgNYx', '$2a$12$YddGua7gTQDJZ6EWpbjDs.JJOHLJHw5thFo/Jl9UuBjG.RJ68Yy/i', 'ApgdwBcF8sLMvrwRlnysjAeyj1WWCHjK', '$2a$12$z2bb2WTfGpaF9AtyhvMdcOWzzi7mAsgfAVyTGDVGu6e59aq0dFIRi'), -- Cz9#B300#)'p
-('OliviaSmith', 'regular', 'evLgiV6IVBc6gRFyXYHnQlEoM0AB91ua', '$2a$12$GgUpLGwt2wF3fod3LSILWelNHbU33dDPhXdaeLNnVJl/mmVCGQi1.', 'wHKgLfIwChNb4voiNQQC4pCyIzkY5sMv', '$2a$12$tC5BsxhpItiBdiL74dojoOg2CZJyVauy6vP.5anSCDw0iRI5nKHIO'), -- PcPt[052Z?I(
-('NoahBrown', 'tutor', 'Pawz6gvEvuJfdTnaWGDoanMJmjHzcHK8', '$2a$12$I52DE6o/DEAWYi9TGjr1kug9H2zY7e81J2o4d5K.DIUN/SUhs6a/y', 'WXK7wVbNvm4Q3F27WXngH6igzUi8ukAX', '$2a$12$ekepdk./GquMca64Kkt1Q.r53UoGyvywLuJ/nY/nomAb.lNQOzFnK'); -- zP!103%t&N8M
+('SophiaMiller', 'admin',    'posts/1.jpg', 'FQN4mCv8eImiEpGEgvO7WYiXRVEEb5He', '$2a$12$iU6MWEn9GfW4YYALuv/3fuDd5XmVf0AqR9Ce8Qhvy37LGdvBjPFJu', 'CBQKcDCvwco2IgfjtOSxTPVFvGjHzGID', '$2a$12$3.HEtdugDGZukDTJdvOTQu.D77NQynqkiWEG.l1u8mkkygapkDQyG'), -- x|i0IS7IM$0K
+('JamesAnderso', 'tutor',    NULL,          '4ggUIehMMldAiLosbnSPHU1ffTXk97zq', '$2a$12$Jv0X83adMgI5n6ezTBsfq.tG9cqRZAItSSidi2sjVjDLtpWqBuIYi', 'IKrLJQlcmGelcDTCaBPOMo3TcLZiF26n', '$2a$12$tlQwUrunbzXT.uKQSdaBJOuV0TkMhh/W8lt7CVM4CkpQW0tY7eIIu'), -- 8qIe?]=L0e15
+('LiamJohnson',  'regular',  'posts/3.jpg', 'H8fdUHmf4nSqm2OZTGB2D6XXxSHEgNYx', '$2a$12$YddGua7gTQDJZ6EWpbjDs.JJOHLJHw5thFo/Jl9UuBjG.RJ68Yy/i', 'ApgdwBcF8sLMvrwRlnysjAeyj1WWCHjK', '$2a$12$z2bb2WTfGpaF9AtyhvMdcOWzzi7mAsgfAVyTGDVGu6e59aq0dFIRi'), -- Cz9#B300#)'p
+('OliviaSmith',  'regular',  'posts/4.jpg', 'evLgiV6IVBc6gRFyXYHnQlEoM0AB91ua', '$2a$12$GgUpLGwt2wF3fod3LSILWelNHbU33dDPhXdaeLNnVJl/mmVCGQi1.', 'wHKgLfIwChNb4voiNQQC4pCyIzkY5sMv', '$2a$12$tC5BsxhpItiBdiL74dojoOg2CZJyVauy6vP.5anSCDw0iRI5nKHIO'), -- PcPt[052Z?I(
+('NoahBrown',    'tutor',    'posts/5.jpg', 'Pawz6gvEvuJfdTnaWGDoanMJmjHzcHK8', '$2a$12$I52DE6o/DEAWYi9TGjr1kug9H2zY7e81J2o4d5K.DIUN/SUhs6a/y', 'WXK7wVbNvm4Q3F27WXngH6igzUi8ukAX', '$2a$12$ekepdk./GquMca64Kkt1Q.r53UoGyvywLuJ/nY/nomAb.lNQOzFnK'); -- zP!103%t&N8M
 
 INSERT INTO follower (user_id, follower_id) 
 VALUES

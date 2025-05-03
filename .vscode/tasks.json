@@ -36,6 +36,15 @@
                 "reveal": "always",
                 "panel": "new"
             }
+        },
+        {
+            "label": "Run emulator 2",
+            "type": "shell",
+            "command": "emulator -avd Medium_Phone_API_36",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
         }
     ]
 }
