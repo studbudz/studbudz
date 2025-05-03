@@ -102,7 +102,7 @@ class Engine {
 
     //makes the http request only
     final response = await _httpHandler.fetchData('feed', queryParams: params);
-    print("response: ${response}");
+    print("response: $response");
     return response;
   }
 

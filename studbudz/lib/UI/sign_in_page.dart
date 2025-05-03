@@ -29,7 +29,7 @@ class _SignInPageState extends State<SignInPage> {
                 passwordController: _passwordController,
               ),
               // Bottom Section: Sign In Button
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Center(

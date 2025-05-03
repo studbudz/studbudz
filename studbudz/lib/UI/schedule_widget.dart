@@ -111,7 +111,9 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                     child: Transform.scale(
                       scale: scale,
                       child: Center(
-                        child: EventCard(event: eventData[index], height: widget.height ?? 0.5),
+                        child: EventCard(
+                            event: eventData[index],
+                            height: widget.height ?? 0.5),
                       ),
                     ),
                   );
@@ -122,14 +124,16 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                 top: centerY,
                 child: IconButton(
                     onPressed: previousPage,
-                    icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 30)),
+                    icon: const Icon(Icons.arrow_back_ios_rounded,
+                        color: Colors.white, size: 30)),
               ),
               Positioned(
                 right: 20,
                 top: centerY,
                 child: IconButton(
                     onPressed: nextPage,
-                    icon: Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 30)),
+                    icon: const Icon(Icons.arrow_forward_ios_rounded,
+                        color: Colors.white, size: 30)),
               ),
             ],
           ),
@@ -164,7 +168,8 @@ class _EventCardState extends State<EventCard> {
 
   @override
   Widget build(BuildContext context) {
-    final double cardHeight = MediaQuery.of(context).size.height * widget.height;
+    final double cardHeight =
+        MediaQuery.of(context).size.height * widget.height;
     final double cardWidth = MediaQuery.of(context).size.height * 0.7;
 
     return GestureDetector(
@@ -185,13 +190,13 @@ class _EventCardState extends State<EventCard> {
 
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [Colors.blueAccent, Colors.lightBlueAccent],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 15,
@@ -205,7 +210,7 @@ class _EventCardState extends State<EventCard> {
           children: [
             Text(
               eventName,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -238,14 +243,15 @@ class _EventCardState extends State<EventCard> {
 
   // Back of the card showing more detailed information
   Widget _buildBack() {
-    String eventDescription = widget.event['eventDescription'] ?? 'No description available.';
+    String eventDescription =
+        widget.event['eventDescription'] ?? 'No description available.';
     String eventAddress = widget.event['eventAddress'] ?? 'Unknown Address';
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.blueAccent,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 10,

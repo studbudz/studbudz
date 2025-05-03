@@ -15,17 +15,16 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Simulated current user ID (in your app, replace this with real auth logic)
   final currentUserId = Controller().engine.userId;
 
-  bool isLoading = true; // Add a loading flag
+  bool isLoading = true;
   dynamic userData;
   List<dynamic> userPosts = [];
   String username = "john_doe";
   String bio = "Loving life. Photographer. Traveler.";
   int postsCount = 34;
   int followersCount = 1200;
-  List<String> posts = [];
+  List<dynamic>? posts = [];
   XFile? _avatarFile;
 
   bool get isCurrentUserProfile =>
@@ -38,6 +37,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getUserData() async {
+    print("Fetching user data for user ID: ${widget.userId}");
+
     try {
       final result = await Controller()
           .engine
@@ -45,27 +46,25 @@ class _ProfilePageState extends State<ProfilePage> {
 
       userData = result["user"];
       userPosts = result["posts"];
+      print("User posts: $userPosts");
 
       await _downloadAvatar();
 
       setState(() {
         username = userData["username"];
-        bio = userData["user_bio"] ?? ""; // Ensure bio is safely assigned
+        bio = userData["user_bio"] ?? "";
         followersCount = userData["followers_count"] ??
             0; // Ensure this key exists in the result
         postsCount = userPosts.length;
 
-        // Clear the posts list to avoid appending duplicates, then add new data
-        posts.clear();
-        posts.addAll(result['postUrls'] ??
-            []); // Assuming postUrls contains URLs to the posts
+        posts = userPosts;
 
-        isLoading = false; // Set loading to false once data is loaded
+        isLoading = false;
       });
     } catch (e) {
       print("Error loading user data: $e");
       setState(() {
-        isLoading = false; // Stop loading even if there's an error
+        isLoading = false;
       });
     }
   }
@@ -86,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       print("no avatar found");
       setState(() {
-        _avatarFile = null; // Set to null if no avatar is found
+        _avatarFile = null;
       });
     }
   }
@@ -108,10 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: Stack(
         children: [
-          if (isLoading)
-            const Center(
-                child:
-                    CircularProgressIndicator()), // Show loading spinner while data loads
+          if (isLoading) const Center(child: CircularProgressIndicator()),
           if (!isLoading)
             ListView(
               children: [
@@ -178,8 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       } else {
                         // Add follow/unfollow logic here
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Followed user (simulated)')),
+                          const SnackBar(content: Text('Follow user')),
                         );
                       }
                     },
@@ -188,10 +183,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 Container(
-                  color: Colors.grey[100], // Or any color you like
+                  color: Colors.grey[100],
                   height: MediaQuery.of(context).size.height * 0.6,
                   child: FeedWidget(
-                    posts: posts,
+                    posts: posts ??
+                        [const Center(child: Text('Nothing to see here'))],
                     isLoading: isLoading,
                     onLoadMore: () => {},
                   ),

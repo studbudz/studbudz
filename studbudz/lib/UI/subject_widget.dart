@@ -58,7 +58,7 @@ class _SubjectWidgetState extends State<SubjectWidget> {
             value: id,
             child: Text(name),
           );
-        }).toList(),
+        }),
       ],
     );
   }

@@ -2203,7 +2203,17 @@ VALUES
   (2, 'The longest running experiment – a glimpse into scientific history.', 'posts/7.jpg', 603, NULL, NULL, NULL, '2025-04-29 16:00:00'),
   (1, 'Frank Lloyd Wright’s spiral house for his son – architectural brilliance.', 'posts/8.mp4', 27, NULL, NULL, NULL, '2025-04-29 17:00:00'),
   (2, 'Check out this video on Messier 8 – one of the most beautiful nebulae.', 'posts/10.mp4', 22, NULL, NULL, NULL, '2025-04-29 18:00:00'),
-  (4, 'The simplest backpropagation example – a key concept in neural networks.', 'posts/12.mp4', 24, NULL, NULL, NULL, '2025-04-29 19:00:00');
+  (4, 'The simplest backpropagation example – a key concept in neural networks.', 'posts/12.mp4', 24, NULL, NULL, NULL, '2025-04-29 19:00:00'),
+  (1, 'Excited to see everyone at the Photography Outing! Don’t forget your favorite lenses and tripods.', NULL, 1313, NULL, NULL, 1, '2025-03-03 08:00:00'),
+  (2, 'Our Coding Workshop is coming up soon! Please install Python 3.10 beforehand if you can.', NULL, 22, NULL, NULL, 2, '2025-03-08 10:00:00'),
+  (3, 'Looking forward to sharing insights at the History Lecture. Bring your questions about ancient civilizations!', NULL, 154, NULL, NULL, 3, '2025-03-13 12:00:00'),
+  (4, 'Astronomy Night is almost here! We’ll have telescopes set up and some star maps for everyone.', NULL, 603, NULL, NULL, 4, '2025-03-19 19:00:00'),
+  (1, 'Reminder: The Design Thinking Workshop starts at 9am sharp. Bring a notebook and an open mind!', NULL, 27, NULL, NULL, 5, '2025-03-24 09:00:00'),
+  (2, 'Sociology Seminar attendees: Please review the reading packet sent via email before the event.', NULL, 18, NULL, NULL, 6, '2025-03-29 15:00:00'),
+  (3, 'Excited to host the Mathematics and Logic Discussion! Feel free to bring your favorite logic puzzles.', NULL, 984, NULL, NULL, 7, '2025-04-04 18:00:00'),
+  (4, 'Psychology Meetup is coming up! Let’s share recent articles or studies that caught your interest.', NULL, 24, NULL, NULL, 8, '2025-04-09 17:00:00'),
+  (5, 'Looking forward to our next Literature Book Club meeting! This month’s book is a classic-bring your thoughts.', NULL, 4, NULL, NULL, 9, '2025-04-14 14:00:00');
+
 
 INSERT INTO comment (user_id, post_id, parent_comment_id, comment_content, comment_created_at)
 VALUES

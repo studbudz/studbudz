@@ -23,9 +23,13 @@ class _PostWidgetState extends State<PostWidget> {
   void initState() {
     super.initState();
     // Initiate media download when the widget is created
-    if (widget.data['type'] == 'media') {
+    if (widget.data['type'] == 'media' && widget.data['file'] != null) {
       _downloadMedia(widget.data['file']);
+    } else {
+      widget.data['type'] = 'text';
     }
+
+    print("Post data: ${widget.data}");
   }
 
   Future<void> _downloadMedia(String url) async {
@@ -39,7 +43,6 @@ class _PostWidgetState extends State<PostWidget> {
           ..initialize().then((_) {
             if (!mounted) return;
             setState(() {});
-            // Ensure audio is not muted
           });
       }
     });
@@ -99,12 +102,12 @@ class _PostWidgetState extends State<PostWidget> {
         children: [
           Text(
             data['subject'],
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
             data['post_content'],
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
         ],
       ),
@@ -112,7 +115,7 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   Widget buildMediaPost(dynamic data) {
-    final url = data['file'] as String?;
+    print("building media post");
     Widget content;
 
     if (_videoController != null && _videoController!.value.isInitialized) {
@@ -186,16 +189,16 @@ class _PostWidgetState extends State<PostWidget> {
         children: [
           Text(
             data['subject'],
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Image.asset(
             'assets/dummyPost.jpg', // Use the image from assets
             fit: BoxFit.cover,
             width: double.infinity,
             height: 250,
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             data['event_description'],
             style: const TextStyle(fontSize: 16),
@@ -234,16 +237,21 @@ class _HeaderWidgetState extends State<HeaderWidget> {
 
   Future<void> _downloadAvatar() async {
     final url = widget.data['user_avatar'] as String?;
-
-    // If URL is not empty, try to download the avatar
+    print("avatar url: $url");
     if (url != null && url.isNotEmpty) {
       final file = await Controller().engine.downloadMedia(endpoint: url);
 
-      // Check if the widget is still mounted before updating the state
+      print("downloaded avatar: ${file.path}");
+
       if (!mounted) return;
 
       setState(() {
         _avatarFile = file;
+      });
+    } else {
+      print("no avatar found");
+      setState(() {
+        _avatarFile = null;
       });
     }
   }
@@ -281,7 +289,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
               '${widget.data["username"]}', // Placeholder for username (can be dynamic)
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            Spacer(),
+            const Spacer(),
             PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'Report') {
