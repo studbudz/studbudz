@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/notifier.dart';
 //change username inside account section and password\
-//
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

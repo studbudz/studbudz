@@ -2,9 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:studubdz/UI/feed_widget.dart';
-import 'package:studubdz/UI/friends_page.dart';
 import 'package:studubdz/UI/nav_bar.dart';
-import 'package:studubdz/UI/settings_page.dart';
 import 'package:studubdz/notifier.dart';
 import 'edit_profile_page.dart'; // Import the EditProfilePage
 
@@ -127,10 +125,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             ? FileImage(File(_avatarFile!.path))
                             : null,
                         child: _avatarFile == null
-                            ? Icon(Icons.person, size: 50, color: Colors.white)
+                            ? const Icon(Icons.person, size: 50)
                             : null,
                       ),
-
                       const SizedBox(width: 20),
                       Expanded(
                         child: Column(
