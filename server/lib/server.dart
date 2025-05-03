@@ -638,6 +638,9 @@ class Server {
         userID,
         userID,
       ]);
+
+      print(userRows);
+
       if (userRows.isEmpty) {
         request.response
           ..statusCode = HttpStatus.notFound

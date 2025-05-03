@@ -72,6 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _downloadAvatar() async {
     final url = userData['user_avatar'] as String?;
+    print("avatar url: $url");
     if (url != null && url.isNotEmpty) {
       final file = await Controller().engine.downloadMedia(endpoint: url);
 
