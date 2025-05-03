@@ -2,9 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:studubdz/UI/feed_widget.dart';
-import 'package:studubdz/UI/friends_page.dart';
 import 'package:studubdz/UI/nav_bar.dart';
-import 'package:studubdz/UI/settings_page.dart';
 import 'package:studubdz/notifier.dart';
 import 'edit_profile_page.dart'; // Import the EditProfilePage
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -29,7 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int postsCount = 34;
   int followersCount = 1200;
   List<String> posts = [];
-  late XFile _avatarFile;
+  XFile? _avatarFile;
 
   bool get isCurrentUserProfile =>
       widget.userId == null || widget.userId == currentUserId;
@@ -128,7 +126,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       // Profile Picture
                       CircleAvatar(
                         radius: 50,
-                        backgroundImage: FileImage(File(_avatarFile.path)),
+                        backgroundImage: _avatarFile != null
+                            ? FileImage(File(_avatarFile!.path))
+                            : null,
+                        child: _avatarFile == null
+                            ? const Icon(Icons.person, size: 50)
+                            : null,
                       ),
                       const SizedBox(width: 20),
                       Expanded(

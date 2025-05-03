@@ -54,33 +54,36 @@ class AccountSetup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(50.0),
-              child: Text('Sign Up', style: TextStyle(fontSize: 30)),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-              child: TextField(
-                  decoration: InputDecoration(labelText: 'Username *')),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-              child: TextField(
-                  decoration: InputDecoration(labelText: 'Password *')),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-              child: TextField(
-                  decoration: InputDecoration(labelText: 'Confirm Password *')),
-            ),
-            ElevatedButton(
-              onPressed: onStepContinue,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-              child: const Text('Next'),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(50.0),
+                child: Text('Sign Up', style: TextStyle(fontSize: 30)),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                child: TextField(
+                    decoration: InputDecoration(labelText: 'Username *')),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                child: TextField(
+                    decoration: InputDecoration(labelText: 'Password *')),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                child: TextField(
+                    decoration:
+                        InputDecoration(labelText: 'Confirm Password *')),
+              ),
+              ElevatedButton(
+                onPressed: onStepContinue,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                child: const Text('Next'),
+              ),
+            ],
+          ),
         ),
       ),
     );

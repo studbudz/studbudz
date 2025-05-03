@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:studubdz/UI/sign_up.dart';
 import 'package:studubdz/notifier.dart';
 
 class SignInPage extends StatefulWidget {
@@ -16,35 +17,33 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Column(
-        children: [
-          // Top Section: Title and Profile Logo
-          const Expanded(
-            flex: 2,
-            child: SignInHeaderWidget(),
-          ),
-          // Middle Section: Username and Password Fields
-          Expanded(
-            flex: 2,
-            child: SignInFormWidget(
-              usernameController: _usernameController,
-              passwordController: _passwordController,
-            ),
-          ),
-          // Bottom Section: Sign In Button
-          Expanded(
-            flex: 2,
-            child: Center(
-              child: SizedBox(
-                width: screenWidth * 0.5,
-                child: ElevatedButton(
-                  onPressed: () => _handleSignIn(),
-                  child: const Text('Sign In'),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Top Section: Title and Profile Logo
+              const SignInHeaderWidget(),
+              // Middle Section: Username and Password Fields
+              SignInFormWidget(
+                usernameController: _usernameController,
+                passwordController: _passwordController,
+              ),
+              // Bottom Section: Sign In Button
+              SizedBox(
+                height: 20,
+              ),
+              Center(
+                child: SizedBox(
+                  width: screenWidth * 0.5,
+                  child: ElevatedButton(
+                    onPressed: () => _handleSignIn(),
+                    child: const Text('Sign In'),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -125,6 +124,7 @@ class _SignInFormWidgetState extends State<SignInFormWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
             controller: widget.usernameController,
@@ -167,6 +167,24 @@ class _SignInFormWidgetState extends State<SignInFormWidget> {
               }
               return null;
             },
+          ),
+          const SizedBox(height: 10),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SignUpPage(),
+                  ),
+                );
+              },
+              child: const Text(
+                'Sign Up',
+                style: TextStyle(color: Colors.blue),
+              ),
+            ),
           ),
         ],
       ),

@@ -21,25 +21,25 @@ class FeedWidget extends StatefulWidget {
 class _FeedWidgetState extends State<FeedWidget> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return SingleChildScrollView(
       padding: const EdgeInsets.only(bottom: 100, top: 20),
-      itemCount: widget.posts.length,
-      itemBuilder: (context, index) {
-        final item = widget.posts[index];
-        if (item['type'] == 'user') {
-          return Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-            child: UserRecommendationWidget(userData: item),
-          );
-        } else {
-          return Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-            child: PostWidget(data: item),
-          );
-        }
-      },
+      child: Column(
+        children: widget.posts.map((item) {
+          if (item['type'] == 'user') {
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              child: UserRecommendationWidget(userData: item),
+            );
+          } else {
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              child: PostWidget(data: item),
+            );
+          }
+        }).toList(),
+      ),
     );
   }
 }
