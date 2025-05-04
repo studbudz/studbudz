@@ -111,7 +111,10 @@ class Server {
         final uri = request.uri.path;
         print(uri);
         //idk why it's different don't ask me.
-        if (uri.startsWith('/profiles/') || uri.startsWith('/posts/')) {
+        if (uri.startsWith('/profiles/') ||
+            uri.startsWith('/posts/') ||
+            uri.startsWith('/events/')) {
+          print("downloading media");
           await _getMedia(request);
         } else if (uri == '/getUserSuggestionsFromName') {
           // handle
@@ -537,7 +540,9 @@ class Server {
             : request.uri.path;
 
     // Ensure the path starts with "profiles/" and points to a valid file in the "assets/" folder
-    if (uri.startsWith('profiles/') || uri.startsWith('posts/')) {
+    if (uri.startsWith('profiles/') ||
+        uri.startsWith('posts/') ||
+        uri.startsWith('events/')) {
       final filePath = 'assets/$uri'; // Files stored in the "assets" folder
       print("path: $filePath");
       final file = File(filePath);
@@ -658,8 +663,24 @@ class Server {
 
       // Convert DateTime objects for posts
       for (var post in posts) {
-        post['post_created_at'] =
-            (post['post_created_at'] as DateTime).toIso8601String();
+        final rawDate = post['post_created_at'];
+        if (rawDate is DateTime) {
+          post['post_created_at'] = rawDate.toIso8601String();
+        } else if (rawDate is String) {
+          // already a string, skip
+        } else {
+          post['post_created_at'] = null;
+        }
+
+        // Do the same for event dates, if they're present
+        final startAt = post['event_start_at'];
+        if (startAt is DateTime) {
+          post['event_start_at'] = startAt.toIso8601String();
+        }
+        final endAt = post['event_end_at'];
+        if (endAt is DateTime) {
+          post['event_end_at'] = endAt.toIso8601String();
+        }
       }
 
       // Directly return the raw values with DateTime converted to string

@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:studubdz/UI/profile_page.dart';
 import 'package:studubdz/notifier.dart';
 import 'package:video_player/video_player.dart';
+import 'package:intl/intl.dart';
 
 class PostWidget extends StatefulWidget {
   final dynamic data;
@@ -25,6 +25,9 @@ class _PostWidgetState extends State<PostWidget> {
     // Initiate media download when the widget is created
     if (widget.data['type'] == 'media' && widget.data['file'] != null) {
       _downloadMedia(widget.data['file']);
+    } else if (widget.data['event_description'] != null) {
+      widget.data['type'] = 'event';
+      _downloadMedia(widget.data['event_image']);
     } else {
       widget.data['type'] = 'text';
     }
@@ -182,35 +185,122 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   Widget buildEventPost(dynamic data) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+    final start = DateTime.parse(data['event_start_at']);
+    final end = DateTime.parse(data['event_end_at']);
+    final formattedTime =
+        '${DateFormat.jm().format(start)}–${DateFormat.jm().format(end)}';
+    final participants = data['participants_count'] ?? 0;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Subject
           Text(
             data['subject'],
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
-          Image.asset(
-            'assets/dummyPost.jpg', // Use the image from assets
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 250,
-          ),
-          const SizedBox(height: 8),
+
+          const SizedBox(height: 6),
+
+          // Description above the image
           Text(
             data['event_description'],
-            style: const TextStyle(fontSize: 16),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 14, height: 1.4),
           ),
+
           const SizedBox(height: 8),
-          Text(
-            'Location: ${data['event_location_name']}',
-            style: const TextStyle(fontSize: 16),
+
+          // Image with time & participants overlays
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: _downloadedFile != null
+                    ? Image.file(
+                        File(_downloadedFile!.path),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 250,
+                      )
+                    : Image.asset(
+                        'assets/dummyPost.jpg',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 250,
+                      ),
+              ),
+              // Time at bottom-left
+              Positioned(
+                left: 8,
+                bottom: 8,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    formattedTime,
+                    style: const TextStyle(fontSize: 12, color: Colors.white),
+                  ),
+                ),
+              ),
+              // Participants at bottom-right
+              Positioned(
+                right: 8,
+                bottom: 8,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.group, size: 12, color: Colors.white),
+                      const SizedBox(width: 4),
+                      Text(
+                        '$participants',
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-          Text(
-            'Time: ${data['event_start_at']} - ${data['event_end_at']}',
-            style: const TextStyle(fontSize: 16),
+
+          const SizedBox(height: 10),
+
+          // Join button with participants count
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  print('Joining event: ${data['subject']}');
+                },
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  textStyle: const TextStyle(fontSize: 14),
+                ),
+                child: const Text('Join'),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '$participants participating',
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              ),
+            ],
           ),
         ],
       ),
@@ -286,7 +376,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
             ),
             const SizedBox(width: 10),
             Text(
-              '${widget.data["username"]}', // Placeholder for username (can be dynamic)
+              '${widget.data["username"]} ${widget.data["type"]}', // Placeholder for username (can be dynamic)
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const Spacer(),
@@ -343,17 +433,17 @@ class FooterWidget extends StatelessWidget {
               iconSize: 30,
             ),
             // Comment button
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.comment_outlined),
-              iconSize: 30,
-            ),
-            // Share button
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.share_outlined),
-              iconSize: 30,
-            ),
+            // IconButton(
+            //   onPressed: () {},
+            //   icon: const Icon(Icons.comment_outlined),
+            //   iconSize: 30,
+            // ),
+            // // Share button
+            // IconButton(
+            //   onPressed: () {},
+            //   icon: const Icon(Icons.share_outlined),
+            //   iconSize: 30,
+            // ),
           ],
         ),
       ),

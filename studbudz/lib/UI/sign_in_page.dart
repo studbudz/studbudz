@@ -49,20 +49,27 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   void _handleSignIn() async {
-    String username = _usernameController.text;
-    String password = _passwordController.text;
+    String username = _usernameController.text.trim();
+    String password = _passwordController.text.trim();
 
-    print("Validating login details.");
+    if (username.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter both username and password'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     bool success = await Controller().engine.logIn(username, password);
 
     if (success) {
-      print("switching page");
+      print("Login successful, navigating to home page.");
       setState(() {
         Controller().setPage(AppPage.home);
       });
     } else {
-      // Return error
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Invalid username or password'),

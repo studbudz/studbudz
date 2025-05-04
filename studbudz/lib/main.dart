@@ -22,7 +22,7 @@ void main() {
       null,
       [
         NotificationChannel(
-          channelKey: 'basic_channel', // Fixed mismatch here
+          channelKey: 'basic_channel',
           channelName: 'Basic Notifications',
           channelGroupKey: 'basic_group',
           channelDescription: 'Notification channel for basic notifications',

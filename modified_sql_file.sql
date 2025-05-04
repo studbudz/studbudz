@@ -2092,18 +2092,12 @@ VALUES
 (5, 4),
 (5, 16);
 
-/* images not correct yet*/
 INSERT INTO event (user_id, subject_id, event_name, event_image, event_description, event_location_name, event_address, event_city, event_state, event_country, event_postal_code, event_latitude, event_longitude, event_start_at, event_end_at)
 VALUES
 (1, 1313, 'Photography Outing', 'events/1.jpg', 'Capture the beauty of nature with a group of photography enthusiasts. Bring your cameras and creativity!', 'Central Park', '59th St to 110th St, Manhattan', 'New York', 'New York', 'United States', '10022', 40.785091, -73.968285, '2025-03-05 10:00:00', '2025-03-05 12:00:00'),
 (2, 22, 'Coding Workshop', 'events/2.jpeg', 'Learn the basics of Python programming in this hands-on workshop. No prior experience required!', 'Tech Hub', '123 Innovation Drive', 'San Francisco', 'California', 'United States', '94107', 37.774929, -122.419416, '2025-03-10 14:00:00', '2025-03-10 16:00:00'),
 (3, 154, 'History Lecture', 'events/3.jpg', 'Dive into the fascinating history of ancient civilizations with our guest historian.', 'City Library', '456 Knowledge Lane', 'Chicago', 'Illinois', 'United States', '60601', 41.878113, -87.629799, '2025-03-15 11:00:00', '2025-03-15 13:00:00'),
 (4, 603, 'Astronomy Night', 'events/4.jpeg', 'Join us for a night under the stars as we explore constellations and discuss the latest in astrophysics.', 'Observatory Hill', '789 Starry Way', 'Los Angeles', 'California', 'United States', '90012', 34.052235, -118.243683, '2025-03-20 20:00:00', '2025-03-20 22:00:00'),
-(1, 27, 'Design Thinking Workshop', 'events/1.jpg', 'A hands-on workshop where participants will explore creative solutions to real-world design challenges.', 'Design Studio', '987 Creativity Blvd', 'Austin', 'Texas', 'United States', '73301', 30.267153, -97.743060, '2025-03-25 09:00:00', '2025-03-25 12:00:00'),
-(2, 18, 'Sociology Seminar', 'events/2.jpeg', 'Join us for a deep dive into social behavior and the dynamics of modern society.', 'University Hall', '321 Sociology Street', 'Boston', 'Massachusetts', 'United States', '02115', 42.360081, -71.058884, '2025-03-30 13:00:00', '2025-03-30 15:00:00'),
-(3, 984, 'Mathematics and Logic Discussion', 'events/3.jpg', 'Engage in stimulating discussions about mathematical theories and logical reasoning.', 'Coffee Shop', '101 Logical Lane', 'Seattle', 'Washington', 'United States', '98101', 47.606209, -122.332069, '2025-04-05 10:00:00', '2025-04-05 12:00:00'),
-(4, 24, 'Psychology Meetup', 'events/4.jpeg', 'Join fellow psychology enthusiasts for a casual meetup and discussion about the latest research in human behavior.', 'Coffee Shop', '555 Mental Health Ave', 'New York', 'New York', 'United States', '10001', 40.712776, -74.005974, '2025-04-10 14:00:00', '2025-04-10 16:00:00'),
-(5, 4, 'Literature Book Club', 'events/2.jpeg', 'Discuss the most influential literary works and dive deep into the art of storytelling.', 'Public Library', '123 Booklover Rd', 'San Francisco', 'California', 'United States', '94110', 37.774929, -122.419416, '2025-04-15 16:00:00', '2025-04-15 18:00:00');
 
 INSERT INTO user_event (user_id, event_id)
 VALUES

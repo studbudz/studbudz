@@ -8,6 +8,7 @@ class AuthManager {
   Future<void> saveAuthData(String token, String uuid) async {
     try {
       await _secureStorage.write(key: 'token', value: token);
+      print("Token saved: $token");
       await _secureStorage.write(key: 'uuid', value: uuid);
     } catch (e) {
       throw Exception('Error saving authentication data: $e');
