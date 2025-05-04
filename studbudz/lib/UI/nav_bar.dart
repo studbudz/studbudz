@@ -28,7 +28,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
     'Feed',
     'Home',
     'Schedule',
-    'Chat',
+    // 'Chat',
     'Profile'
         'Add Post',
   ];
@@ -102,25 +102,10 @@ class _NavBarWidgetState extends State<NavBarWidget> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    selectedIndex = 3;
-                  });
-                  print('Tapped on ${labels[3]}');
-                  notifier.setPage(AppPage.chat); // Navigate to FeedPage
-                },
-                icon: Icon(
-                  icons[3],
-                  size: iconSize,
-                  color:
-                      currentPage == AppPage.chat ? Colors.blue : Colors.black,
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
                     selectedIndex = 4;
                   });
                   print('Tapped on ${labels[4]}');
-                  notifier.setPage(AppPage.profile);
+                  notifier.setPage(AppPage.chat);
                 },
                 icon: Icon(
                   icons[4],
@@ -130,6 +115,21 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                       : Colors.black,
                 ),
               ),
+              //               IconButton(
+              //   onPressed: () {
+              //     setState(() {
+              //       selectedIndex = 3;
+              //     });
+              //     print('Tapped on ${labels[3]}');
+              //     notifier.setPage(AppPage.chat); // Navigate to FeedPage
+              //   },
+              //   icon: Icon(
+              //     icons[3],
+              //     size: iconSize,
+              //     color:
+              //         currentPage == AppPage.chat ? Colors.blue : Colors.black,
+              //   ),
+              // ),
             ],
           ),
         ),

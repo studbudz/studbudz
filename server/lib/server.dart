@@ -47,13 +47,13 @@ class Server {
     // Handles incoming connections
     await for (HttpRequest request in _httpServer) {
       print("Received request: ${request.uri.path}");
-      if (request.uri.path == '/') {
-        request.response
-          ..statusCode = HttpStatus.ok
-          ..headers.contentType = ContentType.html
-          ..write('<h1>Hello, World!</h1>') // Response content
-          ..close(); // Close the response
-      }
+      // if (request.uri.path == '/') {
+      //   request.response
+      //     ..statusCode = HttpStatus.ok
+      //     ..headers.contentType = ContentType.html
+      //     ..write('<h1>Hello, World!</h1>') // Response content
+      //     ..close(); // Close the response
+      // }
 
       if (request.uri.path == '/signin') {
         print("Received Sign In request.");
@@ -124,9 +124,9 @@ class Server {
           await _handleGetProfile(request, username);
         } else if (uri == '/subjects') {
           await _handleGetSubjects(request, username);
-        }else if (uri == '/subjects') {
+        } else if (uri == '/joinevent') {
           await _handleJoinEvent(request, username);
-        }else if (uri == '/getparticipantscount') {
+        } else if (uri == '/getparticipantscount') {
           await _handleGetParticipantCount(request, username);
         } else {
           request.response
@@ -157,7 +157,7 @@ class Server {
         username,
       ]);
 
-      print(data);
+      // print(data);
       String salt = data[0]['password_salt'];
       String passwordHash = data[0]['password_hash'];
 
@@ -170,7 +170,7 @@ class Server {
         // Generate a token and UUID
         List<String?> values = _tokenHandler.requestToken(username);
 
-        print(values);
+        // print(values);
 
         // Set headers before writing data
         request.response.statusCode = HttpStatus.ok;
@@ -304,7 +304,7 @@ class Server {
     try {
       final data = await _parseJsonBody(request);
 
-      print(data);
+      // print(data);
 
       final userId = await _resolveUserId(username);
       final content = data['post_content'] as String;
@@ -487,10 +487,6 @@ class Server {
 
       final data = formatPosts(followedPosts, suggestedUsers, newPosts);
 
-      for (var x in data) {
-        print(x);
-      }
-
       final output = {'posts': data};
 
       // Send response
@@ -648,8 +644,6 @@ class Server {
         userID,
       ]);
 
-      print(userRows);
-
       if (userRows.isEmpty) {
         request.response
           ..statusCode = HttpStatus.notFound
@@ -660,16 +654,15 @@ class Server {
       }
 
       final posts = await _sqlHandler.select('getUserPosts', [userID]);
-      
 
       // Convert DateTime objects to ISO 8601 string format
       var user = userRows.first;
       user['joined_at'] = (user['joined_at'] as DateTime).toIso8601String();
-      print('ANDREW TATE $posts');
+      // print('ANDREW TATE $posts');
       // Convert DateTime objects for posts
       for (var post in posts) {
         final rawDate = post['post_created_at'];
-        print('ANDREW TATE $post');
+        // print('ANDREW TATE $post');
 
         if (rawDate is DateTime) {
           post['post_created_at'] = rawDate.toIso8601String();
@@ -737,37 +730,41 @@ class Server {
       )
       ..close();
   }
-  
+
   Future<void> _handleJoinEvent(HttpRequest request, String username) async {
+    try {
+      String content = await utf8.decodeStream(request);
+      // Map<String, dynamic> requestBody = jsonDecode(content);
+
+      // print(requestBody);
+
+      // Your existing logic for joining the event goes here
+    } catch (e) {
+      print("Error: $e");
+
+      request.response.statusCode = HttpStatus.internalServerError;
+      request.response.write(
+        jsonEncode({
+          'error': 'Failed to join the event',
+          'details': e.toString(),
+        }),
+      );
+    } finally {
+      await request.response.close();
+    }
+  }
+}
+
+Future<void> _handleGetParticipantCount(
+  HttpRequest request,
+  String username,
+) async {
   try {
     String content = await utf8.decodeStream(request);
     Map<String, dynamic> requestBody = jsonDecode(content);
 
-    print(requestBody);
-
-    // Your existing logic for joining the event goes here
-
+    // print(requestBody);
   } catch (e) {
-    print("Error: $e");
-
-    request.response.statusCode = HttpStatus.internalServerError;
-    request.response.write(jsonEncode({'error': 'Failed to join the event', 'details': e.toString()}));
-  } finally {
-    await request.response.close();
-  }
-}
-
-
-  
-  }
-  Future<void> _handleGetParticipantCount(HttpRequest request, String username) async {
-    try{
-      String content = await utf8.decodeStream(request);
-      Map<String, dynamic> requestBody = jsonDecode(content);
-
-      print(requestBody);
-
-    } catch (e) {
     // Catch and handle any errors that occurred
     request.response
       ..statusCode = HttpStatus.internalServerError
