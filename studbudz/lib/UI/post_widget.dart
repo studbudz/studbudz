@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:studubdz/UI/profile_page.dart';
 import 'package:studubdz/notifier.dart';
@@ -18,6 +19,9 @@ class _PostWidgetState extends State<PostWidget> {
   bool isLiked = false; // Track the state of the heart icon
   XFile? _downloadedFile;
   VideoPlayerController? _videoController;
+  
+  int? participantCount;
+
 
   @override
   void initState() {
@@ -28,12 +32,21 @@ class _PostWidgetState extends State<PostWidget> {
     } else if (widget.data['event_description'] != null) {
       widget.data['type'] = 'event';
       _downloadMedia(widget.data['event_image']);
+      _handleGetParticipantCount();
     } else {
       widget.data['type'] = 'text';
     }
 
-    print("Post data: ${widget.data}");
+    // print("Post data: ${widget.data}");
   }
+  Future<void> _handleGetParticipantCount()async {
+    final eventId = widget.data['event_id'];
+    final response = await Controller().engine.getParticipantsCount(eventID: eventId);
+    print('andrew tate $response');
+  }
+
+
+
 
   Future<void> _downloadMedia(String url) async {
     if (url.isEmpty) return;
@@ -118,7 +131,7 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   Widget buildMediaPost(dynamic data) {
-    print("building media post");
+    // print("building media post");
     Widget content;
 
     if (_videoController != null && _videoController!.value.isInitialized) {
@@ -184,12 +197,17 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
+
+
   Widget buildEventPost(dynamic data) {
     final start = DateTime.parse(data['event_start_at']);
     final end = DateTime.parse(data['event_end_at']);
     final formattedTime =
         '${DateFormat.jm().format(start)}–${DateFormat.jm().format(end)}';
     final participants = data['participants_count'] ?? 0;
+
+
+    // print('ANDREW TATE $data');
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -327,11 +345,11 @@ class _HeaderWidgetState extends State<HeaderWidget> {
 
   Future<void> _downloadAvatar() async {
     final url = widget.data['user_avatar'] as String?;
-    print("avatar url: $url");
+    // print("avatar url: $url");
     if (url != null && url.isNotEmpty) {
       final file = await Controller().engine.downloadMedia(endpoint: url);
 
-      print("downloaded avatar: ${file.path}");
+      // print("downloaded avatar: ${file.path}");
 
       if (!mounted) return;
 
@@ -339,7 +357,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
         _avatarFile = file;
       });
     } else {
-      print("no avatar found");
+      // print("no avatar found");
       setState(() {
         _avatarFile = null;
       });

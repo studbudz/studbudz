@@ -55,7 +55,7 @@ class Engine {
   Future<Map<dynamic, dynamic>> autoSuggest(String query) async {
     final response = await _httpHandler.fetchData('getUserSuggestionsFromName',
         queryParams: {'query': '$query%'});
-    print(response);
+    // print(response);
     return {"hi": "hi"};
   }
 
@@ -74,7 +74,7 @@ class Engine {
         break;
       // Both functions below require separate sendData Functions because they contain media
       case 'media':
-        print(data);
+        // print(data);
         final response = await _httpHandler.sendData('mediaPost', data);
         if (response["success"] == true) {
           Controller().setPage(AppPage.feed);
@@ -83,7 +83,7 @@ class Engine {
         }
         break;
       case 'event':
-        print(data);
+        // print(data);
         final response = await _httpHandler.sendData('eventPost', data);
         if (response["success"] == true) {
           Controller().setPage(AppPage.feed);
@@ -102,7 +102,7 @@ class Engine {
 
     //makes the http request only
     final response = await _httpHandler.fetchData('feed', queryParams: params);
-    print("response: $response");
+    // print("response: $response");
     return response;
   }
 
@@ -115,7 +115,7 @@ class Engine {
           await _httpHandler.fetchData('profile', queryParams: params);
 
       // Assuming the response is a map with profile data
-      print('User profile data: $response');
+      // print('User profile data: $response');
       return response;
     } catch (e) {
       // Handle the error if the request fails
@@ -151,4 +151,24 @@ class Engine {
   Future<dynamic> getSubjects() async {
     return _httpHandler.fetchData('subjects');
   }
-}
+
+ Future<dynamic> getParticipantsCount({required int eventID}) async {
+  final params = {'event_id': '$eventID'}; // Creating query params
+
+  try {
+    // Correctly calling fetchData with query parameters
+    final response = await _httpHandler.fetchData(
+      'getparticipantscount',  // The API endpoint
+      queryParams: params       // Passing the query parameters
+    );
+
+    // Print the response for debugging
+    // print("Response: $response");
+
+    return response; // Return the response from the fetchData call
+  } catch (e) {
+    // Handle errors if the request fails
+    print('Error fetching participant count: $e');
+    throw Exception('Failed to fetch participant count');
+  }
+}}

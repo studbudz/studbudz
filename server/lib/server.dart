@@ -124,6 +124,10 @@ class Server {
           await _handleGetProfile(request, username);
         } else if (uri == '/subjects') {
           await _handleGetSubjects(request, username);
+        }else if (uri == '/subjects') {
+          await _handleJoinEvent(request, username);
+        }else if (uri == '/getparticipantscount') {
+          await _handleGetParticipantCount(request, username);
         } else {
           request.response
             ..statusCode = HttpStatus.notFound
@@ -656,14 +660,17 @@ class Server {
       }
 
       final posts = await _sqlHandler.select('getUserPosts', [userID]);
+      
 
       // Convert DateTime objects to ISO 8601 string format
       var user = userRows.first;
       user['joined_at'] = (user['joined_at'] as DateTime).toIso8601String();
-
+      print('ANDREW TATE $posts');
       // Convert DateTime objects for posts
       for (var post in posts) {
         final rawDate = post['post_created_at'];
+        print('ANDREW TATE $post');
+
         if (rawDate is DateTime) {
           post['post_created_at'] = rawDate.toIso8601String();
         } else if (rawDate is String) {
@@ -728,6 +735,43 @@ class Server {
           'subjects': userRows, // Use the raw data with formatted DateTime
         }),
       )
+      ..close();
+  }
+  
+  Future<void> _handleJoinEvent(HttpRequest request, String username) async {
+  try {
+    String content = await utf8.decodeStream(request);
+    Map<String, dynamic> requestBody = jsonDecode(content);
+
+    print(requestBody);
+
+    // Your existing logic for joining the event goes here
+
+  } catch (e) {
+    print("Error: $e");
+
+    request.response.statusCode = HttpStatus.internalServerError;
+    request.response.write(jsonEncode({'error': 'Failed to join the event', 'details': e.toString()}));
+  } finally {
+    await request.response.close();
+  }
+}
+
+
+  
+  }
+  Future<void> _handleGetParticipantCount(HttpRequest request, String username) async {
+    try{
+      String content = await utf8.decodeStream(request);
+      Map<String, dynamic> requestBody = jsonDecode(content);
+
+      print(requestBody);
+
+    } catch (e) {
+    // Catch and handle any errors that occurred
+    request.response
+      ..statusCode = HttpStatus.internalServerError
+      ..write('Error parsing request: $e')
       ..close();
   }
 }
