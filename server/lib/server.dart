@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:server/sql_handler.dart';
 import 'package:server/token_validation.dart';
 import 'websocket_handler.dart';
@@ -741,7 +740,6 @@ class Server {
       ..close();
   }
 
-
   Future<void> _handleJoinEvent(HttpRequest request, String username) async {
     try {
       String content = await utf8.decodeStream(request);
@@ -768,36 +766,34 @@ class Server {
       await request.response.close();
     }
   }
-}
 
-Future<void> _handleGetParticipantCount(
-  HttpRequest request,
-  String username,
-) async {
-  final eventID = int.tryParse(request.uri.queryParameters['event_id'] ?? '');
+  Future<void> _handleGetParticipantCount(
+    HttpRequest request,
+    String username,
+  ) async {
+    final eventID = int.tryParse(request.uri.queryParameters['event_id'] ?? '');
 
-  if (eventID == null) {
-    request.response
-      ..statusCode = HttpStatus.badRequest
-      ..headers.contentType = ContentType.json
-      ..write(jsonEncode({'error': 'Invalid or missing event_id'}))
-      ..close();
-    return;
+    if (eventID == null) {
+      request.response
+        ..statusCode = HttpStatus.badRequest
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'error': 'Invalid or missing event_id'}))
+        ..close();
+      return;
+    }
+
+    try {
+      final eventRows = await _sqlHandler.select('getParticipantsCount', [
+        eventID,
+      ]);
+
+      print(eventRows);
+    } catch (e) {
+      // Catch and handle any errors that occurred
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..write('Error parsing request: $e')
+        ..close();
+    }
   }
-
-  try {
-    final eventRows = await _sqlHandler.select('getEventById', [
-      eventID,
-      eventID,
-    ]);
-    
-    print(requestBody);
-  } catch (e) {
-    // Catch and handle any errors that occurred
-    request.response
-      ..statusCode = HttpStatus.internalServerError
-      ..write('Error parsing request: $e')
-      ..close();
-  }
 }
-
