@@ -156,6 +156,7 @@ class Engine {
   final params = {'event_id': '$eventID'}; // Creating query params
 
   try {
+    print('making request /getparticipantcount');
     // Correctly calling fetchData with query parameters
     final response = await _httpHandler.fetchData(
       'getparticipantscount',  // The API endpoint

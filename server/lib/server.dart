@@ -124,9 +124,10 @@ class Server {
           await _handleGetProfile(request, username);
         } else if (uri == '/subjects') {
           await _handleGetSubjects(request, username);
-        }else if (uri == '/subjects') {
+        } else if (uri == '/subjects') {
           await _handleJoinEvent(request, username);
-        }else if (uri == '/getparticipantscount') {
+        } else if (uri == '/getparticipantscount') {
+          print('received request at /getparticipantcount');
           await _handleGetParticipantCount(request, username);
         } else {
           request.response
@@ -157,7 +158,7 @@ class Server {
         username,
       ]);
 
-      print(data);
+      // print(data);
       String salt = data[0]['password_salt'];
       String passwordHash = data[0]['password_hash'];
 
@@ -170,7 +171,7 @@ class Server {
         // Generate a token and UUID
         List<String?> values = _tokenHandler.requestToken(username);
 
-        print(values);
+        // print(values);
 
         // Set headers before writing data
         request.response.statusCode = HttpStatus.ok;
@@ -304,7 +305,7 @@ class Server {
     try {
       final data = await _parseJsonBody(request);
 
-      print(data);
+      // print(data);
 
       final userId = await _resolveUserId(username);
       final content = data['post_content'] as String;
@@ -488,7 +489,7 @@ class Server {
       final data = formatPosts(followedPosts, suggestedUsers, newPosts);
 
       for (var x in data) {
-        print(x);
+        // print(x);
       }
 
       final output = {'posts': data};
@@ -555,7 +556,7 @@ class Server {
       if (await file.exists()) {
         final bytes = await file.readAsBytes(); // Read the file as bytes
 
-        print("done");
+        // print("done");
         // Respond with the file content
         request.response
           ..statusCode = HttpStatus.ok
@@ -648,7 +649,7 @@ class Server {
         userID,
       ]);
 
-      print(userRows);
+      // print(userRows);
 
       if (userRows.isEmpty) {
         request.response
@@ -660,16 +661,15 @@ class Server {
       }
 
       final posts = await _sqlHandler.select('getUserPosts', [userID]);
-      
 
       // Convert DateTime objects to ISO 8601 string format
       var user = userRows.first;
       user['joined_at'] = (user['joined_at'] as DateTime).toIso8601String();
-      print('ANDREW TATE $posts');
+      print('ANYTHING $posts');
       // Convert DateTime objects for posts
       for (var post in posts) {
         final rawDate = post['post_created_at'];
-        print('ANDREW TATE $post');
+        print('ANYTHING $post');
 
         if (rawDate is DateTime) {
           post['post_created_at'] = rawDate.toIso8601String();
@@ -712,7 +712,7 @@ class Server {
   }
 
   Future<void> _handleGetSubjects(HttpRequest request, String username) async {
-    print("getting subjects");
+    // print("getting subjects");
     final userRows = await _sqlHandler.select('getAllSubjects', []);
 
     //DO NOT PRINT (unless debugging)
@@ -737,37 +737,54 @@ class Server {
       )
       ..close();
   }
-  
+
   Future<void> _handleJoinEvent(HttpRequest request, String username) async {
-  try {
-    String content = await utf8.decodeStream(request);
-    Map<String, dynamic> requestBody = jsonDecode(content);
-
-    print(requestBody);
-
-    // Your existing logic for joining the event goes here
-
-  } catch (e) {
-    print("Error: $e");
-
-    request.response.statusCode = HttpStatus.internalServerError;
-    request.response.write(jsonEncode({'error': 'Failed to join the event', 'details': e.toString()}));
-  } finally {
-    await request.response.close();
-  }
-}
-
-
-  
-  }
-  Future<void> _handleGetParticipantCount(HttpRequest request, String username) async {
-    try{
+    try {
       String content = await utf8.decodeStream(request);
       Map<String, dynamic> requestBody = jsonDecode(content);
 
-      print(requestBody);
+      // print(requestBody);
 
+      // Your existing logic for joining the event goes here
     } catch (e) {
+      print("Error: $e");
+
+      request.response.statusCode = HttpStatus.internalServerError;
+      request.response.write(
+        jsonEncode({
+          'error': 'Failed to join the event',
+          'details': e.toString(),
+        }),
+      );
+    } finally {
+      await request.response.close();
+    }
+  }
+}
+
+Future<void> _handleGetParticipantCount(
+  HttpRequest request,
+  String username,
+) async {
+  final eventID = int.tryParse(request.uri.queryParameters['event_id'] ?? '');
+
+  if (eventID == null) {
+    request.response
+      ..statusCode = HttpStatus.badRequest
+      ..headers.contentType = ContentType.json
+      ..write(jsonEncode({'error': 'Invalid or missing event_id'}))
+      ..close();
+    return;
+  }
+
+  try {
+    final eventRows = await _sqlHandler.select('getEventById', [
+      eventID,
+      eventID,
+    ]);
+    
+    print(requestBody);
+  } catch (e) {
     // Catch and handle any errors that occurred
     request.response
       ..statusCode = HttpStatus.internalServerError

@@ -299,26 +299,18 @@ class _PostWidgetState extends State<PostWidget> {
           const SizedBox(height: 10),
 
           // Join button with participants count
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  print('Joining event: ${data['subject']}');
-                },
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  textStyle: const TextStyle(fontSize: 14),
-                ),
-                child: const Text('Join'),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                print('Joining event: ${data['subject']}');
+              },
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                textStyle: const TextStyle(fontSize: 14),
               ),
-              const SizedBox(width: 12),
-              Text(
-                '$participants participating',
-                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-              ),
-            ],
+              child: const Text('Join'),
+            ),
           ),
         ],
       ),
