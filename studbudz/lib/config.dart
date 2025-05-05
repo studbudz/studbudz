@@ -1,2 +1,2 @@
-const String address = '169.254.123.145:8080';
+const String address = '192.168.1.107:8080';
 bool logInCheck = true;

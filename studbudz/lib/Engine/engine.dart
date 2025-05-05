@@ -168,14 +168,15 @@ class Engine {
     }
   }
 
-  Future<dynamic> getAllEvents() async {
+  Future<dynamic> getUpcomingEvents() async {
     try {
       // Correctly calling fetchData with query parameters
-      final response = await _httpHandler.fetchData('getEvents');
+      final response = await _httpHandler.fetchData('getupcomingevents');
       return response;
     } catch (e) {
       // Handle errors if the request fails
       print('Error fetching events data: $e');
       throw Exception('Failed to fetch events data');
+    }
+  }
 }
-  } }

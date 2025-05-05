@@ -8,6 +8,7 @@ class TokenHandler {
     jwt = JWT('private_key.pem', 'public_key.pem');
   }
 
+  //this really should include the user id (this slows down the whole code.)
   List<String?> requestToken(String username) {
     var uuidGenerator = Uuid();
     String uuid = uuidGenerator.v4();

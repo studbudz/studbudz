@@ -108,7 +108,7 @@ class Server {
       } else if (request.method == 'GET') {
         // Handle GET requests
         final uri = request.uri.path;
-        print(uri);
+        // print(uri);
         //idk why it's different don't ask me.
         if (uri.startsWith('/profiles/') ||
             uri.startsWith('/posts/') ||
@@ -128,6 +128,8 @@ class Server {
         } else if (uri == '/getparticipantscount') {
           print('received request at /getparticipantcount');
           await _handleGetParticipantCount(request, username);
+        } else if (uri == '/getupcomingevents') {
+          await _handleGetUpcomingEvents(request, username);
         } else {
           request.response
             ..statusCode = HttpStatus.notFound
@@ -490,10 +492,6 @@ class Server {
 
       final data = formatPosts(followedPosts, suggestedUsers, newPosts);
 
-      for (var x in data) {
-        // print(x);
-      }
-
       final output = {'posts': data};
 
       // Send response
@@ -667,11 +665,9 @@ class Server {
       // Convert DateTime objects to ISO 8601 string format
       var user = userRows.first;
       user['joined_at'] = (user['joined_at'] as DateTime).toIso8601String();
-      print('ANYTHING $posts');
       // Convert DateTime objects for posts
       for (var post in posts) {
         final rawDate = post['post_created_at'];
-        print('ANYTHING $post');
 
         if (rawDate is DateTime) {
           post['post_created_at'] = rawDate.toIso8601String();
@@ -714,11 +710,7 @@ class Server {
   }
 
   Future<void> _handleGetSubjects(HttpRequest request, String username) async {
-    // print("getting subjects");
     final userRows = await _sqlHandler.select('getAllSubjects', []);
-
-    //DO NOT PRINT (unless debugging)
-    // print(userRows);
 
     if (userRows.isEmpty) {
       request.response
@@ -744,9 +736,6 @@ class Server {
     try {
       String content = await utf8.decodeStream(request);
       Map<String, dynamic> requestBody = jsonDecode(content);
-
-      // print(requestBody);
-      // print(requestBody);
 
       // Your existing logic for joining the event goes here
     } catch (e) {
@@ -786,11 +775,7 @@ class Server {
         return;
       }
 
-      print(eventRows[0]['participants_count']);
-
       int participantCount = eventRows[0]['participants_count'];
-
-      print("Participant count: $participantCount");
 
       request.response
         ..statusCode = HttpStatus.ok
@@ -809,9 +794,7 @@ class Server {
   Future<void> _handleGetEventData(HttpRequest request, String username) async {
     final userId = await _resolveUserId(username);
     try {
-      final eventRows = await _sqlHandler.select('getEventData', [
-        userId,
-      ]);
+      final eventRows = await _sqlHandler.select('getEventData', [userId]);
 
       if (eventRows.isEmpty) {
         request.response
@@ -821,7 +804,6 @@ class Server {
           ..close();
         return;
       }
-      print('$eventRows');
 
       request.response
         ..statusCode = HttpStatus.ok
@@ -830,6 +812,41 @@ class Server {
         ..close();
     } catch (e) {
       // Catch and handle any errors that occurred
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..write('Error parsing request: $e')
+        ..close();
+    }
+  }
+
+  Future<void> _handleGetUpcomingEvents(
+    HttpRequest request,
+    String username,
+  ) async {
+    final userId = await _resolveUserId(username);
+    try {
+      final rawRows = await _sqlHandler.select('getUpcomingEvents', [userId]);
+      final List<Map<String, dynamic>> eventData =
+          rawRows.map((row) {
+            return {
+              'userId': row['user_id'] as int,
+              'subjectId': row['subject_id'] as int?,
+              'eventName': row['event_name'] as String,
+              'eventImage': row['event_image'] as String,
+              'eventDescription': row['event_description'] as String,
+              'eventLocationName': row['event_location_name'] as String,
+              'eventAddress': row['event_address'] as String,
+              'eventStartAt':
+                  (row['event_start_at'] as DateTime).toIso8601String(),
+              'eventEndAt': (row['event_end_at'] as DateTime).toIso8601String(),
+            };
+          }).toList();
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'event_data': eventData}))
+        ..close();
+    } catch (e) {
       request.response
         ..statusCode = HttpStatus.internalServerError
         ..write('Error parsing request: $e')

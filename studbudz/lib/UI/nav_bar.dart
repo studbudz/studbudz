@@ -16,19 +16,17 @@ class _NavBarWidgetState extends State<NavBarWidget> {
   double iconSize = 36;
 
   final List<IconData> icons = [
-    CupertinoIcons.square_stack_3d_up,
-    CupertinoIcons.home,
-    CupertinoIcons.calendar,
-    // CupertinoIcons.chat_bubble_text, // Commented out chat icon
-    CupertinoIcons.person,
-    CupertinoIcons.add
+    CupertinoIcons.square_stack_3d_up, // Feed
+    CupertinoIcons.home, // Home (center icon)
+    CupertinoIcons.calendar, // Schedule
+    CupertinoIcons.person, // Profile
+    CupertinoIcons.add // Add (not used directly)
   ];
 
   final List<String> labels = [
     'Feed',
     'Home',
     'Schedule',
-    // 'Chat', // Commented out chat label
     'Profile',
     'Add Post',
   ];
@@ -50,12 +48,13 @@ class _NavBarWidgetState extends State<NavBarWidget> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Feed
               IconButton(
                 onPressed: () {
                   setState(() {
                     selectedIndex = 0;
                   });
-                  notifier.setPage(AppPage.feed); // Navigate to Feed
+                  notifier.setPage(AppPage.feed);
                 },
                 icon: Icon(
                   icons[0],
@@ -64,29 +63,14 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                       currentPage == AppPage.feed ? Colors.blue : Colors.black,
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    selectedIndex = 1;
-                  });
-                  print('Tapped on ${labels[2]}');
-                  notifier.setPage(AppPage.schedule);
-                },
-                icon: Icon(
-                  icons[2],
-                  size: iconSize,
-                  color: currentPage == AppPage.schedule
-                      ? Colors.blue
-                      : Colors.black,
-                ),
-              ),
+              // Home (with toggle to Add Post)
               IconButton(
                 onPressed: () {
                   if (currentPage == AppPage.home) {
                     notifier.setPage(AppPage.createPost);
                   } else {
                     setState(() {
-                      selectedIndex = 2;
+                      selectedIndex = 1;
                     });
                     print('Tapped on ${labels[1]}');
                     notifier.setPage(AppPage.home);
@@ -99,31 +83,31 @@ class _NavBarWidgetState extends State<NavBarWidget> {
                       currentPage == AppPage.home ? Colors.blue : Colors.black,
                 ),
               ),
-              // Commented out chat page button
-              /*
+              // Schedule
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    selectedIndex = 2;
+                  });
+                  print('Tapped on ${labels[2]}');
+                  notifier.setPage(AppPage.schedule);
+                },
+                icon: Icon(
+                  icons[2],
+                  size: iconSize,
+                  color: currentPage == AppPage.schedule
+                      ? Colors.blue
+                      : Colors.black,
+                ),
+              ),
+              // Profile
               IconButton(
                 onPressed: () {
                   setState(() {
                     selectedIndex = 3;
                   });
                   print('Tapped on ${labels[3]}');
-                  notifier.setPage(AppPage.chat); // Navigate to Chat
-                },
-                icon: Icon(
-                  icons[3],
-                  size: iconSize,
-                  color:
-                      currentPage == AppPage.chat ? Colors.blue : Colors.black,
-                ),
-              ),
-              */
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    selectedIndex = 3; // Adjusted index due to chat removal
-                  });
-                  print('Tapped on ${labels[3]}');
-                  notifier.setPage(AppPage.profile); // Navigate to Profile
+                  notifier.setPage(AppPage.profile);
                 },
                 icon: Icon(
                   icons[3],

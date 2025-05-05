@@ -105,6 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
               },
             ),
         ],
+        toolbarHeight: 40,
       ),
       body: Stack(
         children: [
@@ -113,36 +114,53 @@ class _ProfilePageState extends State<ProfilePage> {
             ListView(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: EdgeInsets.only(
+                    bottom: isCurrentUserProfile ? 40.0 : 0.0,
+                    left: 16,
+                    right: 16,
+                    top: 16,
+                  ),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Profile Picture
                       CircleAvatar(
                         radius: 50,
                         backgroundImage: _avatarFile != null
                             ? FileImage(File(_avatarFile!.path))
                             : null,
                         child: _avatarFile == null
-                            ? const Icon(Icons.person, size: 50)
+                            ? const Icon(Icons.person, size: 32)
                             : null,
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 14),
+                      // <-- Expanded here absorbs the remaining width
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(username,
-                                style: const TextStyle(
-                                    fontSize: 22, fontWeight: FontWeight.bold)),
+                            Text(
+                              username,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             const SizedBox(height: 4),
-                            Text(bio,
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.grey)),
-                            const SizedBox(height: 16),
+                            Text(
+                              bio,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 12),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 _buildStatsColumn(postsCount, 'Posts'),
+                                const SizedBox(width: 24),
                                 _buildClickableStatsColumn(
                                     followersCount, 'Friends', context),
                               ],
@@ -154,38 +172,46 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (isCurrentUserProfile) {
-                        final updatedProfile = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditProfilePage(
-                                currentName: username, currentBio: bio),
-                          ),
-                        );
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: SizedBox(
+                    height: 30,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        textStyle: const TextStyle(fontSize: 14),
+                      ),
+                      onPressed: () async {
+                        if (isCurrentUserProfile) {
+                          final updatedProfile = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditProfilePage(
+                                  currentName: username, currentBio: bio),
+                            ),
+                          );
 
-                        if (updatedProfile != null) {
-                          setState(() {
-                            username = updatedProfile['name'];
-                            bio = updatedProfile['bio'];
-                          });
+                          if (updatedProfile != null) {
+                            setState(() {
+                              username = updatedProfile['name'];
+                              bio = updatedProfile['bio'];
+                            });
+                          }
+                        } else {
+                          // Add follow/unfollow logic here
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Follow user')),
+                          );
                         }
-                      } else {
-                        // Add follow/unfollow logic here
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Follow user')),
-                        );
-                      }
-                    },
-                    child:
-                        Text(isCurrentUserProfile ? 'Edit Profile' : 'Follow'),
+                      },
+                      child: Text(
+                          isCurrentUserProfile ? 'Edit Profile' : 'Follow'),
+                    ),
                   ),
                 ),
+                const SizedBox(height: 8),
                 Container(
                   color: Colors.grey[100],
-                  height: MediaQuery.of(context).size.height * 0.6,
+                  height: MediaQuery.of(context).size.height * 0.8,
                   child: FeedWidget(
                     posts: posts ??
                         [const Center(child: Text('Nothing to see here'))],

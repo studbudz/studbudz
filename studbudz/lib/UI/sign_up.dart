@@ -15,7 +15,11 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   int step = 0;
-  late String words;
+  String username = '';
+  String password = '';
+  String confirmPassword = '';
+  String words = '';
+  List<TextEditingController> wordControllers = [];
 
   void nextStep() {
     setState(() {
@@ -28,6 +32,24 @@ class _SignUpPageState extends State<SignUpPage> {
     final generatedWords = await generateMnemonic();
     setState(() {
       words = generatedWords;
+      wordControllers = List.generate(
+        words.split(' ').length,
+        (_) => TextEditingController(),
+      );
+    });
+  }
+
+  void onUsernameChanged(String val) {
+    print("Username: $val");
+    setState(() {
+      username = val;
+    });
+  }
+
+  void onPasswordChanged(String val) {
+    print("Password: $val");
+    setState(() {
+      password = val;
     });
   }
 
@@ -35,11 +57,28 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     switch (step) {
       case 0:
-        return AccountSetup(onStepContinue: nextStep);
+        return AccountSetup(
+          onStepContinue: nextStep,
+          onUsernameChanged: onUsernameChanged,
+          onPasswordChanged: onPasswordChanged,
+          onConfirmPasswordChanged: (val) => confirmPassword = val,
+        );
       case 1:
         return WordGeneration(words: words, onStep: nextStep);
       case 2:
-        return WordVerification(words: words, onStep: nextStep);
+        return WordVerification(
+          words: words,
+          controllers: wordControllers,
+          onStep: () {
+            // Here you can handle sending all data to your server
+            print("Username: $username");
+            print("Password: $password");
+            print("Recovery Phrase: $words");
+            print(
+                "Entered Words: ${wordControllers.map((c) => c.text).join(' ')}");
+            nextStep();
+          },
+        );
       default:
         return const Placeholder();
     }
@@ -47,8 +86,18 @@ class _SignUpPageState extends State<SignUpPage> {
 }
 
 class AccountSetup extends StatelessWidget {
-  const AccountSetup({super.key, required this.onStepContinue});
+  const AccountSetup({
+    super.key,
+    required this.onStepContinue,
+    required this.onUsernameChanged,
+    required this.onPasswordChanged,
+    required this.onConfirmPasswordChanged,
+  });
+
   final VoidCallback onStepContinue;
+  final ValueChanged<String> onUsernameChanged;
+  final ValueChanged<String> onPasswordChanged;
+  final ValueChanged<String> onConfirmPasswordChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -61,21 +110,32 @@ class AccountSetup extends StatelessWidget {
                 padding: EdgeInsets.all(50.0),
                 child: Text('Sign Up', style: TextStyle(fontSize: 30)),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 child: TextField(
-                    decoration: InputDecoration(labelText: 'Username *')),
+                  decoration: const InputDecoration(labelText: 'Username *'),
+                  onChanged: onUsernameChanged,
+                ),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 child: TextField(
-                    decoration: InputDecoration(labelText: 'Password *')),
+                  decoration: const InputDecoration(labelText: 'Password *'),
+                  obscureText: true,
+                  onChanged: onPasswordChanged,
+                ),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'Confirm Password *')),
+                  decoration:
+                      const InputDecoration(labelText: 'Confirm Password *'),
+                  obscureText: true,
+                  onChanged: onConfirmPasswordChanged,
+                ),
               ),
               ElevatedButton(
                 onPressed: onStepContinue,
@@ -116,7 +176,6 @@ class _WordGenerationState extends State<WordGeneration> {
   @override
   Widget build(BuildContext context) {
     final wordList = widget.words.split(' ');
-    print(wordList.length);
 
     return Scaffold(
       body: Center(
@@ -226,29 +285,43 @@ class _WordGenerationState extends State<WordGeneration> {
   }
 }
 
-class WordVerification extends StatefulWidget {
-  const WordVerification(
-      {super.key, required this.words, required this.onStep});
+class WordVerification extends StatelessWidget {
+  const WordVerification({
+    super.key,
+    required this.words,
+    required this.controllers,
+    required this.onStep,
+  });
+
   final String words;
+  final List<TextEditingController> controllers;
   final VoidCallback onStep;
 
-  @override
-  State<WordVerification> createState() => _WordVerificationState();
-}
+  void handleInput(int index, String value) {
+    final words = value.trim().split(RegExp(r'\s+'));
+    if (words.isEmpty) return;
 
-class _WordVerificationState extends State<WordVerification> {
-  late List<TextEditingController> wordControllers;
+    // Set current controller to first word
+    controllers[index].text = words.first;
 
-  @override
-  void initState() {
-    super.initState();
-    wordControllers = List.generate(
-        widget.words.split(' ').length, (index) => TextEditingController());
+    // Move cursor to the end
+    controllers[index].selection = TextSelection.fromPosition(
+      TextPosition(offset: controllers[index].text.length),
+    );
+
+    // Get remaining words
+    final remaining = words.sublist(1);
+
+    if (remaining.isNotEmpty && index + 1 < controllers.length) {
+      final nextValue = remaining.join(' ');
+      handleInput(
+          index + 1, nextValue); // Recursively send to the next controller
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final wordsList = widget.words.split(' ');
+    final wordsList = words.split(' ');
 
     return Scaffold(
       body: Center(
@@ -292,8 +365,11 @@ class _WordVerificationState extends State<WordVerification> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: TextField(
-                                controller: wordControllers[index],
+                                controller: controllers[index],
                                 textAlign: TextAlign.center,
+                                onChanged: (val) {
+                                  handleInput(index, val);
+                                },
                                 decoration: const InputDecoration(
                                   filled: true,
                                   fillColor: Colors.white,
@@ -312,7 +388,7 @@ class _WordVerificationState extends State<WordVerification> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: widget.onStep,
+                onPressed: onStep,
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
                 child: const Text('Confirm',
                     style: TextStyle(color: Colors.white)),

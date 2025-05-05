@@ -27,10 +27,17 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   }
 
   Future<void> _handleGetEventData() async {
-    final response = await Controller().engine.getAllEvents();
+    final response = await Controller().engine.getUpcomingEvents();
+    final rawList = response['event_data'] as List<dynamic>? ?? [];
+    if (rawList.isEmpty) return;
+    final parsed = rawList.map((e) {
+      final m = Map<String, dynamic>.from(e as Map);
+      m['eventStartAt'] = DateTime.parse(m['eventStartAt'] as String);
+      m['eventEndAt'] = DateTime.parse(m['eventEndAt'] as String);
+      return m;
+    }).toList();
     setState(() {
-      eventData = response['eventdata'];
-      
+      eventData = parsed;
     });
   }
 
@@ -70,46 +77,57 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
         const SizedBox(height: 15),
         // Stack for the event cards and navigation buttons
         Expanded(
-          child: Stack(
-            children: [
-              PageView.builder(
-                controller: _pageController,
-                itemCount: eventData.length,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  double scale =
-                      (1.1 - 0.2 * (currentPage - index).abs()).clamp(0.9, 1.1);
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Transform.scale(
-                      scale: scale,
-                      child: Center(
-                        child: EventCard(
-                            event: eventData[index],
-                            height: widget.height ?? 0.5),
-                      ),
+          child: eventData.isEmpty
+              ? Center(
+                  child: Text(
+                    "No upcoming events",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[700],
                     ),
-                  );
-                },
-              ),
-              Positioned(
-                left: 20,
-                top: centerY,
-                child: IconButton(
-                    onPressed: previousPage,
-                    icon: const Icon(Icons.arrow_back_ios_rounded,
-                        color: Colors.white, size: 30)),
-              ),
-              Positioned(
-                right: 20,
-                top: centerY,
-                child: IconButton(
-                    onPressed: nextPage,
-                    icon: const Icon(Icons.arrow_forward_ios_rounded,
-                        color: Colors.white, size: 30)),
-              ),
-            ],
-          ),
+                  ),
+                )
+              : Stack(
+                  children: [
+                    PageView.builder(
+                      controller: _pageController,
+                      itemCount: eventData.length,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        double scale = (1.1 - 0.2 * (currentPage - index).abs())
+                            .clamp(0.9, 1.1);
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Transform.scale(
+                            scale: scale,
+                            child: Center(
+                              child: EventCard(
+                                  event: eventData[index],
+                                  height: widget.height ?? 0.5),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    Positioned(
+                      left: 20,
+                      top: centerY,
+                      child: IconButton(
+                          onPressed: previousPage,
+                          icon: const Icon(Icons.arrow_back_ios_rounded,
+                              color: Colors.white, size: 30)),
+                    ),
+                    Positioned(
+                      right: 20,
+                      top: centerY,
+                      child: IconButton(
+                          onPressed: nextPage,
+                          icon: const Icon(Icons.arrow_forward_ios_rounded,
+                              color: Colors.white, size: 30)),
+                    ),
+                  ],
+                ),
         ),
       ],
     );
