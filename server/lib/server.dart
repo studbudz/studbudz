@@ -787,7 +787,21 @@ class Server {
         eventID,
       ]);
 
+      if (eventRows.isEmpty) {
+        request.response
+          ..statusCode = HttpStatus.notFound
+          ..headers.contentType = ContentType.json
+          ..write(jsonEncode({'error': 'Event not found'}))
+          ..close();
+        return;
+      }
       print(eventRows);
+      int participantCount = eventRows[0]['participant_count'];
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'participant_count': participantCount}))
+        ..close();
     } catch (e) {
       // Catch and handle any errors that occurred
       request.response

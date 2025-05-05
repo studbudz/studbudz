@@ -42,7 +42,8 @@ class _PostWidgetState extends State<PostWidget> {
   Future<void> _handleGetParticipantCount()async {
     final eventId = widget.data['event_id'];
     final response = await Controller().engine.getParticipantsCount(eventID: eventId);
-    print('andrew tate $response');
+    print('text $response');
+    participantCount = response['participant_count'];
   }
 
 
@@ -204,7 +205,7 @@ class _PostWidgetState extends State<PostWidget> {
     final end = DateTime.parse(data['event_end_at']);
     final formattedTime =
         '${DateFormat.jm().format(start)}–${DateFormat.jm().format(end)}';
-    final participants = data['participants_count'] ?? 0;
+    final participants = participantCount ?? 0;
 
 
     // print('ANDREW TATE $data');
