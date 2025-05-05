@@ -108,6 +108,7 @@ class HttpRequestHandler {
 
   Future<Map<String, dynamic>> fetchData(String endpoint,
       {Map<String, String>? queryParams}) async {
+    print("Fetching data");
     //replace with getter from auth manager
     final uri = Uri.parse('$_address/$endpoint');
     final url = queryParams != null && queryParams.isNotEmpty
@@ -129,6 +130,7 @@ class HttpRequestHandler {
 
       //OK!
       if (response.statusCode == 200 || response.statusCode == 201) {
+        print("Response: $responseBody");
         // Decode the JSON response
         return jsonDecode(responseBody);
       } else {

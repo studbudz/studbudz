@@ -752,16 +752,6 @@ class Server {
     } catch (e) {
       print("Error: $e");
       // Your existing logic for joining the event goes here
-    } catch (e) {
-      print("Error: $e");
-
-      request.response.statusCode = HttpStatus.internalServerError;
-      request.response.write(
-        jsonEncode({
-          'error': 'Failed to join the event',
-          'details': e.toString(),
-        }),
-      );
     } finally {
       await request.response.close();
     }
@@ -795,8 +785,13 @@ class Server {
           ..close();
         return;
       }
-      print(eventRows);
-      int participantCount = eventRows[0]['participant_count'];
+
+      print(eventRows[0]['participants_count']);
+
+      int participantCount = eventRows[0]['participants_count'];
+
+      print("Participant count: $participantCount");
+
       request.response
         ..statusCode = HttpStatus.ok
         ..headers.contentType = ContentType.json

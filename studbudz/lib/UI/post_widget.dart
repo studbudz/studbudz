@@ -19,9 +19,8 @@ class _PostWidgetState extends State<PostWidget> {
   bool isLiked = false; // Track the state of the heart icon
   XFile? _downloadedFile;
   VideoPlayerController? _videoController;
-  
-  int? participantCount;
 
+  int? participantCount;
 
   @override
   void initState() {
@@ -39,15 +38,17 @@ class _PostWidgetState extends State<PostWidget> {
 
     // print("Post data: ${widget.data}");
   }
-  Future<void> _handleGetParticipantCount()async {
+
+  Future<void> _handleGetParticipantCount() async {
     final eventId = widget.data['event_id'];
-    final response = await Controller().engine.getParticipantsCount(eventID: eventId);
-    print('text $response');
-    participantCount = response['participant_count'];
+
+    final response =
+        await Controller().engine.getParticipantsCount(eventID: eventId);
+
+    setState(() {
+      participantCount = response['participant_count'];
+    });
   }
-
-
-
 
   Future<void> _downloadMedia(String url) async {
     if (url.isEmpty) return;
@@ -198,15 +199,12 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
-
-
   Widget buildEventPost(dynamic data) {
     final start = DateTime.parse(data['event_start_at']);
     final end = DateTime.parse(data['event_end_at']);
     final formattedTime =
         '${DateFormat.jm().format(start)}–${DateFormat.jm().format(end)}';
     final participants = participantCount ?? 0;
-
 
     // print('ANDREW TATE $data');
 

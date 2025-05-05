@@ -156,15 +156,11 @@ class Engine {
     final params = {'event_id': '$eventID'}; // Creating query params
 
     try {
-      print('making request /getparticipantcount');
       // Correctly calling fetchData with query parameters
       final response = await _httpHandler.fetchData('getparticipantscount',
           queryParams: params);
 
-      // Print the response for debugging
-      // print("Response: $response");
-
-      return response; // Return the response from the fetchData call
+      return response;
     } catch (e) {
       // Handle errors if the request fails
       print('Error fetching participant count: $e');

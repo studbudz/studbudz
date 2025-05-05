@@ -12,52 +12,22 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   final PageController _pageController = PageController(viewportFraction: 0.7);
   double currentPage = 0;
 
-  final List<Map<String, dynamic>> eventData = [
-    {
-      'userId': 1,
-      'subjectId': 2,
-      'eventName': 'Physics Café at Starbucks',
-      'eventImage': 'starbucks_physics_image.jpg',
-      'eventDescription':
-          "Join us for an intellectually stimulating cup of coffee at Starbucks. Let's talk all things physics, from quantum mechanics to the mysteries of the universe!",
-      'eventLocationName': 'Starbucks Café',
-      'eventAddress': 'Whiteley Wy, Whiteley, Fareham PO15 7LJ',
-      'eventStartAt': DateTime.parse('2025-03-05 10:00:00'),
-      'eventEndAt': DateTime.parse('2025-03-05 12:00:00'),
-    },
-    {
-      'userId': 2,
-      'subjectId': 5,
-      'eventName': 'Computer Science & Coffee at The Isambard',
-      'eventImage': 'isambard_computer_science_image.jpg',
-      'eventDescription':
-          "Come join us at The Isambard Kingdom Brunel in Portsmouth for a great blend of caffeine and computer science talk. Whether you're a coding newbie or a seasoned developer, there's something for everyone!",
-      'eventLocationName': 'The Isambard Kingdom Brunel',
-      'eventAddress': '2 Guildhall Walk, Portsmouth PO1 2DD',
-      'eventStartAt': DateTime.parse('2025-03-06 14:00:00'),
-      'eventEndAt': DateTime.parse('2025-03-06 16:00:00'),
-    },
-    {
-      'userId': 4,
-      'subjectId': null,
-      'eventName': 'Italian Bear Chocolate Meetup',
-      'eventImage': 'chocolate_meetup_image.jpg',
-      'eventDescription':
-          "A casual meetup for all chocolate lovers in the heart of Fitzrovia. Meet new people, chat, and enjoy delicious Italian Bear Chocolate together.",
-      'eventLocationName': 'Italian Bear Chocolate',
-      'eventAddress': '29 Rathbone Pl, London W1T 1JG',
-      'eventStartAt': DateTime.parse('2025-03-07 18:00:00'),
-      'eventEndAt': DateTime.parse('2025-03-07 20:00:00'),
-    },
-  ];
+  final List<Map<String, dynamic>> eventData = [];
 
   @override
   void initState() {
     super.initState();
+    _handleGetScheduleData();
     _pageController.addListener(() {
       setState(() {
         currentPage = _pageController.page ?? 0;
       });
+    });
+  }
+
+  Future<void> _handleGetScheduleData() async {
+    setState(() {
+      //UPDATE THIS PAGE WITH THE DATA FROM THE SERVER
     });
   }
 
