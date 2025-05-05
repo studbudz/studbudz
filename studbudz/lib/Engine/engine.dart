@@ -167,4 +167,15 @@ class Engine {
       throw Exception('Failed to fetch participant count');
     }
   }
+
+  Future<dynamic> getAllEvents() async {
+    try {
+      // Correctly calling fetchData with query parameters
+      final response = await _httpHandler.fetchData('getEvents');
+      return response;
+    } catch (e) {
+      // Handle errors if the request fails
+      print('Error fetching events data: $e');
+      throw Exception('Failed to fetch events data');
 }
+  } }

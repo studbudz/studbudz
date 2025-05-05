@@ -18,5 +18,6 @@
     "getUserById": "SELECT user_id, username, user_bio, account_type, user_avatar, user_private, joined_at, (SELECT COUNT(*) FROM follower WHERE user_id = ?) AS followers_count FROM user WHERE user_id = ?",
     "getUserPosts": "SELECT CASE WHEN p.event_id IS NOT NULL THEN 'event' WHEN p.post_url IS NOT NULL THEN 'media' ELSE 'text' END AS type, s.subject_name AS subject, p.post_content, p.post_url AS file, p.event_id AS event_id, e.event_name, e.event_image, e.event_description, e.event_location_name, e.event_start_at, e.event_end_at, e.event_private, p.post_private, u.user_id, u.username, u.user_avatar, p.post_created_at FROM post p LEFT JOIN user u ON p.user_id = u.user_id LEFT JOIN subject s ON p.subject_id = s.subject_id LEFT JOIN event e ON p.event_id = e.event_id WHERE p.user_id = ? ORDER BY p.post_created_at DESC",    "userJoinEvent": "INSERT INTO user_event(user_id, event_id) VALUES (?, ?)",
     "getParticipantsCount": "SELECT COUNT(*) AS participants_count FROM user_event WHERE event_id = ?",
-    "getAllSubjects": "SELECT subject_id, subject_name FROM subject"
+    "getAllSubjects": "SELECT subject_id, subject_name FROM subject",
+    "getUpcomingEvents": "SELECT e.* FROM event e INNER JOIN user_event ue ON e.event_id = ue.event_id WHERE ue.user_id = ? AND e.event_start_at > NOW() ORDER BY e.event_start_at ASC"
 }

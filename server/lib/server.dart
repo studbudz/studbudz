@@ -805,4 +805,35 @@ class Server {
         ..close();
     }
   }
+
+  Future<void> _handleGetEventData(HttpRequest request, String username) async {
+    final userId = await _resolveUserId(username);
+    try {
+      final eventRows = await _sqlHandler.select('getEventData', [
+        userId,
+      ]);
+
+      if (eventRows.isEmpty) {
+        request.response
+          ..statusCode = HttpStatus.notFound
+          ..headers.contentType = ContentType.json
+          ..write(jsonEncode({'error': 'Event not found'}))
+          ..close();
+        return;
+      }
+      print('$eventRows');
+
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'event_data': eventRows}))
+        ..close();
+    } catch (e) {
+      // Catch and handle any errors that occurred
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..write('Error parsing request: $e')
+        ..close();
+    }
+  }
 }

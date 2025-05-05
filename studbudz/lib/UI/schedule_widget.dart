@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:studubdz/notifier.dart';
 
 class ScheduleWidget extends StatefulWidget {
   final double? height;
@@ -12,12 +13,12 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   final PageController _pageController = PageController(viewportFraction: 0.7);
   double currentPage = 0;
 
-  final List<Map<String, dynamic>> eventData = [];
+  List<Map<String, dynamic>> eventData = [];
 
   @override
   void initState() {
     super.initState();
-    _handleGetScheduleData();
+    _handleGetEventData();
     _pageController.addListener(() {
       setState(() {
         currentPage = _pageController.page ?? 0;
@@ -25,9 +26,11 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     });
   }
 
-  Future<void> _handleGetScheduleData() async {
+  Future<void> _handleGetEventData() async {
+    final response = await Controller().engine.getAllEvents();
     setState(() {
-      //UPDATE THIS PAGE WITH THE DATA FROM THE SERVER
+      eventData = response['eventdata'];
+      
     });
   }
 
