@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:studubdz/UI/feed_widget.dart';
+import 'package:studubdz/UI/friends_page.dart';
 import 'package:studubdz/UI/nav_bar.dart';
 import 'package:studubdz/notifier.dart';
 import 'edit_profile_page.dart'; // Import the EditProfilePage
@@ -221,7 +222,12 @@ class _ProfilePageState extends State<ProfilePage> {
       int count, String label, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Controller().setPage(AppPage.friendsPage);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const FriendsPage(),
+          ),
+        );
       },
       child: Column(
         children: [

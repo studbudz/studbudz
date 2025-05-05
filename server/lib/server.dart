@@ -47,13 +47,13 @@ class Server {
     // Handles incoming connections
     await for (HttpRequest request in _httpServer) {
       print("Received request: ${request.uri.path}");
-      if (request.uri.path == '/') {
-        request.response
-          ..statusCode = HttpStatus.ok
-          ..headers.contentType = ContentType.html
-          ..write('<h1>Hello, World!</h1>') // Response content
-          ..close(); // Close the response
-      }
+      // if (request.uri.path == '/') {
+      //   request.response
+      //     ..statusCode = HttpStatus.ok
+      //     ..headers.contentType = ContentType.html
+      //     ..write('<h1>Hello, World!</h1>') // Response content
+      //     ..close(); // Close the response
+      // }
 
       if (request.uri.path == '/signin') {
         print("Received Sign In request.");
@@ -159,6 +159,7 @@ class Server {
       ]);
 
       // print(data);
+      // print(data);
       String salt = data[0]['password_salt'];
       String passwordHash = data[0]['password_hash'];
 
@@ -171,6 +172,7 @@ class Server {
         // Generate a token and UUID
         List<String?> values = _tokenHandler.requestToken(username);
 
+        // print(values);
         // print(values);
 
         // Set headers before writing data
@@ -305,6 +307,7 @@ class Server {
     try {
       final data = await _parseJsonBody(request);
 
+      // print(data);
       // print(data);
 
       final userId = await _resolveUserId(username);
@@ -738,13 +741,18 @@ class Server {
       ..close();
   }
 
+
   Future<void> _handleJoinEvent(HttpRequest request, String username) async {
     try {
       String content = await utf8.decodeStream(request);
       Map<String, dynamic> requestBody = jsonDecode(content);
 
       // print(requestBody);
+      // print(requestBody);
 
+      // Your existing logic for joining the event goes here
+    } catch (e) {
+      print("Error: $e");
       // Your existing logic for joining the event goes here
     } catch (e) {
       print("Error: $e");
@@ -792,3 +800,4 @@ Future<void> _handleGetParticipantCount(
       ..close();
   }
 }
+
