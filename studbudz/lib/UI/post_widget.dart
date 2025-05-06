@@ -50,6 +50,28 @@ class _PostWidgetState extends State<PostWidget> {
     });
   }
 
+  Future<void> _handleHasJoined() async {
+    final eventId = widget.data['event_id'];
+
+    print("Checking if user has joined event with ID: $eventId");
+
+    final response = await Controller().engine.hasJoinedEvent(eventID: eventId);
+
+    setState(() {});
+  }
+
+  Future<void> _handleJoinEvent() async {
+    print('data: ${widget.data}');
+    final eventId = widget.data['event_id'];
+
+    print("Joining event with ID: $eventId");
+
+    final response =
+        await Controller().engine.handleJoinEvent(eventID: eventId);
+
+    setState(() {});
+  }
+
   Future<void> _downloadMedia(String url) async {
     if (url.isEmpty) return;
     final file = await Controller().engine.downloadMedia(endpoint: url);
@@ -301,7 +323,7 @@ class _PostWidgetState extends State<PostWidget> {
           Center(
             child: ElevatedButton(
               onPressed: () {
-                print('Joining event: ${data['subject']}');
+                _handleJoinEvent();
               },
               style: ElevatedButton.styleFrom(
                 padding:
@@ -385,7 +407,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
             ),
             const SizedBox(width: 10),
             Text(
-              '${widget.data["username"]} ${widget.data["type"]}', // Placeholder for username (can be dynamic)
+              '${widget.data["username"]}', // Placeholder for username (can be dynamic)
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const Spacer(),

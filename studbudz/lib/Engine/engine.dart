@@ -179,4 +179,32 @@ class Engine {
       throw Exception('Failed to fetch events data');
     }
   }
+
+  Future<void> handleJoinEvent({required eventID}) async {
+    final params = {'event_id': '$eventID'}; // Creating query params
+
+    try {
+      // Correctly calling fetchData with query parameters
+      final response =
+          await _httpHandler.sendData('joinevent', {'event_id': eventID});
+    } catch (e) {
+      // Handle errors if the request fails
+      print('Error joining event: $e');
+      throw Exception('Failed to join event');
+    }
+  }
+
+  Future<void> hasJoinedEvent({required eventID}) async {
+    final params = {'event_id': '$eventID'}; // Creating query params
+
+    try {
+      // Correctly calling fetchData with query parameters
+      final response =
+          await _httpHandler.fetchData('hasjoined', queryParams: params);
+    } catch (e) {
+      // Handle errors if the request fails
+      print('Error checking event participation: $e');
+      throw Exception('Failed to check event participation');
+    }
+  }
 }

@@ -101,6 +101,8 @@ class Server {
             await _handleFollow(request, username);
           case '/unfollow':
             await _handleUnfollow(request, username);
+          case '/joinevent':
+            await _handleJoinEvent(request, username);
           default:
             request.response.statusCode = HttpStatus.notFound;
             await request.response.close();
@@ -130,6 +132,8 @@ class Server {
           await _handleGetParticipantCount(request, username);
         } else if (uri == '/getupcomingevents') {
           await _handleGetUpcomingEvents(request, username);
+        } else if (uri == '/hasjoinedevent') {
+          await _handleHasJoinedEvent(request, username);
         } else {
           request.response
             ..statusCode = HttpStatus.notFound
@@ -737,6 +741,33 @@ class Server {
       String content = await utf8.decodeStream(request);
       Map<String, dynamic> requestBody = jsonDecode(content);
 
+      print("Join Event Request: $requestBody");
+
+      final eventID = requestBody['event_id'] as int;
+
+      final userID = await _resolveUserId(username);
+
+      final eventRows = await _sqlHandler.insert('addUserToEvent', [
+        userID,
+        eventID,
+      ]);
+
+      print(eventRows);
+
+      if (eventRows != 1) {
+        request.response
+          ..statusCode = HttpStatus.internalServerError
+          ..headers.contentType = ContentType.json
+          ..write(jsonEncode({'error': 'Failed to join event'}))
+          ..close();
+        return;
+      }
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'success': true}))
+        ..close();
+
       // Your existing logic for joining the event goes here
     } catch (e) {
       print("Error: $e");
@@ -852,5 +883,13 @@ class Server {
         ..write('Error parsing request: $e')
         ..close();
     }
+  }
+
+  Future<void> _handleHasJoinedEvent(
+    HttpRequest request,
+    String username,
+  ) async {
+    final eventID = int.tryParse(request.uri.queryParameters['event_id'] ?? '');
+    final userId = await _resolveUserId(username);
   }
 }
