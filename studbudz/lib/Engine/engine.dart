@@ -10,7 +10,7 @@ class Engine {
   late final Controller _controller;
   late WebsocketHandler _websocketHandler;
   late final HttpRequestHandler _httpHandler;
-  late final int userId;
+  late int userId = 0;
 
   Engine() {
     _authManager = AuthManager();
@@ -26,9 +26,13 @@ class Engine {
   }
 
   Future<bool> isLoggedIn() async {
-    String fetchedUserId = await getUserId();
-    userId = int.parse(fetchedUserId);
-    return await _authManager.isLoggedIn();
+    try {
+      String token = await _authManager.getToken();
+      return token.isNotEmpty; // Check if token exists and is valid
+    } catch (e) {
+      print("Error checking login state: $e");
+      return false;
+    }
   }
 
   Future<bool> logIn(String username, String password) async {
@@ -38,15 +42,15 @@ class Engine {
       bool response = await _httpHandler.signInRequest(username, password);
       if (response) {
         print("Login Success!");
-        String fetchedUserId = await getUserId();
-        print("userID was init");
+        userId = int.parse(await getUserId()); // Initialize userId
+        print("User ID initialized: $userId");
         return true;
       } else {
         print("Login failed.");
         return false;
       }
     } catch (e) {
-      print("Login failed.");
+      print("Login failed: $e");
       return false;
     }
   }
