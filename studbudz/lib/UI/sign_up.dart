@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/notifier.dart';
 
 Future<bool> checkUserExists(String username) async {
@@ -140,7 +141,31 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     if (step == 3) {
-      return const Scaffold(body: Center(child: Text("All done!")));
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("All done!"),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                ),
+                child: const Text('Go to Home', style: TextStyle(fontSize: 18)),
+              ),
+            ],
+          ),
+        ),
+      );
     }
     switch (step) {
       case 0:
