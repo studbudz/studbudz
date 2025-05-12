@@ -21,5 +21,6 @@
     "getAllSubjects": "SELECT subject_id, subject_name FROM subject",
     "getUpcomingEvents": "SELECT e.* FROM event e INNER JOIN user_event ue ON e.event_id = ue.event_id WHERE ue.user_id = ? AND e.event_start_at > NOW() ORDER BY e.event_start_at ASC",
     "addUserToEvent": "INSERT INTO user_event (user_id, event_id) VALUES (?, ?)",
-    "hasUserJoinedEvent": "SELECT EXISTS (SELECT 1 FROM user_event WHERE user_id = ? AND event_id = ?) AS has_joined"
+    "hasUserJoinedEvent": "SELECT EXISTS (SELECT 1 FROM user_event WHERE user_id = ? AND event_id = ?) AS has_joined",
+    "createUser": "INSERT INTO user (username, password_salt, password_hash, word_salt, word_hash) VALUES (?, ?, ?, ?, ?)"
 }

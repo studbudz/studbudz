@@ -207,4 +207,14 @@ class Engine {
       throw Exception('Failed to check event participation');
     }
   }
+
+  Future<bool> userExists(String username) async {
+    return _httpHandler.userExists(username);
+  }
+
+  Future<bool> signUpRequest(
+      String username, String password, String words) async {
+    print("Signing up with: $username and $password");
+    return _httpHandler.signUpRequest(username, password, words);
+  }
 }

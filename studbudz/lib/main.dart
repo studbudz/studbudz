@@ -13,7 +13,6 @@ import 'package:studubdz/UI/sign_up.dart';
 import 'package:studubdz/UI/theme_data.dart';
 import 'package:studubdz/UI/sign_in_page.dart';
 import 'package:studubdz/UI/profile_page.dart';
-import 'package:studubdz/UI/chat_page.dart';
 import 'package:provider/provider.dart';
 import 'notifier.dart';
 
@@ -108,6 +107,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   // Method to switch pages based on controller's page
+  //sometimes used, sometimes not.
   Widget _buildPage(Controller controller) {
     print("Current Page: ${controller.currentPage}");
 
@@ -122,8 +122,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         return const SchedulePage();
       case AppPage.feed:
         return const FeedPage();
-      case AppPage.chat:
-        return const ChatPage();
       case AppPage.settings:
         return const SettingsPage(); // Fixed syntax error
       case AppPage.profile:

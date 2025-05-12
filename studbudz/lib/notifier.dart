@@ -12,7 +12,6 @@ enum AppPage {
   recovery,
   feed,
   schedule,
-  chat,
   postWidget,
   createPost,
   editProfile,

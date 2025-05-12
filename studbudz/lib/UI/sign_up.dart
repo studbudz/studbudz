@@ -1,6 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:studubdz/notifier.dart';
+
+Future<bool> checkUserExists(String username) async {
+  print("Checking if user exists: $username");
+  return Controller().engine.userExists(username);
+}
+
+Future<bool> validatePasswordComplexity(String password) async {
+  if (password.length < 8) return false;
+
+  bool hasUppercase = false;
+  bool hasLowercase = false;
+  bool hasDigit = false;
+  bool hasSpecialChar = false;
+
+  for (var char in password.runes) {
+    if (char >= 65 && char <= 90) hasUppercase = true; // A-Z
+    if (char >= 97 && char <= 122) hasLowercase = true; // a-z
+    if (char >= 48 && char <= 57) hasDigit = true; // 0-9
+    if (!((char >= 65 && char <= 90) ||
+        (char >= 97 && char <= 122) ||
+        (char >= 48 && char <= 57))) {
+      hasSpecialChar = true; // Special character
+    }
+  }
+
+  return hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
+}
+
+Future<bool> signUp(String username, String password, String words) async {
+  print("Signing up with: $username and $password");
+  final response = await Controller().engine.signUpRequest(
+        username,
+        password,
+        words,
+      );
+  return response;
+}
 
 Future<String> generateMnemonic() async {
   return bip39.generateMnemonic(strength: 256);
@@ -21,47 +59,96 @@ class _SignUpPageState extends State<SignUpPage> {
   String words = '';
   List<TextEditingController> wordControllers = [];
 
-  void nextStep() {
-    setState(() {
-      step++;
-      if (step == 1) generateWords();
-    });
+  @override
+  void dispose() {
+    for (var c in wordControllers) {
+      c.dispose();
+    }
+    super.dispose();
   }
 
-  Future<void> generateWords() async {
-    final generatedWords = await generateMnemonic();
+  void nextStep() {
+    switch (step) {
+      case 0:
+        _handleAccountSetup();
+        break;
+      case 1:
+        _handleWordGenerationConfirmed();
+        break;
+      case 2:
+        _handleWordVerification();
+        break;
+    }
+  }
+
+  Future<void> _handleAccountSetup() async {
+    if (username.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty ||
+        password != confirmPassword) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Invalid input")));
+      return;
+    }
+    if (await checkUserExists(username)) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Username is taken")));
+      return;
+    }
+    if (!await validatePasswordComplexity(password)) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Weak password")));
+      return;
+    }
+    setState(() => step = 1);
+    final generated = await generateMnemonic();
     setState(() {
-      words = generatedWords;
+      words = generated;
       wordControllers = List.generate(
-        words.split(' ').length,
+        generated.split(' ').length,
         (_) => TextEditingController(),
       );
     });
   }
 
-  void onUsernameChanged(String val) {
-    print("Username: $val");
-    setState(() {
-      username = val;
-    });
+  Future<void> _handleWordGenerationConfirmed() async {
+    if (words.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("No phrase")));
+      return;
+    }
+    setState(() => step = 2);
   }
 
-  void onPasswordChanged(String val) {
-    print("Password: $val");
-    setState(() {
-      password = val;
-    });
+  Future<void> _handleWordVerification() async {
+    final entered = wordControllers.map((c) => c.text.trim()).join(' ');
+    if (entered != words) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Phrase mismatch")));
+      return;
+    }
+    bool success = await signUp(username, password, words);
+    if (!success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Sign up failed. Try again.")),
+      );
+      return;
+    }
+    setState(() => step = 3);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (step == 3) {
+      return const Scaffold(body: Center(child: Text("All done!")));
+    }
     switch (step) {
       case 0:
         return AccountSetup(
           onStepContinue: nextStep,
-          onUsernameChanged: onUsernameChanged,
-          onPasswordChanged: onPasswordChanged,
-          onConfirmPasswordChanged: (val) => confirmPassword = val,
+          onUsernameChanged: (v) => username = v,
+          onPasswordChanged: (v) => password = v,
+          onConfirmPasswordChanged: (v) => confirmPassword = v,
         );
       case 1:
         return WordGeneration(words: words, onStep: nextStep);
@@ -69,15 +156,7 @@ class _SignUpPageState extends State<SignUpPage> {
         return WordVerification(
           words: words,
           controllers: wordControllers,
-          onStep: () {
-            // Here you can handle sending all data to your server
-            print("Username: $username");
-            print("Password: $password");
-            print("Recovery Phrase: $words");
-            print(
-                "Entered Words: ${wordControllers.map((c) => c.text).join(' ')}");
-            nextStep();
-          },
+          onStep: nextStep,
         );
       default:
         return const Placeholder();
@@ -164,45 +243,29 @@ class _WordGenerationState extends State<WordGeneration> {
 
   void copyToClipboard() {
     Clipboard.setData(ClipboardData(text: widget.words));
-    setState(() {
-      copied = true;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Recovery phrase copied!")),
-    );
+    setState(() => copied = true);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Recovery phrase copied!")));
   }
 
   @override
   Widget build(BuildContext context) {
     final wordList = widget.words.split(' ');
-
     return Scaffold(
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.key, size: 60, color: Colors.black),
+              const Icon(Icons.key, size: 60),
+              const SizedBox(height: 10),
+              const Text('Your Recovery Phrase',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center),
               const SizedBox(height: 10),
               const Text(
-                'Your Recovery Phrase',
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'These words are your account recovery phrase. If you lose access, use them to restore your account. **Never share them with anyone!**',
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.red,
-                    fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center,
-              ),
+                  'These words are your account recovery phrase. Never share them.',
+                  textAlign: TextAlign.center),
               const SizedBox(height: 20),
               Expanded(
                 child: ListView.builder(
@@ -218,32 +281,24 @@ class _WordGenerationState extends State<WordGeneration> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
+                              decoration: BoxDecoration(boxShadow: [
+                                BoxShadow(
                                     color: Colors.black.withOpacity(0.2),
                                     spreadRadius: 2,
                                     blurRadius: 6,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                                    offset: Offset(0, 4))
+                              ], borderRadius: BorderRadius.circular(10)),
                               child: TextField(
                                 readOnly: true,
                                 controller: TextEditingController(
                                     text: wordList[index]),
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
                                 decoration: const InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 10),
-                                  border: InputBorder.none,
-                                ),
+                                    border: InputBorder.none,
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    contentPadding:
+                                        EdgeInsets.symmetric(vertical: 10)),
                               ),
                             ),
                           ),
@@ -260,10 +315,9 @@ class _WordGenerationState extends State<WordGeneration> {
                   ElevatedButton(
                     onPressed: copyToClipboard,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      padding: const EdgeInsets.all(12),
-                      shape: const CircleBorder(),
-                    ),
+                        backgroundColor: Colors.black,
+                        padding: const EdgeInsets.all(12),
+                        shape: const CircleBorder()),
                     child:
                         const Icon(Icons.copy, size: 20, color: Colors.white),
                   ),
@@ -286,57 +340,41 @@ class _WordGenerationState extends State<WordGeneration> {
 }
 
 class WordVerification extends StatelessWidget {
-  const WordVerification({
-    super.key,
-    required this.words,
-    required this.controllers,
-    required this.onStep,
-  });
-
+  const WordVerification(
+      {super.key,
+      required this.words,
+      required this.controllers,
+      required this.onStep});
   final String words;
   final List<TextEditingController> controllers;
   final VoidCallback onStep;
 
   void handleInput(int index, String value) {
-    final words = value.trim().split(RegExp(r'\s+'));
-    if (words.isEmpty) return;
-
-    // Set current controller to first word
-    controllers[index].text = words.first;
-
-    // Move cursor to the end
+    final parts = value.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty) return;
+    controllers[index].text = parts.first;
     controllers[index].selection = TextSelection.fromPosition(
-      TextPosition(offset: controllers[index].text.length),
-    );
-
-    // Get remaining words
-    final remaining = words.sublist(1);
-
+        TextPosition(offset: controllers[index].text.length));
+    final remaining = parts.sublist(1);
     if (remaining.isNotEmpty && index + 1 < controllers.length) {
-      final nextValue = remaining.join(' ');
-      handleInput(
-          index + 1, nextValue); // Recursively send to the next controller
+      handleInput(index + 1, remaining.join(' '));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final wordsList = words.split(' ');
-
     return Scaffold(
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.key, size: 60, color: Colors.black),
+              const Icon(Icons.key, size: 60),
               const SizedBox(height: 10),
-              const Text(
-                'Confirm Recovery Phrase',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
+              const Text('Confirm Recovery Phrase',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center),
               const SizedBox(height: 20),
               Expanded(
                 child: ListView.builder(
@@ -352,31 +390,23 @@ class WordVerification extends StatelessWidget {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
+                              decoration: BoxDecoration(boxShadow: [
+                                BoxShadow(
                                     color: Colors.black.withOpacity(0.2),
                                     spreadRadius: 2,
                                     blurRadius: 6,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                                    offset: Offset(0, 4))
+                              ], borderRadius: BorderRadius.circular(10)),
                               child: TextField(
                                 controller: controllers[index],
                                 textAlign: TextAlign.center,
-                                onChanged: (val) {
-                                  handleInput(index, val);
-                                },
+                                onChanged: (v) => handleInput(index, v),
                                 decoration: const InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 10),
-                                  border: InputBorder.none,
-                                ),
+                                    border: InputBorder.none,
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    contentPadding:
+                                        EdgeInsets.symmetric(vertical: 10)),
                               ),
                             ),
                           ),

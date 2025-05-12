@@ -4,7 +4,7 @@ A Study Buddy App
 StudBudz is a study buddy app designed to help students collaborate and stay organized. The app includes various pages for managing tasks, tracking progress, and interacting with other users.
 
 # Features
-- ✅ Create and join study groupsZ
+- ✅ Create and join study groups
 - ✅ Task management and progress tracking
 - ✅ Real-time collaboration with other users
 - ✅ Personalized study recommendations

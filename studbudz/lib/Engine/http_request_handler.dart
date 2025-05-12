@@ -106,8 +106,10 @@ class HttpRequestHandler {
     }
   }
 
-  Future<Map<String, dynamic>> fetchData(String endpoint,
-      {Map<String, String>? queryParams}) async {
+  Future<Map<String, dynamic>> fetchData(
+    String endpoint, {
+    Map<String, String>? queryParams,
+  }) async {
     print("Fetching data");
     //replace with getter from auth manager
     final uri = Uri.parse('$_address/$endpoint');
@@ -222,7 +224,8 @@ class HttpRequestHandler {
         }
       } else {
         throw Exception(
-            'Failed to sign in: ${response.statusCode}, $responseBody');
+          'Failed to sign in: ${response.statusCode}, $responseBody',
+        );
       }
     } catch (e) {
       // Debugging: print out the error message
@@ -231,10 +234,71 @@ class HttpRequestHandler {
     }
   }
 
+  //sign up request
+  Future<bool> signUpRequest(
+    String username,
+    String password,
+    String words,
+  ) async {
+    final url = Uri.parse('$_address/signup');
+    try {
+      final request = await _httpClient.postUrl(url);
+      request.headers.contentType = ContentType.json;
+
+      // Send the username and password in the body as JSON
+      Map<String, dynamic> data = {
+        'username': username,
+        'password': password,
+        'words': words,
+      };
+      request.add(utf8.encode(jsonEncode(data)));
+
+      final response = await request.close();
+      final responseBody = await response.transform(utf8.decoder).join();
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception(
+          'Failed to sign up: ${response.statusCode}, $responseBody',
+        );
+      }
+    } catch (e) {
+      print('Error during sign up: $e');
+      throw Exception('Error during sign up: $e');
+    }
+  }
+
+  // Request to /userexists with GET and username as a query parameter
+  Future<bool> userExists(String username) async {
+    final url = Uri.parse('$_address/userexists').replace(
+      queryParameters: {'username': username},
+    );
+    try {
+      final response = await _client.get(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        return responseBody['exists'] ?? false;
+      } else {
+        throw Exception(
+          'Failed to check user existence: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      print('Error checking user existence: $e');
+      throw Exception('Error checking user existence: $e');
+    }
+  }
+
   // Method to check if the connection to the server is valid
   Future<void> checkConnection() async {
     final url = Uri.parse(
-        '$_address/ping'); // Use a 'ping' endpoint or a health-check endpoint
+      '$_address/ping',
+    ); // Use a 'ping' endpoint or a health-check endpoint
     try {
       final request = await _httpClient.getUrl(url);
       final response = await request.close();
@@ -244,7 +308,8 @@ class HttpRequestHandler {
       } else {
         // Server is not responding as expected
         print(
-            'Failed to reach the server. Status code: ${response.statusCode}');
+          'Failed to reach the server. Status code: ${response.statusCode}',
+        );
       }
     } catch (e) {
       // Error in connection (e.g., no network, unreachable host)
