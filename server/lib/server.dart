@@ -167,16 +167,22 @@ class Server {
   void _handleSignIn(HttpRequest request) async {
     print("received sign in request");
     try {
+      // Read the request body
       String content = await utf8.decodeStream(request);
-      Map<String, dynamic> body = jsonDecode(content);
+      Map<String, dynamic> requestBody = jsonDecode(content);
 
       String username = requestBody['username'];
       String password = requestBody['password'];
       print('Username: $username, Password: $password');
 
+      //get salt and hashed password from sql_handler for that username
+      //add and then return the password
       final data = await _sqlHandler.select("getUserCredentialsByUsername", [
         username,
       ]);
+
+      // print(data);
+      // print(data);
       String salt = data[0]['password_salt'];
       String passwordHash = data[0]['password_hash'];
 
