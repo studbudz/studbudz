@@ -15,14 +15,6 @@ class AuthManager {
     }
   }
 
-  Future<void> saveUserId(String userID) async {
-    try {
-      await _secureStorage.write(key: 'userID', value: userID);
-    } catch (e) {
-      throw Exception('Error saving userID data: $e');
-    }
-  }
-
   Future<String> getUserId() async {
     try {
       final userID = await _secureStorage.read(key: 'userID');
@@ -34,6 +26,39 @@ class AuthManager {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<String> getUsername() async {
+    final token = await getToken();
+    final parts = token.split('.');
+    if (parts.length != 3) throw Exception('Invalid token format');
+
+    final payload =
+        utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
+    final payloadMap = json.decode(payload) as Map<String, dynamic>;
+
+    if (!payloadMap.containsKey('username')) {
+      throw Exception('Username not found in token');
+    }
+
+    return payloadMap['username'];
+  }
+
+  Future<int> getUserIdFromToken() async {
+    print("getting userID from token");
+    final token = await getToken();
+    final parts = token.split('.');
+    if (parts.length != 3) throw Exception('Invalid token format');
+
+    final payload =
+        utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
+    final payloadMap = json.decode(payload) as Map<String, dynamic>;
+
+    if (!payloadMap.containsKey('user_id')) {
+      throw Exception('UserID not found in token');
+    }
+
+    return int.parse(payloadMap['user_id'].toString());
   }
 
   // Method to retrieve the token from secure storage

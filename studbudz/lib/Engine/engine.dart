@@ -26,8 +26,6 @@ class Engine {
   }
 
   Future<bool> isLoggedIn() async {
-    String fetchedUserId = await getUserId();
-    userId = int.parse(fetchedUserId);
     return await _authManager.isLoggedIn();
   }
 
@@ -37,9 +35,6 @@ class Engine {
     try {
       bool response = await _httpHandler.signInRequest(username, password);
       if (response) {
-        print("Login Success!");
-        String fetchedUserId = await getUserId();
-        print("userID was init");
         return true;
       } else {
         print("Login failed.");
@@ -144,10 +139,6 @@ class Engine {
         await _httpHandler.sendData('unfollow', {'userID': userId});
   }
 
-  Future<String> getUserId() async {
-    return _authManager.getUserId();
-  }
-
   Future<dynamic> getSubjects() async {
     return _httpHandler.fetchData('subjects');
   }
@@ -180,31 +171,92 @@ class Engine {
     }
   }
 
-  Future<void> handleJoinEvent({required eventID}) async {
-    final params = {'event_id': '$eventID'}; // Creating query params
-
+  Future<void> handleJoinEvent({required int eventID}) async {
     try {
-      // Correctly calling fetchData with query parameters
       final response =
           await _httpHandler.sendData('joinevent', {'event_id': eventID});
+      print("Successfully joined event: $response");
     } catch (e) {
-      // Handle errors if the request fails
-      print('Error joining event: $e');
+      print("Error joining event: $e");
       throw Exception('Failed to join event');
     }
   }
 
-  Future<void> hasJoinedEvent({required eventID}) async {
-    final params = {'event_id': '$eventID'}; // Creating query params
+  Future<void> handleLeaveEvent({required int eventID}) async {
+    try {
+      final response =
+          await _httpHandler.sendData('leaveevent', {'event_id': eventID});
+      print("Successfully left event: $response");
+    } catch (e) {
+      print("Error leaving event: $e");
+      throw Exception('Failed to leave event');
+    }
+  }
+
+  Future<bool> hasJoinedEvent({required int eventID}) async {
+    final params = {'event_id': '$eventID'};
 
     try {
-      // Correctly calling fetchData with query parameters
       final response =
           await _httpHandler.fetchData('hasjoined', queryParams: params);
+      return response['has_joined'] ?? false;
     } catch (e) {
-      // Handle errors if the request fails
       print('Error checking event participation: $e');
       throw Exception('Failed to check event participation');
     }
+  }
+
+  Future<void> toggleJoinEvent(
+      {required int eventID, required bool hasJoined}) async {
+    try {
+      if (hasJoined) {
+        await handleLeaveEvent(eventID: eventID);
+      } else {
+        await handleJoinEvent(eventID: eventID);
+      }
+    } catch (e) {
+      print('Error toggling event participation: $e');
+      throw Exception('Failed to toggle event participation');
+    }
+  }
+
+  Future<void> likePost({required int postID}) async {
+    try {
+      final response =
+          await _httpHandler.sendData('likepost', {'post_id': postID});
+      print("Successfully liked post: $response");
+    } catch (e) {
+      print("Error liking post: $e");
+      throw Exception('Failed to like post');
+    }
+  }
+
+  Future<void> unlikePost({required int postID}) async {
+    try {
+      final response =
+          await _httpHandler.sendData('unlikepost', {'post_id': postID});
+      print("Successfully unliked post: $response");
+    } catch (e) {
+      print("Error unliking post: $e");
+      throw Exception('Failed to unlike post');
+    }
+  }
+
+  Future<bool> hasLikedPost({required int postID}) async {
+    final params = {'post_id': '$postID'};
+
+    try {
+      final response =
+          await _httpHandler.fetchData('haslikedpost', queryParams: params);
+      return response['has_liked'] ?? false;
+    } catch (e) {
+      print("Error checking if post is liked: $e");
+      throw Exception('Failed to check if post is liked');
+    }
+  }
+
+  Future<int> getUserId() async {
+    print("getting userID");
+    return await _authManager.getUserIdFromToken();
   }
 }

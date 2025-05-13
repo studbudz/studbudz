@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_dart_jwt/easy_dart_jwt.dart'; // Alan's library
 import 'package:uuid/uuid.dart';
 
@@ -8,13 +10,13 @@ class TokenHandler {
     jwt = JWT('private_key.pem', 'public_key.pem');
   }
 
-  //this really should include the user id (this slows down the whole code.)
-  List<String?> requestToken(String username) {
+  List<String?> requestToken(String username, dynamic userId) {
     var uuidGenerator = Uuid();
     String uuid = uuidGenerator.v4();
 
     final payload = {
       'username': username,
+      'user_id': userId.toString(), // Ensure user_id is a String
       'uuid': uuid,
       'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000,
       'exp':

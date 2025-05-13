@@ -103,6 +103,12 @@ class Server {
             await _handleUnfollow(request, username);
           case '/joinevent':
             await _handleJoinEvent(request, username);
+          case '/leaveevent':
+            await _handleLeaveEvent(request, username);
+          case '/likepost':
+            await _handleLikePost(request, username);
+          case '/unlikepost':
+            _handleUnlikePost(request, username);
           default:
             request.response.statusCode = HttpStatus.notFound;
             await request.response.close();
@@ -126,7 +132,7 @@ class Server {
         } else if (uri == '/subjects') {
           await _handleGetSubjects(request, username);
         } else if (uri == '/subjects') {
-          await _handleJoinEvent(request, username);
+          await _handleHasJoinedEvent(request, username);
         } else if (uri == '/getparticipantscount') {
           print('received request at /getparticipantcount');
           await _handleGetParticipantCount(request, username);
@@ -134,6 +140,8 @@ class Server {
           await _handleGetUpcomingEvents(request, username);
         } else if (uri == '/hasjoinedevent') {
           await _handleHasJoinedEvent(request, username);
+        } else if (uri == '/haslikedpost') {
+          await _handleHasLikedPost(request, username);
         } else {
           request.response
             ..statusCode = HttpStatus.notFound
@@ -149,6 +157,7 @@ class Server {
   }
 
   void _handleSignIn(HttpRequest request) async {
+    print("received sign in request");
     try {
       // Read the request body
       String content = await utf8.decodeStream(request);
@@ -156,6 +165,7 @@ class Server {
 
       String username = requestBody['username'];
       String password = requestBody['password'];
+      print('Username: $username, Password: $password');
 
       //get salt and hashed password from sql_handler for that username
       //add and then return the password
@@ -174,31 +184,24 @@ class Server {
 
       // Validate the username and password (replace with actual validation logic)
       if (passwordHash == computedHash) {
-        // Generate a token and UUID
-        List<String?> values = _tokenHandler.requestToken(username);
+        final userRow = await _sqlHandler.select("getUserIdByUsername", [
+          username,
+        ]);
+        final userId = userRow.first['user_id'];
 
-        // print(values);
-        // print(values);
+        final response = _tokenHandler.requestToken(username, userId);
 
-        // Set headers before writing data
-        request.response.statusCode = HttpStatus.ok;
-        request.response.headers.contentType = ContentType.json;
-        request.response.write(
-          jsonEncode({
-            'token': values[0],
-            'uuid': values[1],
-            'user_id': data[0]["user_id"],
-          }),
-        );
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..headers.contentType = ContentType.json
+          ..write(jsonEncode({'token': response[0], 'uuid': response[1]}));
       } else {
         request.response.statusCode = HttpStatus.unauthorized;
-        request.response.headers.contentType = ContentType.text;
         request.response.write('Invalid credentials');
       }
     } catch (e) {
       print('Error handling sign-in: $e');
       request.response.statusCode = HttpStatus.internalServerError;
-      request.response.headers.contentType = ContentType.text;
       request.response.write('Internal server error');
     } finally {
       await request.response.close();
@@ -465,7 +468,7 @@ class Server {
       // Fetch all data
       final followedPosts = await _sqlHandler.select(
         "getPostsByFollowedUsers",
-        [userId],
+        [userId, userId],
       );
       final suggestedUsers = await _sqlHandler.select("getSuggestedUsers", [
         userId,
@@ -476,7 +479,7 @@ class Server {
       // print("");
       final newPosts = await _sqlHandler.select(
         "getNewPostsByNonFollowedUsers",
-        [userId],
+        [userId, userId],
       );
 
       // === Handle DateTime conversion ===
@@ -738,6 +741,7 @@ class Server {
 
   Future<void> _handleJoinEvent(HttpRequest request, String username) async {
     try {
+      // Parse the request body
       String content = await utf8.decodeStream(request);
       Map<String, dynamic> requestBody = jsonDecode(content);
 
@@ -745,35 +749,73 @@ class Server {
 
       final eventID = requestBody['event_id'] as int;
 
+      // Resolve the user ID from the username
       final userID = await _resolveUserId(username);
 
-      final eventRows = await _sqlHandler.insert('addUserToEvent', [
+      // Insert the user-event relationship into the database
+      final result = await _sqlHandler.insert('addUserToEvent', [
         userID,
         eventID,
       ]);
 
-      print(eventRows);
-
-      if (eventRows != 1) {
-        request.response
-          ..statusCode = HttpStatus.internalServerError
-          ..headers.contentType = ContentType.json
-          ..write(jsonEncode({'error': 'Failed to join event'}))
-          ..close();
-        return;
+      if (result != 1) {
+        throw Exception('Failed to join event');
       }
+
       request.response
         ..statusCode = HttpStatus.ok
         ..headers.contentType = ContentType.json
-        ..write(jsonEncode({'success': true}))
+        ..write(
+          jsonEncode({'success': true, 'message': 'Event joined successfully'}),
+        )
         ..close();
-
-      // Your existing logic for joining the event goes here
     } catch (e) {
-      print("Error: $e");
-      // Your existing logic for joining the event goes here
-    } finally {
-      await request.response.close();
+      print("Error joining event: $e");
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'error': 'Failed to join event'}))
+        ..close();
+    }
+  }
+
+  Future<void> _handleLeaveEvent(HttpRequest request, String username) async {
+    try {
+      // Parse the request body
+      String content = await utf8.decodeStream(request);
+      Map<String, dynamic> requestBody = jsonDecode(content);
+
+      print("Leave Event Request: $requestBody");
+
+      final eventID = requestBody['event_id'] as int;
+
+      // Resolve the user ID from the username
+      final userID = await _resolveUserId(username);
+
+      // Delete the user-event relationship from the database
+      final result = await _sqlHandler.delete('removeUserFromEvent', [
+        userID,
+        eventID,
+      ]);
+
+      if (result != 1) {
+        throw Exception('Failed to leave event');
+      }
+
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.json
+        ..write(
+          jsonEncode({'success': true, 'message': 'Event left successfully'}),
+        )
+        ..close();
+    } catch (e) {
+      print("Error leaving event: $e");
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'error': 'Failed to leave event'}))
+        ..close();
     }
   }
 
@@ -890,6 +932,134 @@ class Server {
     String username,
   ) async {
     final eventID = int.tryParse(request.uri.queryParameters['event_id'] ?? '');
-    final userId = await _resolveUserId(username);
+
+    if (eventID == null) {
+      request.response
+        ..statusCode = HttpStatus.badRequest
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'error': 'Invalid or missing event_id'}))
+        ..close();
+      return;
+    }
+
+    try {
+      final userID = await _resolveUserId(username);
+      final result = await _sqlHandler.select('hasUserJoinedEvent', [
+        userID,
+        eventID,
+      ]);
+
+      final hasJoined = result.isNotEmpty && result.first['has_joined'] == 1;
+
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'has_joined': hasJoined}))
+        ..close();
+    } catch (e) {
+      print("Error checking event participation: $e");
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'error': 'Failed to check event participation'}))
+        ..close();
+    }
+  }
+
+  Future<void> _handleLikePost(HttpRequest request, String username) async {
+    try {
+      String content = await utf8.decodeStream(request);
+      Map<String, dynamic> requestBody = jsonDecode(content);
+
+      final postId = requestBody['post_id'] as int;
+      final userId = await _resolveUserId(username);
+
+      final result = await _sqlHandler.insert('likePost', [userId, postId]);
+
+      if (result != 1) {
+        throw Exception('Failed to like post');
+      }
+
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.json
+        ..write(
+          jsonEncode({'success': true, 'message': 'Post liked successfully'}),
+        )
+        ..close();
+    } catch (e) {
+      print("Error liking post: $e");
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'error': 'Failed to like post'}))
+        ..close();
+    }
+  }
+
+  Future<void> _handleUnlikePost(HttpRequest request, String username) async {
+    try {
+      String content = await utf8.decodeStream(request);
+      Map<String, dynamic> requestBody = jsonDecode(content);
+
+      final postId = requestBody['post_id'] as int;
+      final userId = await _resolveUserId(username);
+
+      final result = await _sqlHandler.delete('unlikePost', [userId, postId]);
+
+      if (result != 1) {
+        throw Exception('Failed to unlike post');
+      }
+
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.json
+        ..write(
+          jsonEncode({'success': true, 'message': 'Post unliked successfully'}),
+        )
+        ..close();
+    } catch (e) {
+      print("Error unliking post: $e");
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'error': 'Failed to unlike post'}))
+        ..close();
+    }
+  }
+
+  Future<void> _handleHasLikedPost(HttpRequest request, String username) async {
+    try {
+      final userId = await _resolveUserId(username);
+      final postId = int.tryParse(request.uri.queryParameters['post_id'] ?? '');
+
+      if (postId == null) {
+        request.response
+          ..statusCode = HttpStatus.badRequest
+          ..headers.contentType = ContentType.json
+          ..write(jsonEncode({'error': 'Invalid or missing post_id'}))
+          ..close();
+        return;
+      }
+
+      final result = await _sqlHandler.select('hasUserLikedPost', [
+        userId,
+        postId,
+      ]);
+
+      final hasLiked = result.isNotEmpty && result.first['has_liked'] == 1;
+
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'has_liked': hasLiked}))
+        ..close();
+    } catch (e) {
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'error': 'Failed to check if post is liked'}))
+        ..close();
+    }
   }
 }

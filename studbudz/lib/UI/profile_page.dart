@@ -16,17 +16,20 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final currentUserId = Controller().engine.userId;
+  int currentUserId = 0;
 
   bool isLoading = true;
   dynamic userData;
   List<dynamic> userPosts = [];
   String username = "john_doe";
   String bio = "Loving life. Photographer. Traveler.";
-  int postsCount = 34;
-  int followersCount = 1200;
+  int postsCount = 0;
+  int followersCount = 0;
   List<dynamic>? posts = [];
   XFile? _avatarFile;
+
+  bool following = false; // Track follow/unfollow state
+  bool loadingFollow = false; // Track loading state for follow/unfollow
 
   bool get isCurrentUserProfile =>
       widget.userId == null || widget.userId == currentUserId;
@@ -38,32 +41,48 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getUserData() async {
-    print("Fetching user data for user ID: ${widget.userId}");
+    debugPrint("Fetching user data for user ID: ${widget.userId}");
 
     try {
+      debugPrint("Attempting to fetch current user ID...");
+      currentUserId = await Controller().engine.getUserId();
+      debugPrint("Current user ID fetched: $currentUserId");
+
+      debugPrint(
+          "Fetching user profile for user ID: ${widget.userId ?? currentUserId}");
       final result = await Controller()
           .engine
           .getUserProfile(userID: widget.userId ?? currentUserId);
 
-      userData = result["user"];
-      userPosts = result["posts"];
-      print("User posts: $userPosts");
+      debugPrint("User profile fetched successfully: $result");
 
-      await _downloadAvatar();
+      // Ensure the result contains the expected keys
+      if (result.containsKey("user") && result.containsKey("posts")) {
+        userData = result["user"];
+        userPosts = result["posts"];
+        debugPrint("User data: $userData");
+        debugPrint("User posts: $userPosts");
 
-      setState(() {
-        username = userData["username"];
-        bio = userData["user_bio"] ?? "";
-        followersCount = userData["followers_count"] ??
-            0; // Ensure this key exists in the result
-        postsCount = userPosts.length;
+        await _downloadAvatar();
 
-        posts = userPosts;
-
-        isLoading = false;
-      });
+        setState(() {
+          username = userData["username"] ?? "Unknown User";
+          bio = userData["user_bio"] ?? "No bio available.";
+          followersCount = userData["followers_count"] ?? 0;
+          postsCount = userPosts.length;
+          posts = userPosts;
+          following =
+              userData["is_followed"] ?? false; // Initialize follow state
+          isLoading = false;
+        });
+      } else {
+        debugPrint("Error: Missing 'user' or 'posts' in the response.");
+        setState(() {
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      print("Error loading user data: $e");
+      debugPrint("Error loading user data: $e");
       setState(() {
         isLoading = false;
       });
@@ -88,6 +107,36 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _avatarFile = null;
       });
+    }
+  }
+
+  Future<void> _handleFollow() async {
+    setState(() => loadingFollow = true);
+    final userId = widget.userId ?? currentUserId;
+
+    try {
+      if (!following) {
+        debugPrint("Following user with ID: $userId");
+        await Controller().engine.followUser(userId);
+      } else {
+        debugPrint("Unfollowing user with ID: $userId");
+        await Controller().engine.unfollowUser(userId);
+      }
+
+      setState(() {
+        following = !following;
+        followersCount += following ? 1 : -1; // Update followers count
+      });
+    } catch (e) {
+      debugPrint("Error during follow/unfollow: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('Failed to ${following ? "unfollow" : "follow"} the user.'),
+        ),
+      );
+    } finally {
+      setState(() => loadingFollow = false);
     }
   }
 
@@ -133,7 +182,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             : null,
                       ),
                       const SizedBox(width: 14),
-                      // <-- Expanded here absorbs the remaining width
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,8 +209,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 _buildStatsColumn(postsCount, 'Posts'),
                                 const SizedBox(width: 24),
-                                _buildClickableStatsColumn(
-                                    followersCount, 'Friends', context),
+                                _buildStatsColumn(followersCount, 'Friends'),
                               ],
                             ),
                           ],
@@ -179,32 +226,37 @@ class _ProfilePageState extends State<ProfilePage> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         textStyle: const TextStyle(fontSize: 14),
+                        backgroundColor: isCurrentUserProfile || following
+                            ? Colors.grey
+                            : Colors.blue,
                       ),
-                      onPressed: () async {
-                        if (isCurrentUserProfile) {
-                          final updatedProfile = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditProfilePage(
-                                  currentName: username, currentBio: bio),
-                            ),
-                          );
+                      onPressed: isCurrentUserProfile
+                          ? () async {
+                              final updatedProfile = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditProfilePage(
+                                      currentName: username, currentBio: bio),
+                                ),
+                              );
 
-                          if (updatedProfile != null) {
-                            setState(() {
-                              username = updatedProfile['name'];
-                              bio = updatedProfile['bio'];
-                            });
-                          }
-                        } else {
-                          // Add follow/unfollow logic here
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Follow user')),
-                          );
-                        }
-                      },
-                      child: Text(
-                          isCurrentUserProfile ? 'Edit Profile' : 'Follow'),
+                              if (updatedProfile != null) {
+                                setState(() {
+                                  username = updatedProfile['name'];
+                                  bio = updatedProfile['bio'];
+                                });
+                              }
+                            }
+                          : (loadingFollow ? null : _handleFollow),
+                      child: loadingFollow
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(isCurrentUserProfile
+                              ? 'Edit Profile'
+                              : (following ? 'Following' : 'Follow')),
                     ),
                   ),
                 ),
@@ -241,29 +293,6 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 4),
         Text(label, style: const TextStyle(fontSize: 14, color: Colors.grey)),
       ],
-    );
-  }
-
-  Widget _buildClickableStatsColumn(
-      int count, String label, BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const FriendsPage(),
-          ),
-        );
-      },
-      child: Column(
-        children: [
-          Text('$count',
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          Text(label, style: const TextStyle(fontSize: 14, color: Colors.grey)),
-        ],
-      ),
     );
   }
 }

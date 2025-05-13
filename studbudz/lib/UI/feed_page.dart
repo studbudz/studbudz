@@ -17,7 +17,24 @@ class _FeedPageState extends State<FeedPage> {
   @override
   void initState() {
     super.initState();
-    getData();
+    checkAuthenticationAndLoadData();
+  }
+
+  Future<void> checkAuthenticationAndLoadData() async {
+    try {
+      final loggedIn = await Controller().engine.isLoggedIn();
+      if (!loggedIn) {
+        print("Not logged in. Redirecting to login.");
+        Controller().setPage(AppPage.signIn);
+        return;
+      }
+
+      print("Token found. Fetching feed data.");
+      await getData();
+    } catch (e) {
+      print("Error in checkAuthenticationAndLoadData: $e");
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 
   Future<void> getData() async {
@@ -30,6 +47,7 @@ class _FeedPageState extends State<FeedPage> {
       data = result["posts"];
       isLoading = false;
     });
+    print(data);
   }
 
   @override

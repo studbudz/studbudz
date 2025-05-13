@@ -67,7 +67,8 @@ class _SignInPageState extends State<SignInPage> {
     if (success) {
       print("Login successful, navigating to home page.");
       setState(() {
-        Controller().setPage(AppPage.home);
+        Controller()
+            .setPage(AppPage.home); // Ensure this is set to `AppPage.home`
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

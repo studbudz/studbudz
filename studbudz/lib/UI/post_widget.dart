@@ -17,6 +17,7 @@ class PostWidget extends StatefulWidget {
 
 class _PostWidgetState extends State<PostWidget> {
   bool isLiked = false; // Track the state of the heart icon
+  bool hasJoined = false; // Track if the user has joined the event
   XFile? _downloadedFile;
   VideoPlayerController? _videoController;
 
@@ -32,11 +33,27 @@ class _PostWidgetState extends State<PostWidget> {
       widget.data['type'] = 'event';
       _downloadMedia(widget.data['event_image']);
       _handleGetParticipantCount();
+      _handleHasJoined();
     } else {
       widget.data['type'] = 'text';
     }
 
-    // print("Post data: ${widget.data}");
+    // Check if the post is liked
+    _checkIfLiked();
+  }
+
+  Future<void> _checkIfLiked() async {
+    final postId = widget.data['post_id'];
+
+    try {
+      final liked = await Controller().engine.hasLikedPost(postID: postId);
+      print("post was liked? $liked");
+      setState(() {
+        isLiked = liked;
+      });
+    } catch (e) {
+      print("Error checking if post is liked: $e");
+    }
   }
 
   Future<void> _handleGetParticipantCount() async {
@@ -50,26 +67,70 @@ class _PostWidgetState extends State<PostWidget> {
     });
   }
 
+  Future<void> _handleToggleLike() async {
+    print(widget.data);
+    final postId = widget.data['post_id'];
+
+    try {
+      if (isLiked) {
+        print("Unliking post with ID: $postId");
+        await Controller().engine.unlikePost(postID: postId);
+      } else {
+        print("Liking post with ID: $postId");
+        await Controller().engine.likePost(postID: postId);
+      }
+
+      setState(() {
+        isLiked = !isLiked; // Toggle the like state
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to update like status.')),
+      );
+    }
+  }
+
   Future<void> _handleHasJoined() async {
     final eventId = widget.data['event_id'];
 
     print("Checking if user has joined event with ID: $eventId");
 
-    final response = await Controller().engine.hasJoinedEvent(eventID: eventId);
+    final joined = await Controller().engine.hasJoinedEvent(eventID: eventId);
 
-    setState(() {});
+    setState(() {
+      hasJoined = joined;
+    });
   }
 
-  Future<void> _handleJoinEvent() async {
-    print('data: ${widget.data}');
+  Future<void> _handleToggleJoinEvent() async {
     final eventId = widget.data['event_id'];
 
-    print("Joining event with ID: $eventId");
-
-    final response =
+    try {
+      if (hasJoined) {
+        print("Leaving event with ID: $eventId");
+        await Controller().engine.handleLeaveEvent(eventID: eventId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Successfully left the event!')),
+        );
+      } else {
+        print("Joining event with ID: $eventId");
         await Controller().engine.handleJoinEvent(eventID: eventId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Successfully joined the event!')),
+        );
+      }
 
-    setState(() {});
+      setState(() {
+        hasJoined = !hasJoined; // Toggle the state
+        participantCount = hasJoined
+            ? (participantCount ?? 0) + 1
+            : (participantCount ?? 0) - 1;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to update event participation.')),
+      );
+    }
   }
 
   Future<void> _downloadMedia(String url) async {
@@ -109,11 +170,7 @@ class _PostWidgetState extends State<PostWidget> {
           buildMainSection(widget.data),
           FooterWidget(
             isLiked: isLiked,
-            onLikePressed: () {
-              setState(() {
-                isLiked = !isLiked;
-              });
-            },
+            onLikePressed: _handleToggleLike,
           ),
         ],
       ),
@@ -155,7 +212,6 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   Widget buildMediaPost(dynamic data) {
-    // print("building media post");
     Widget content;
 
     if (_videoController != null && _videoController!.value.isInitialized) {
@@ -227,8 +283,6 @@ class _PostWidgetState extends State<PostWidget> {
     final formattedTime =
         '${DateFormat.jm().format(start)}–${DateFormat.jm().format(end)}';
     final participants = participantCount ?? 0;
-
-    // print('ANDREW TATE $data');
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -319,18 +373,16 @@ class _PostWidgetState extends State<PostWidget> {
 
           const SizedBox(height: 10),
 
-          // Join button with participants count
+          // Join/Leave button with participants count
           Center(
             child: ElevatedButton(
-              onPressed: () {
-                _handleJoinEvent();
-              },
+              onPressed: _handleToggleJoinEvent,
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 textStyle: const TextStyle(fontSize: 14),
               ),
-              child: const Text('Join'),
+              child: Text(hasJoined ? 'Leave' : 'Join'),
             ),
           ),
         ],
@@ -358,11 +410,8 @@ class _HeaderWidgetState extends State<HeaderWidget> {
 
   Future<void> _downloadAvatar() async {
     final url = widget.data['user_avatar'] as String?;
-    // print("avatar url: $url");
     if (url != null && url.isNotEmpty) {
       final file = await Controller().engine.downloadMedia(endpoint: url);
-
-      // print("downloaded avatar: ${file.path}");
 
       if (!mounted) return;
 
@@ -370,7 +419,6 @@ class _HeaderWidgetState extends State<HeaderWidget> {
         _avatarFile = file;
       });
     } else {
-      // print("no avatar found");
       setState(() {
         _avatarFile = null;
       });
@@ -400,14 +448,14 @@ class _HeaderWidgetState extends State<HeaderWidget> {
                       radius: 25,
                     )
                   : const Icon(
-                      Icons.person, // Default user icon
+                      Icons.person,
                       size: 25,
-                      color: Colors.white, // Icon color
+                      color: Colors.white,
                     ),
             ),
             const SizedBox(width: 10),
             Text(
-              '${widget.data["username"]}', // Placeholder for username (can be dynamic)
+              '${widget.data["username"]}',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const Spacer(),
@@ -454,27 +502,14 @@ class FooterWidget extends StatelessWidget {
         alignment: Alignment.bottomLeft,
         child: Row(
           children: [
-            // Heart button with animation when pressed
             IconButton(
               onPressed: onLikePressed,
               icon: Icon(
                 isLiked ? Icons.favorite : Icons.favorite_border,
-                color: isLiked ? Colors.red : Colors.black54,
+                color: isLiked ? Colors.red : Colors.black54, // Red if liked
               ),
               iconSize: 30,
             ),
-            // Comment button
-            // IconButton(
-            //   onPressed: () {},
-            //   icon: const Icon(Icons.comment_outlined),
-            //   iconSize: 30,
-            // ),
-            // // Share button
-            // IconButton(
-            //   onPressed: () {},
-            //   icon: const Icon(Icons.share_outlined),
-            //   iconSize: 30,
-            // ),
           ],
         ),
       ),

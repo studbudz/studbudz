@@ -109,35 +109,32 @@ class HttpRequestHandler {
   Future<Map<String, dynamic>> fetchData(String endpoint,
       {Map<String, String>? queryParams}) async {
     print("Fetching data");
-    //replace with getter from auth manager
+
+    // Check if the token exists
+    final token = await _authManager.getToken();
+    if (token.isEmpty) {
+      throw Exception('Token not found or is empty');
+    }
+
     final uri = Uri.parse('$_address/$endpoint');
     final url = queryParams != null && queryParams.isNotEmpty
         ? uri.replace(queryParameters: queryParams)
         : uri;
 
-    print(url.queryParameters);
-
     try {
       final request = await _httpClient.getUrl(url);
-      print("getting token3");
-      final token = await _authManager.getToken();
       request.headers.set('Authorization', 'Bearer $token');
       final response = await request.close();
-      print(response);
-      //into readable text
-      //.join combines the multiple streams
       final responseBody = await response.transform(utf8.decoder).join();
 
-      //OK!
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Response: $responseBody");
-        // Decode the JSON response
         return jsonDecode(responseBody);
       } else {
         throw Exception('Failed to fetch data: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Error fetching data $e');
+      print("Error fetching data: $e");
+      rethrow;
     }
   }
 
@@ -214,8 +211,6 @@ class HttpRequestHandler {
           String token = jsonResponse['token'];
           String uuid = jsonResponse['uuid'];
           _authManager.saveAuthData(token, uuid);
-
-          _authManager.saveUserId(jsonResponse["user_id"].toString());
           return true;
         } else {
           throw Exception('Invalid response structure: missing token or uuid');

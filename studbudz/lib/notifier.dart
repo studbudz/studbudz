@@ -57,10 +57,11 @@ class Controller extends ChangeNotifier {
   void setPage(AppPage page) async {
     if (!loggedIn && logInCheck) {
       currentPage = AppPage.signIn;
+      print("User is not logged in. Redirecting to sign-in page.");
     } else {
       currentPage = page;
+      print("Navigating to page: $currentPage");
     }
-    print("set page to: $currentPage");
     notifyListeners();
   }
 
