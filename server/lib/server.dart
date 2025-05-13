@@ -27,14 +27,11 @@ class Server {
   }
 
   Future<void> start() async {
-    // Load SSL certificate and key
-    //certificate is self signed and is seen as extremely risky from the client side. (is encrypted and works for our purposes.)
     SecurityContext context =
         SecurityContext()
           ..useCertificateChain('certificate.pem')
           ..usePrivateKey('private_key.pem');
 
-    // Allows connection from any device on the current network using HTTPS.
     _httpServer = await HttpServer.bindSecure(
       InternetAddress.anyIPv4,
       8080,
@@ -43,52 +40,48 @@ class Server {
 
     print('Server running on port 8080');
 
-    // Handles incoming connections
     await for (HttpRequest request in _httpServer) {
       print("Received request: ${request.uri.path}");
-      // if (request.uri.path == '/') {
-      //   request.response
-      //     ..statusCode = HttpStatus.ok
-      //     ..headers.contentType = ContentType.html
-      //     ..write('<h1>Hello, World!</h1>') // Response content
-      //     ..close(); // Close the response
-      // }
 
+      // Public endpoints
       if (request.uri.path == '/signin') {
-        print("Received Sign In request.");
         _handleSignIn(request);
-        continue; // Prevent further processing of this request.
-      } else if (request.uri.path == '/signup') {
-        _handleSignUp(request);
-        continue; // Prevent further processing.
-      } else if (request.uri.path == '/ping') {
-        request.response.statusCode = HttpStatus.accepted;
-        await request.response.close();
         continue;
       }
-      // Get token from request if the endpoint isn't sign in/up
+      if (request.uri.path == '/signup') {
+        await _handleSignUp(request);
+        continue;
+      }
+      if (request.uri.path == '/userexists') {
+        await _handleUserExists(request);
+        continue;
+      }
+      if (request.uri.path == '/ping') {
+        request.response
+          ..statusCode = HttpStatus.accepted
+          ..close();
+        continue;
+      }
+
+      // Authenticated endpoints
       String? token = request.headers.value('Authorization')?.split(' ').last;
       if (token == null || !_tokenHandler.validateToken(token)) {
-        request.response.statusCode = HttpStatus.unauthorized;
-        print("Connection refused.");
-        await request.response.close();
+        request.response
+          ..statusCode = HttpStatus.unauthorized
+          ..close();
+        continue;
+      }
+      String username = _tokenHandler.getInfo(token)['username'];
+
+      // WebSocket upgrade
+      if (WebSocketTransformer.isUpgradeRequest(request)) {
+        WebSocket socket = await WebSocketTransformer.upgrade(request);
+        _webSocketHandler.handleConnection(socket, token);
         continue;
       }
 
-      // Additional processing (e.g., WebSocket upgrade, POST/GET handling)
-      String username = _tokenHandler.getInfo(token)['username'];
-      if (WebSocketTransformer.isUpgradeRequest(request)) {
-        print('Upgrading to websocket connection.');
-        WebSocket socket = await WebSocketTransformer.upgrade(request);
-        _webSocketHandler.handleConnection(socket, token);
-      } else if (request.method == 'POST') {
-        print("Post Request: ${request.uri.path}");
-        // Handle POST requests
-        //create textPost-final data = {type, subject, post_content, post_private}
-
-        final uri = request.uri.path;
-
-        switch (uri) {
+      if (request.method == 'POST') {
+        switch (request.uri.path) {
           case '/textPost':
             await _handleTextPost(request, username);
             break;
@@ -97,10 +90,13 @@ class Server {
             break;
           case '/eventPost':
             await _handleEventPost(request, username);
+            break;
           case '/follow':
             await _handleFollow(request, username);
+            break;
           case '/unfollow':
             await _handleUnfollow(request, username);
+            break;
           case '/joinevent':
             await _handleJoinEvent(request, username);
           case '/leaveevent':
@@ -110,35 +106,47 @@ class Server {
           case '/unlikepost':
             _handleUnlikePost(request, username);
           default:
-            request.response.statusCode = HttpStatus.notFound;
-            await request.response.close();
+            request.response
+              ..statusCode = HttpStatus.notFound
+              ..close();
         }
-      } else if (request.method == 'GET') {
-        // Handle GET requests
+        continue;
+      }
+
+      if (request.method == 'GET') {
         final uri = request.uri.path;
-        // print(uri);
-        //idk why it's different don't ask me.
         if (uri.startsWith('/profiles/') ||
             uri.startsWith('/posts/') ||
             uri.startsWith('/events/')) {
-          print("downloading media");
           await _getMedia(request);
-        } else if (uri == '/getUserSuggestionsFromName') {
-          // handle
-        } else if (uri == '/feed') {
+          continue;
+        }
+        if (uri == '/getUserSuggestionsFromName') {
+          await suggestion(request);
+          continue;
+        }
+        if (uri == '/feed') {
           await _handleGetFeed(request, username);
-        } else if (uri == '/profile') {
+          continue;
+        }
+        if (uri == '/profile') {
           await _handleGetProfile(request, username);
-        } else if (uri == '/subjects') {
+          continue;
+        }
+        if (uri == '/subjects') {
           await _handleGetSubjects(request, username);
         } else if (uri == '/subjects') {
           await _handleHasJoinedEvent(request, username);
         } else if (uri == '/getparticipantscount') {
           print('received request at /getparticipantcount');
           await _handleGetParticipantCount(request, username);
-        } else if (uri == '/getupcomingevents') {
+          continue;
+        }
+        if (uri == '/getupcomingevents') {
           await _handleGetUpcomingEvents(request, username);
-        } else if (uri == '/hasjoinedevent') {
+          continue;
+        }
+        if (uri == '/hasjoinedevent') {
           await _handleHasJoinedEvent(request, username);
         } else if (uri == '/haslikedpost') {
           await _handleHasLikedPost(request, username);
@@ -159,22 +167,16 @@ class Server {
   void _handleSignIn(HttpRequest request) async {
     print("received sign in request");
     try {
-      // Read the request body
       String content = await utf8.decodeStream(request);
-      Map<String, dynamic> requestBody = jsonDecode(content);
+      Map<String, dynamic> body = jsonDecode(content);
 
       String username = requestBody['username'];
       String password = requestBody['password'];
       print('Username: $username, Password: $password');
 
-      //get salt and hashed password from sql_handler for that username
-      //add and then return the password
       final data = await _sqlHandler.select("getUserCredentialsByUsername", [
         username,
       ]);
-
-      // print(data);
-      // print(data);
       String salt = data[0]['password_salt'];
       String passwordHash = data[0]['password_hash'];
 
@@ -208,31 +210,75 @@ class Server {
     }
   }
 
-  void _handleSignUp(HttpRequest request) async {
+  Future<void> _handleUserExists(HttpRequest request) async {
+    final username = request.uri.queryParameters['username'] ?? '';
+    final data = await _sqlHandler.select("getUserIdByUsername", [username]);
+    bool exists = data.isNotEmpty;
+
+    request.response
+      ..statusCode = HttpStatus.ok
+      ..headers.contentType = ContentType.json
+      ..write(jsonEncode({'exists': exists}))
+      ..close();
+  }
+
+  Future<void> _handleSignUp(HttpRequest request) async {
+    print("Received sign-up request");
+
+    String content = await utf8.decodeStream(request);
+    Map<String, dynamic> body = jsonDecode(content);
+
+    //we have useranem, password and words
+    String username = body['username'];
+    String password = body['password'];
+    String words = body['words'];
+
+    String passwordSalt = BCrypt.gensalt();
+    String wordsSalt = BCrypt.gensalt();
+
+    // Hashing algorithm is bcrypt
+    // Password hash = password + salt
+    // Words hash = salt + words
+    String passwordHash = BCrypt.hashpw(
+      passwordSalt + password,
+      BCrypt.gensalt(),
+    );
+    String wordsHash = BCrypt.hashpw(wordsSalt + words, BCrypt.gensalt());
+
+    print("Password Hash: $passwordHash");
+    print("Words Hash: $wordsHash");
+
+    await _sqlHandler.insert('createUser', [
+      username,
+      passwordSalt,
+      passwordHash,
+      wordsSalt,
+      wordsHash,
+    ]);
+
     try {
-      // For now, just send an OK response
-      request.response.statusCode = HttpStatus.ok;
-      request.response.write('Sign-up successful');
+      // parse, hash, insert into DB...
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..write('Sign-up successful');
     } catch (e) {
-      print('Error handling sign-up: $e');
-      request.response.statusCode = HttpStatus.internalServerError;
-      request.response.write('Internal server error');
+      print('SignUp error: $e');
+      request.response
+        ..statusCode = HttpStatus.internalServerError
+        ..write('Internal server error');
     } finally {
       await request.response.close();
     }
   }
 
   Future<void> suggestion(HttpRequest request) async {
-    final params = request.uri.queryParameters;
-    final data = await _getNameSuggestions(params['query']!);
-
-    request.response.headers.contentType = ContentType.json;
-    request.response.statusCode = HttpStatus.ok;
-
-    // Send the JSON encoded data as the response
-    request.response.write(jsonEncode(data));
-
-    await request.response.close();
+    final q = request.uri.queryParameters['query'] ?? '';
+    final data = await _getNameSuggestions(q);
+    request.response
+      ..statusCode = HttpStatus.ok
+      ..headers.contentType = ContentType.json
+      ..write(jsonEncode(data))
+      ..close();
   }
 
   Future<List<Map<String, dynamic>>> _getNameSuggestions(String query) async {

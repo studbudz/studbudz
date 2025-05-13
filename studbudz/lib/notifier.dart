@@ -12,7 +12,6 @@ enum AppPage {
   recovery,
   feed,
   schedule,
-  chat,
   postWidget,
   createPost,
   editProfile,
@@ -40,11 +39,9 @@ class Controller extends ChangeNotifier {
   Future<void> init() async {
     loggedIn = await engine.isLoggedIn();
     if (!loggedIn && logInCheck) {
-      currentPage =
-          AppPage.signIn; // if you are not logged in -> send to sign in
+      currentPage = AppPage.signIn; // Redirect to sign-in if not logged in
     } else {
-      currentPage = AppPage
-          .home; // if we do not check or you are logged in -> send to this page.
+      currentPage = AppPage.home; // Redirect to home if logged in
     }
     print("Logged in is: $loggedIn and page is: $currentPage");
     notifyListeners();

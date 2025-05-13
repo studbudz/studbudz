@@ -51,20 +51,23 @@ class RoundedSearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor, // Background color
-        borderRadius: BorderRadius.circular(30), // Rounded border
-      ),
-      child: TextField(
-        onChanged: (text) {
-          Controller().engine.autoSuggest(text);
-        },
-        decoration: const InputDecoration(
-          icon: Icon(Icons.search),
-          hintText: "Search...",
-          border: InputBorder.none, // Removes default underline
+    return Material(
+      color: Colors.transparent, // Make the Material widget transparent
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.white, // Background color for the search box itself
+          borderRadius: BorderRadius.circular(30), // Rounded border
+        ),
+        child: TextField(
+          onChanged: (text) {
+            Controller().engine.autoSuggest(text);
+          },
+          decoration: const InputDecoration(
+            icon: Icon(Icons.search),
+            hintText: "Search...",
+            border: InputBorder.none, // Removes default underline
+          ),
         ),
       ),
     );

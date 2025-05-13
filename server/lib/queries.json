@@ -25,5 +25,6 @@
     "hasUserJoinedEvent": "SELECT EXISTS (SELECT 1 FROM user_event WHERE user_id = ? AND event_id = ?) AS has_joined",
     "likePost": "INSERT INTO `like` (user_id, post_id) VALUES (?, ?)",
     "unlikePost": "DELETE FROM `like` WHERE user_id = ? AND post_id = ?",
-    "hasUserLikedPost": "SELECT EXISTS (SELECT 1 FROM `like` WHERE user_id = ? AND post_id = ?) AS has_liked"
+    "hasUserLikedPost": "SELECT EXISTS (SELECT 1 FROM `like` WHERE user_id = ? AND post_id = ?) AS has_liked",
+    "createUser": "INSERT INTO user (username, password_salt, password_hash, word_salt, word_hash) VALUES (?, ?, ?, ?, ?)"
 }

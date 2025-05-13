@@ -10,7 +10,7 @@ class Engine {
   late final Controller _controller;
   late WebsocketHandler _websocketHandler;
   late final HttpRequestHandler _httpHandler;
-  late final int userId;
+  late int userId = 0;
 
   Engine() {
     _authManager = AuthManager();
@@ -41,7 +41,7 @@ class Engine {
         return false;
       }
     } catch (e) {
-      print("Login failed.");
+      print("Login failed: $e");
       return false;
     }
   }
