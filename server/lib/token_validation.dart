@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:easy_dart_jwt/easy_dart_jwt.dart'; // Alan's library
 import 'package:uuid/uuid.dart';
 

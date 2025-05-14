@@ -3,12 +3,10 @@ import 'package:studubdz/Engine/auth_manager.dart';
 import 'package:studubdz/notifier.dart';
 import 'http_request_handler.dart';
 import 'package:studubdz/config.dart';
-import 'package:studubdz/Engine/websocket_handler.dart';
 
 class Engine {
   late final AuthManager _authManager;
   late final Controller _controller;
-  late WebsocketHandler _websocketHandler;
   late final HttpRequestHandler _httpHandler;
   late int userId = 0;
 
@@ -17,7 +15,6 @@ class Engine {
     _httpHandler = HttpRequestHandler(
         address: 'https://$address', authManager: _authManager);
     print('HttpHandler initialized: $_httpHandler');
-    _websocketHandler = WebsocketHandler('ws://$address', _authManager);
   }
 
   void setController(Controller controller) {

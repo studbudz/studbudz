@@ -84,27 +84,31 @@ class Server {
         switch (request.uri.path) {
           case '/textPost':
             await _handleTextPost(request, username);
-            break;
+            continue;
           case '/mediaPost':
             await _handleMediaPost(request, username);
-            break;
+            continue;
           case '/eventPost':
             await _handleEventPost(request, username);
-            break;
+            continue;
           case '/follow':
             await _handleFollow(request, username);
-            break;
+            continue;
           case '/unfollow':
             await _handleUnfollow(request, username);
-            break;
+            continue;
           case '/joinevent':
             await _handleJoinEvent(request, username);
+            continue;
           case '/leaveevent':
             await _handleLeaveEvent(request, username);
+            continue;
           case '/likepost':
             await _handleLikePost(request, username);
+            continue;
           case '/unlikepost':
             _handleUnlikePost(request, username);
+            continue;
           default:
             request.response
               ..statusCode = HttpStatus.notFound
@@ -135,8 +139,10 @@ class Server {
         }
         if (uri == '/subjects') {
           await _handleGetSubjects(request, username);
+          continue;
         } else if (uri == '/subjects') {
           await _handleHasJoinedEvent(request, username);
+          continue;
         } else if (uri == '/getparticipantscount') {
           print('received request at /getparticipantcount');
           await _handleGetParticipantCount(request, username);
@@ -148,18 +154,22 @@ class Server {
         }
         if (uri == '/hasjoinedevent') {
           await _handleHasJoinedEvent(request, username);
+          continue;
         } else if (uri == '/haslikedpost') {
           await _handleHasLikedPost(request, username);
+          continue;
         } else {
           request.response
             ..statusCode = HttpStatus.notFound
             ..write('Not Found')
             ..close();
+          continue;
         }
       } else {
         request.response.statusCode = HttpStatus.forbidden;
         await request.response.close();
         print("Connection refused, other.");
+        continue;
       }
     }
   }
@@ -769,26 +779,36 @@ class Server {
   }
 
   Future<void> _handleGetSubjects(HttpRequest request, String username) async {
-    final userRows = await _sqlHandler.select('getAllSubjects', []);
+    try {
+      final userRows = await _sqlHandler.select('getAllSubjects', []);
 
-    if (userRows.isEmpty) {
+      if (userRows.isEmpty) {
+        request.response
+          ..statusCode = HttpStatus.notFound
+          ..headers.contentType = ContentType.json
+          ..write(jsonEncode({'error': 'Subjects not found'}))
+          ..close();
+        return;
+      } else {
+        // Directly return the raw values with DateTime converted to string
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..headers.contentType = ContentType.json
+          ..write(
+            jsonEncode({
+              'subjects': userRows, // Use the raw data with formatted DateTime
+            }),
+          )
+          ..close();
+      }
+    } catch (e) {
+      print("Error fetching subjects: $e");
       request.response
-        ..statusCode = HttpStatus.notFound
+        ..statusCode = HttpStatus.internalServerError
         ..headers.contentType = ContentType.json
-        ..write(jsonEncode({'error': 'User not found'}))
+        ..write(jsonEncode({'error': 'Failed to fetch subjects'}))
         ..close();
-      return;
     }
-    // Directly return the raw values with DateTime converted to string
-    request.response
-      ..statusCode = HttpStatus.ok
-      ..headers.contentType = ContentType.json
-      ..write(
-        jsonEncode({
-          'subjects': userRows, // Use the raw data with formatted DateTime
-        }),
-      )
-      ..close();
   }
 
   Future<void> _handleJoinEvent(HttpRequest request, String username) async {

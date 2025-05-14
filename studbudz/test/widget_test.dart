@@ -1,22 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:studubdz/main.dart';
+import 'package:studubdz/notifier.dart';
+import 'package:studubdz/UI/sign_in_page.dart';
+import 'package:studubdz/UI/home_page.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('App opens and displays the correct initial page',
+      (WidgetTester tester) async {
+    // Initialize the Controller
+    final controller = Controller();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Set the initial page to SignInPage
+    controller.currentPage = AppPage.signIn;
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Build the app with the real Controller
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Controller>.value(
+        value: controller,
+        child: const MyApp(),
+      ),
+    );
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Wait for the app to settle
+    await tester.pumpAndSettle();
+
+    // Verify that the SignInPage is displayed
+    expect(find.byType(SignInPage), findsOneWidget);
+
+    // Simulate navigation to HomePage
+    controller.setPage(AppPage.home);
+    controller.notifyListeners(); // Notify listeners of the change
+    await tester.pumpAndSettle(); // Wait for animations to complete
+
+    // Verify that the HomePage is displayed
+    expect(find.byType(HomePage), findsOneWidget);
   });
 }
