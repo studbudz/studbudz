@@ -109,7 +109,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   //
   // Parameters:
   //   - data: Form data to be submitted
-  void submit(dynamic data) {
+  Future<void> submit(dynamic data) async {
     Controller controller = Controller();
     bool success = await controller.engine.createPost(data);
 
