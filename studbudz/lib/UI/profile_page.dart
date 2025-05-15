@@ -7,6 +7,12 @@ import 'package:studubdz/UI/nav_bar.dart';
 import 'package:studubdz/notifier.dart';
 import 'edit_profile_page.dart'; // Import the EditProfilePage
 
+// Displays a user's profile, including avatar, username, bio, stats, and posts.
+// Handles profile editing for the current user and follow/unfollow logic for other users.
+// Fetches user data and posts from the backend and manages loading and error states.
+//
+// Parameters:
+//   - userId: int? (optional). If null, displays the current user's profile; otherwise, displays the specified user's profile.
 class ProfilePage extends StatefulWidget {
   final int? userId;
   const ProfilePage({super.key, this.userId});
@@ -16,21 +22,22 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  int currentUserId = 0;
+  int currentUserId = 0; // Stores the current user's ID
 
-  bool isLoading = true;
-  dynamic userData;
-  List<dynamic> userPosts = [];
+  bool isLoading = true; // Indicates if profile data is being loaded
+  dynamic userData; // Holds fetched user data
+  List<dynamic> userPosts = []; // Holds fetched user posts
   String username = "john_doe";
   String bio = "Loving life. Photographer. Traveler.";
   int postsCount = 0;
   int followersCount = 0;
   List<dynamic>? posts = [];
-  XFile? _avatarFile;
+  XFile? _avatarFile; // Stores the user's avatar image
 
   bool following = false; // Track follow/unfollow state
   bool loadingFollow = false; // Track loading state for follow/unfollow
 
+  // Returns true if viewing the current user's profile
   bool get isCurrentUserProfile =>
       widget.userId == null || widget.userId == currentUserId;
 
@@ -40,6 +47,8 @@ class _ProfilePageState extends State<ProfilePage> {
     getUserData();
   }
 
+  // Fetches user profile data and posts from the backend.
+  // Also fetches the current user's ID to determine if this is their profile.
   Future<void> getUserData() async {
     debugPrint("Fetching user data for user ID: ${widget.userId}");
 
@@ -89,6 +98,8 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Downloads the user's avatar image if available.
+  // Falls back to default avatar if not found.
   Future<void> _downloadAvatar() async {
     final url = userData['user_avatar'] as String?;
     print("avatar url: $url");
@@ -110,6 +121,8 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Handles follow/unfollow logic for other users.
+  // Updates the backend and local state.
   Future<void> _handleFollow() async {
     setState(() => loadingFollow = true);
     final userId = widget.userId ?? currentUserId;
@@ -140,6 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Builds the main profile UI, including avatar, stats, bio, posts, and action buttons.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -218,6 +232,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 ),
+                // Edit Profile or Follow/Unfollow button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: SizedBox(
@@ -285,6 +300,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Builds a column displaying a stat count and label (e.g., Posts, Friends).
   Widget _buildStatsColumn(int count, String label) {
     return Column(
       children: [

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:studubdz/UI/sign_up.dart';
 import 'package:studubdz/notifier.dart';
 
+// A stateful page for user authentication. Allows users to sign in with username and password.
+// Handles validation, error feedback, and navigation to the home page or sign up page.
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
@@ -13,6 +15,7 @@ class _SignInPageState extends State<SignInPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  // Builds the sign-in UI, including header, form, and sign-in button.
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -48,10 +51,12 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  // Validates input and attempts to sign in using the backend.
+  // Shows error messages for missing fields or failed authentication.
   void _handleSignIn() async {
     String username = _usernameController.text.trim();
     String password = _passwordController.text.trim();
-
+    // Validate that both fields are filled
     if (username.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -61,7 +66,7 @@ class _SignInPageState extends State<SignInPage> {
       );
       return;
     }
-
+    // Attempt sign in via backend engine
     bool success = await Controller().engine.logIn(username, password);
 
     if (success) {
@@ -71,6 +76,7 @@ class _SignInPageState extends State<SignInPage> {
             .setPage(AppPage.home); // Ensure this is set to `AppPage.home`
       });
     } else {
+      // Show error if authentication fails
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Invalid username or password'),
@@ -81,6 +87,7 @@ class _SignInPageState extends State<SignInPage> {
   }
 }
 
+// Displays the sign-in page header with an icon and title.
 class SignInHeaderWidget extends StatelessWidget {
   const SignInHeaderWidget({super.key});
 
@@ -109,6 +116,12 @@ class SignInHeaderWidget extends StatelessWidget {
   }
 }
 
+// Form widget for entering username and password.
+// Includes password visibility toggle and navigation to sign up page.
+//
+// Parameters:
+//   - usernameController: TextEditingController for the username field
+//   - passwordController: TextEditingController for the password field
 class SignInFormWidget extends StatefulWidget {
   const SignInFormWidget({
     super.key,
@@ -124,8 +137,9 @@ class SignInFormWidget extends StatefulWidget {
 }
 
 class _SignInFormWidgetState extends State<SignInFormWidget> {
-  bool _obscurePassword = true;
+  bool _obscurePassword = true; // Controls password visibility
 
+  // Builds the form UI with validation and password visibility toggle.
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -150,6 +164,7 @@ class _SignInFormWidgetState extends State<SignInFormWidget> {
             },
           ),
           const SizedBox(height: 20),
+          // Password input field with visibility toggle
           TextFormField(
             controller: widget.passwordController,
             obscureText: _obscurePassword,

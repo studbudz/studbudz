@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/UI/subject_widget.dart';
 
+// A form widget for creating and submitting text posts.
+// Allows users to select a subject, set privacy, and enter post content.
+// Notifies the parent widget with the post data when submitted.
+//
+// Parameters:
+//   - submit: Function. Callback to handle the submission of the text post data.
+//     The callback receives a Map<String, dynamic> containing:
+//       - type: 'text'
+//       - subject: selected subject/category (optional)
+//       - post_content: the text content
+//       - post_private: privacy flag (bool)
+
 class TextFormWidget extends StatefulWidget {
   final Function submit;
   const TextFormWidget({super.key, required this.submit});
@@ -9,11 +21,17 @@ class TextFormWidget extends StatefulWidget {
   State<TextFormWidget> createState() => _TextFormWidgetState();
 }
 
+// State for TextFormWidget
+//
+// Handles subject selection, privacy toggle, text input, and submission logic.
 class _TextFormWidgetState extends State<TextFormWidget> {
-  final TextEditingController _controller = TextEditingController();
-  bool _isPrivate = false;
-  int? subject;
+  final TextEditingController _controller =
+      TextEditingController(); // Controller for text input
+  bool _isPrivate = false; // Privacy flag for the post
+  int? subject; // Selected subject/category (optional)
 
+  // Submits the post if the text is not empty.
+  // Packages the data into a map and calls the parent-provided submit callback.
   void _submitIfNotEmpty() {
     if (_controller.text.trim().isNotEmpty) {
       final data = {
@@ -26,19 +44,22 @@ class _TextFormWidgetState extends State<TextFormWidget> {
     }
   }
 
+  // Builds the text post form UI.
+  // Includes subject selection, privacy toggle, text input, and a submit button.
+  // Uses a StatefulBuilder for local state updates (for efficient UI refresh).
   @override
   Widget build(BuildContext context) {
     return StatefulBuilder(
       builder: (context, setState) {
         return Column(
           children: [
-            // Subject input box
+            // Subject input box (optional, can be used for categorization)
             SubjectWidget(
                 onSubjectSelected: (value) => setState(() {
                       subject = value;
                     })),
             const SizedBox(height: 16),
-            // Private toggle
+            // Private toggle switch
             Row(
               children: [
                 Switch(
@@ -53,7 +74,7 @@ class _TextFormWidgetState extends State<TextFormWidget> {
               ],
             ),
             const SizedBox(height: 16),
-            // Text box
+            // Text input field for post content
             TextFormField(
               controller: _controller,
               decoration: InputDecoration(
@@ -66,7 +87,7 @@ class _TextFormWidgetState extends State<TextFormWidget> {
               minLines: 9,
               maxLines: 9,
               onChanged: (value) {
-                setState(() {});
+                setState(() {}); // Updates character counter
               },
               onFieldSubmitted: (value) {
                 _submitIfNotEmpty();

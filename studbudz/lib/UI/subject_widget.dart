@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/notifier.dart';
 
+// A dropdown widget for selecting a subject/category from a list fetched from the backend.
+// Notifies the parent widget when the selection changes.
+//
+// Parameters:
+//   - onSubjectSelected: ValueChanged<int?>. Callback triggered with the selected subject ID or null.
 class SubjectWidget extends StatefulWidget {
   final ValueChanged<int?> onSubjectSelected;
 
@@ -11,15 +16,18 @@ class SubjectWidget extends StatefulWidget {
 }
 
 class _SubjectWidgetState extends State<SubjectWidget> {
-  int? _selectedSubjectId;
-  List<dynamic> _subjects = [];
+  int? _selectedSubjectId; // Currently selected subject ID
+  List<dynamic> _subjects = []; // List of available subjects
 
+  // Fetches the list of subjects from the backend on initialization.
   @override
   void initState() {
     super.initState();
     getData();
   }
 
+  // Calls the backend to retrieve subjects and updates the state.
+  // Handles both success and empty/error cases.
   Future<void> getData() async {
     final result = await Controller().engine.getSubjects();
     final raw = result['subjects'];
@@ -30,6 +38,8 @@ class _SubjectWidgetState extends State<SubjectWidget> {
     setState(() {});
   }
 
+  // Builds the dropdown form field with fetched subjects.
+  // Includes a "None" option for no selection.
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<int?>(
@@ -44,7 +54,7 @@ class _SubjectWidgetState extends State<SubjectWidget> {
         setState(() {
           _selectedSubjectId = newId;
         });
-        widget.onSubjectSelected(newId);
+        widget.onSubjectSelected(newId); // Notify parent of selection
       },
       items: <DropdownMenuItem<int?>>[
         const DropdownMenuItem<int?>(

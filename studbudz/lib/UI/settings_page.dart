@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:studubdz/notifier.dart';
-//change username inside account section and password\
 
+//change username inside account section and password\
+// A stateful page for managing user account settings, privacy, notifications, account deletion, and logout.
+// Integrates with backend for account actions and profile visibility updates.
+//
+// Features:
+// - Toggle profile visibility (public/private)
+// - Toggle notification preferences (locally)
+// - Delete account with confirmation dialog
+// - Log out of the app
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -10,9 +18,10 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool _notificationsEnabled = true;
-  bool _isProfilePublic = true; // Default to public profile
+  bool _notificationsEnabled = true; // Local notification preference
+  bool _isProfilePublic = true; // Profile visibility flag
 
+  // Builds the settings UI with account, notification, and destructive actions.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,13 +37,16 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: Column(
         children: [
+          // Settings icon at the top
           const Padding(
             padding: EdgeInsets.all(16.0),
             child: Icon(Icons.settings, size: 80, color: Colors.grey),
           ),
+          // Main settings list
           Expanded(
             child: ListView(
               children: [
+                // Account settings (profile visibility)
                 ListTile(
                   leading: const Icon(Icons.person),
                   title: const Text('Account'),
@@ -57,6 +69,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                 ),
                 const Divider(),
+                // Notification toggle
                 ListTile(
                   leading: const Icon(Icons.notifications),
                   title: const Text('Notifications'),
@@ -96,6 +109,8 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  // Shows a confirmation dialog before deleting the account.
+  // Calls [_deleteAccount] if the user confirms.
   void _confirmDeleteAccount(BuildContext context) {
     showDialog(
       context: context,
@@ -117,6 +132,8 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  // Handles account deletion logic.
+  // Currently only closes the dialog; should be extended to call the backend.
   Future<void> _deleteAccount(BuildContext context) async {
     try {
       Navigator.pop(context);
@@ -131,6 +148,11 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
+// A page for toggling profile visibility (public/private).
+//
+// Parameters:
+//   - isProfilePublic: bool. Initial visibility state.
+//   - onProfileVisibilityChanged: ValueChanged<bool>. Callback for state changes.
 class AccountSettingsPage extends StatefulWidget {
   final bool isProfilePublic;
   final ValueChanged<bool> onProfileVisibilityChanged;
@@ -154,6 +176,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     _isProfilePublic = widget.isProfilePublic;
   }
 
+// Saves changes to profile visibility and shows a confirmation message.
   void _saveChanges() {
     widget.onProfileVisibilityChanged(_isProfilePublic);
 
@@ -167,6 +190,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     );
   }
 
+  // Builds the account settings UI with a visibility toggle and save button.
   @override
   Widget build(BuildContext context) {
     return Scaffold(

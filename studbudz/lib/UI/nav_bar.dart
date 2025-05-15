@@ -2,6 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:studubdz/notifier.dart';
 
+// A customizable bottom navigation bar for the application.
+//
+// Features:
+// - Navigates between Feed, Home, Schedule, and Profile pages.
+// - Home icon toggles to "Add Post" when on the Home page.
+// - Highlights the active page with a blue color.
+// - Uses Cupertino and Material icons for a modern look.
+//
+// Parameters:
+//   - height: double (optional). The bottom padding of the navigation bar. Default is 60.
 class NavBarWidget extends StatefulWidget {
   final double height;
   const NavBarWidget({super.key, this.height = 60});
@@ -10,10 +20,16 @@ class NavBarWidget extends StatefulWidget {
   State<NavBarWidget> createState() => _NavBarWidgetState();
 }
 
+// State for NavBarWidget
+//
+// Handles the selected navigation index and updates the current page.
+// Maintains icon highlighting and toggling between Home and Add Post.
 class _NavBarWidgetState extends State<NavBarWidget> {
   int selectedIndex = 0;
   AppPage currentPage = Controller().currentPage;
-  double iconSize = 36;
+  double iconSize = 36; // Standard icon size for nav bar
+
+  // List of icons for navigation tabs
 
   final List<IconData> icons = [
     CupertinoIcons.square_stack_3d_up, // Feed
@@ -31,6 +47,10 @@ class _NavBarWidgetState extends State<NavBarWidget> {
     'Add Post',
   ];
 
+  // Builds the navigation bar UI.
+  // - Uses a Row of IconButtons for navigation.
+  // - Highlights the selected icon.
+  // - Handles Home/Add Post toggle logic.
   @override
   Widget build(BuildContext context) {
     Controller notifier = Controller();

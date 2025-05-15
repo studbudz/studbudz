@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:studubdz/UI/subject_widget.dart';
 
+//
+// A form widget that allows users to create and submit an event post.
+//
+// Parameters:
+//   - submit: Function. Callback to handle submission of the event data.
 class EventFormWidget extends StatefulWidget {
   final Function submit;
   const EventFormWidget({super.key, required this.submit});
@@ -53,6 +58,8 @@ class _EventFormWidgetState extends State<EventFormWidget> {
     });
   }
 
+  // Collects all form data and submits it via the provided callback.
+  // Note: Validation for required fields can be added as needed.
   void _submit() {
     final eventName = _eventNameController.text.trim();
 
@@ -78,6 +85,7 @@ class _EventFormWidgetState extends State<EventFormWidget> {
     widget.submit(data);
   }
 
+  // Disposes all text controllers to free resources and prevent memory leaks.
   @override
   void dispose() {
     _eventNameController.dispose();
@@ -86,6 +94,7 @@ class _EventFormWidgetState extends State<EventFormWidget> {
     super.dispose();
   }
 
+// Builds the event form UI
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

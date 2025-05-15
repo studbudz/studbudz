@@ -4,11 +4,17 @@ import 'package:bip39/bip39.dart' as bip39;
 import 'package:studubdz/UI/home_page.dart';
 import 'package:studubdz/notifier.dart';
 
+// Checks if a user with the given username already exists in the backend.
+// Returns true if the username is taken, false otherwise.
 Future<bool> checkUserExists(String username) async {
   print("Checking if user exists: $username");
   return Controller().engine.userExists(username);
 }
 
+// Validates password complexity according to the following rules:
+// - At least 8 characters
+// - Contains uppercase, lowercase, digit, and special character
+// Returns true if the password is strong, false otherwise.
 Future<bool> validatePasswordComplexity(String password) async {
   if (password.length < 8) return false;
 
@@ -27,10 +33,11 @@ Future<bool> validatePasswordComplexity(String password) async {
       hasSpecialChar = true; // Special character
     }
   }
-
   return hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
 }
 
+// Sends a sign-up request to the backend with the provided username, password, and recovery phrase.
+// Returns true if sign-up is successful, false otherwise.
 Future<bool> signUp(String username, String password, String words) async {
   print("Signing up with: $username and $password");
   final response = await Controller().engine.signUpRequest(
@@ -41,10 +48,16 @@ Future<bool> signUp(String username, String password, String words) async {
   return response;
 }
 
+// Generates a new BIP39 mnemonic phrase (24 words, 256-bit strength).
 Future<String> generateMnemonic() async {
   return bip39.generateMnemonic(strength: 256);
 }
 
+// A stateful widget that implements the multi-step sign-up flow:
+// 1. Account setup (username, password)
+// 2. Recovery phrase generation and confirmation
+// 3. Phrase verification
+// 4. Completion and navigation to home page
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -53,13 +66,14 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  int step = 0;
+  int step = 0; // Tracks the current step in the sign-up flow
   String username = '';
   String password = '';
   String confirmPassword = '';
   String words = '';
   List<TextEditingController> wordControllers = [];
 
+  // Disposes all text controllers for the phrase input fields.
   @override
   void dispose() {
     for (var c in wordControllers) {
@@ -68,6 +82,7 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
+  // Advances to the next step, handling validation and state as needed.
   void nextStep() {
     switch (step) {
       case 0:
@@ -82,6 +97,8 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
+  // Handles validation and state for the account setup step.
+  // Checks for empty fields, password match, username uniqueness, and password strength.
   Future<void> _handleAccountSetup() async {
     if (username.isEmpty ||
         password.isEmpty ||
@@ -112,6 +129,7 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
 
+  // Confirms that the recovery phrase has been generated and moves to the verification step.
   Future<void> _handleWordGenerationConfirmed() async {
     if (words.isEmpty) {
       ScaffoldMessenger.of(context)
@@ -121,6 +139,8 @@ class _SignUpPageState extends State<SignUpPage> {
     setState(() => step = 2);
   }
 
+  // Verifies that the user has correctly entered the recovery phrase.
+  // If correct, attempts sign-up with the backend.
   Future<void> _handleWordVerification() async {
     final entered = wordControllers.map((c) => c.text.trim()).join(' ');
     if (entered != words) {
@@ -138,9 +158,11 @@ class _SignUpPageState extends State<SignUpPage> {
     setState(() => step = 3);
   }
 
+  // Builds the UI for each step in the sign-up flow.
   @override
   Widget build(BuildContext context) {
     if (step == 3) {
+      // Completion screen
       return Scaffold(
         body: Center(
           child: Column(
@@ -167,6 +189,7 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       );
     }
+    // Render the appropriate step widget
     switch (step) {
       case 0:
         return AccountSetup(
@@ -189,6 +212,9 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 }
 
+// Stateless widget for the account setup step of sign-up.
+// Allows users to enter username, password, and confirm password.
+// Calls [onStepContinue] when the user presses "Next".
 class AccountSetup extends StatelessWidget {
   const AccountSetup({
     super.key,
@@ -254,6 +280,8 @@ class AccountSetup extends StatelessWidget {
   }
 }
 
+// Displays the generated recovery phrase to the user and allows them to copy it.
+// User must confirm before proceeding to the next step.
 class WordGeneration extends StatefulWidget {
   const WordGeneration({super.key, required this.words, required this.onStep});
   final String words;
@@ -266,6 +294,7 @@ class WordGeneration extends StatefulWidget {
 class _WordGenerationState extends State<WordGeneration> {
   bool copied = false;
 
+  // Copies the recovery phrase to the clipboard and shows a confirmation.
   void copyToClipboard() {
     Clipboard.setData(ClipboardData(text: widget.words));
     setState(() => copied = true);
@@ -292,6 +321,7 @@ class _WordGenerationState extends State<WordGeneration> {
                   'These words are your account recovery phrase. Never share them.',
                   textAlign: TextAlign.center),
               const SizedBox(height: 20),
+              // List of recovery words (read-only)
               Expanded(
                 child: ListView.builder(
                   itemCount: wordList.length,
@@ -334,6 +364,7 @@ class _WordGenerationState extends State<WordGeneration> {
                 ),
               ),
               const SizedBox(height: 20),
+              // Copy and Confirm buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -364,6 +395,8 @@ class _WordGenerationState extends State<WordGeneration> {
   }
 }
 
+// Stateless widget for verifying the recovery phrase.
+// User must enter each word in the correct order to proceed.
 class WordVerification extends StatelessWidget {
   const WordVerification(
       {super.key,
@@ -374,6 +407,7 @@ class WordVerification extends StatelessWidget {
   final List<TextEditingController> controllers;
   final VoidCallback onStep;
 
+  // Handles input for each word field, auto-advancing if multiple words are pasted at once.
   void handleInput(int index, String value) {
     final parts = value.trim().split(RegExp(r'\s+'));
     if (parts.isEmpty) return;
@@ -401,6 +435,7 @@ class WordVerification extends StatelessWidget {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center),
               const SizedBox(height: 20),
+              // Input fields for each recovery word
               Expanded(
                 child: ListView.builder(
                   itemCount: wordsList.length,
@@ -442,6 +477,7 @@ class WordVerification extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+              // Confirm button
               ElevatedButton(
                 onPressed: onStep,
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black),

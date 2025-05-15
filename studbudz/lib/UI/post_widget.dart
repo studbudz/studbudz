@@ -6,6 +6,11 @@ import 'package:studubdz/notifier.dart';
 import 'package:video_player/video_player.dart';
 import 'package:intl/intl.dart';
 
+// Displays a single post (text, media, or event) with interactive features such as like, join/leave event, and user profile navigation.
+// Handles media downloading, video playback, and participant count updates.
+//
+// Parameters:
+//   - data: dynamic. The post data map containing post type, content, and metadata.
 class PostWidget extends StatefulWidget {
   final dynamic data;
   const PostWidget({super.key, this.data});
@@ -22,6 +27,7 @@ class _PostWidgetState extends State<PostWidget> {
 
   int? participantCount;
 
+  // Initializes post state, downloads media if needed, and checks like/join status.
   @override
   void initState() {
     super.initState();
@@ -55,6 +61,7 @@ class _PostWidgetState extends State<PostWidget> {
     }
   }
 
+  // Fetches and updates the number of participants for an event post.
   Future<void> _handleGetParticipantCount() async {
     final eventId = widget.data['event_id'];
 
@@ -66,6 +73,7 @@ class _PostWidgetState extends State<PostWidget> {
     });
   }
 
+// Toggles the like state for the post and updates backend.
   Future<void> _handleToggleLike() async {
     print(widget.data);
     final postId = widget.data['post_id'];
@@ -89,6 +97,7 @@ class _PostWidgetState extends State<PostWidget> {
     }
   }
 
+  // Checks if the user has joined the event (for event posts)
   Future<void> _handleHasJoined() async {
     final eventId = widget.data['event_id'];
 
@@ -101,6 +110,7 @@ class _PostWidgetState extends State<PostWidget> {
     });
   }
 
+  // Handles join/leave event logic and updates participant count.
   Future<void> _handleToggleJoinEvent() async {
     final eventId = widget.data['event_id'];
 
@@ -132,6 +142,7 @@ class _PostWidgetState extends State<PostWidget> {
     }
   }
 
+  // Downloads media file (image/video) for the post and initializes video controller if needed.
   Future<void> _downloadMedia(String url) async {
     if (url.isEmpty) return;
     final file = await Controller().engine.downloadMedia(endpoint: url);
@@ -148,6 +159,7 @@ class _PostWidgetState extends State<PostWidget> {
     });
   }
 
+  // Builds the main post UI, including header, content, and footer.
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -176,6 +188,7 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
+  // Renders the appropriate post content widget based on post type.
   Widget buildMainSection(dynamic data) {
     String postType = data['type'];
     switch (postType) {
@@ -190,6 +203,7 @@ class _PostWidgetState extends State<PostWidget> {
     }
   }
 
+// Renders a text post with subject and content.
   Widget buildTextPost(dynamic data) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -210,6 +224,8 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
+  // Renders a media post, supporting both images and videos.
+  // Handles video playback toggle on tap.
   Widget buildMediaPost(dynamic data) {
     Widget content;
 
@@ -276,6 +292,7 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
+  // Renders an event post with subject, description, image, time, participants, and join/leave button.
   Widget buildEventPost(dynamic data) {
     final start = DateTime.parse(data['event_start_at']);
     final end = DateTime.parse(data['event_end_at']);
@@ -390,6 +407,10 @@ class _PostWidgetState extends State<PostWidget> {
   }
 }
 
+// Displays the post header with user avatar, username, and a popup menu for actions (e.g., report/block).
+//
+// Parameters:
+//   - data: dynamic. The post/user data.
 class HeaderWidget extends StatefulWidget {
   final dynamic data;
   const HeaderWidget({super.key, required this.data});
@@ -400,7 +421,7 @@ class HeaderWidget extends StatefulWidget {
 
 class _HeaderWidgetState extends State<HeaderWidget> {
   XFile? _avatarFile;
-
+  // Downloads the user's avatar image if a URL is provided.
   @override
   void initState() {
     super.initState();
@@ -424,6 +445,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
     }
   }
 
+  // Builds the header UI, including avatar, username, and menu.
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -483,6 +505,11 @@ class _HeaderWidgetState extends State<HeaderWidget> {
   }
 }
 
+// Displays the footer of a post, including the like button.
+//
+// Parameters:
+//   - isLiked: bool. Whether the post is currently liked.
+//   - onLikePressed: VoidCallback. Called when the like button is pressed.
 class FooterWidget extends StatelessWidget {
   final bool isLiked;
   final VoidCallback onLikePressed;

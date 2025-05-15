@@ -4,8 +4,15 @@ import 'media_form_widget.dart';
 import 'event_form_widget.dart';
 import 'package:studubdz/notifier.dart';
 
+// Enum representing different types of posts that can be created
 enum PostType { text, media, event }
 
+// Creates a page for composing different types of posts (text/media/event)
+//
+// Allows users to:
+// 1. Select post type using a segmented control
+// 2. Fill in post-specific content using dynamic forms
+// 3. Submit posts to the backend
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({super.key});
 
@@ -52,6 +59,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
     );
   }
 
+  // Builds the post type selector row
+  //
+  // Returns a Row containing three styled buttons for selecting post types
   Widget buildSelector() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -63,6 +73,13 @@ class _CreatePostPageState extends State<CreatePostPage> {
     );
   }
 
+  // Creates a single selector button with custom styling
+  //
+  // Parameters:
+  //   - label: Display text for the button
+  //   - index: Associated post type index (0-2)
+  //
+  // Returns a GestureDetector wrapping a styled Container
   Widget _buildSelectorButton(String label, int index) {
     final bool isSelected = selector == index;
     return GestureDetector(
@@ -88,11 +105,22 @@ class _CreatePostPageState extends State<CreatePostPage> {
     );
   }
 
+  // Handles post submission to backend
+  //
+  // Parameters:
+  //   - data: Form data to be submitted
   void submit(dynamic data) {
     Controller controller = Controller();
     controller.engine.createPost(data);
   }
 
+  // Builds the appropriate form based on selected post type
+  //
+  // Returns:
+  //   - TextFormWidget for text posts
+  //   - MediaFormWidget for media posts
+  //   - EventFormWidget for event posts
+  //   - Empty container for unknown types (should never occur)
   Widget buildForm() {
     Widget formWidget;
     switch (selector) {
