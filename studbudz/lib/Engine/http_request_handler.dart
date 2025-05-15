@@ -32,6 +32,18 @@ class HttpRequestHandler {
     checkConnection();
   }
 
+  // Named constructor for testing
+  HttpRequestHandler.forTest({
+    required String address,
+    required AuthManager authManager,
+    required http.Client client,
+  }) {
+    _address = address;
+    _authManager = authManager;
+    _client = client;
+    _httpClient = HttpClient();
+  }
+
   // Method to send data (POST request)
   //send arbitrary
   //return response
@@ -124,10 +136,11 @@ class HttpRequestHandler {
         : uri;
 
     try {
-      final request = await _httpClient.getUrl(url);
-      request.headers.set('Authorization', 'Bearer $token');
-      final response = await request.close();
-      final responseBody = await response.transform(utf8.decoder).join();
+      final response = await _client.get(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      final responseBody = response.body;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return jsonDecode(responseBody);
@@ -193,16 +206,13 @@ class HttpRequestHandler {
   Future<bool> signInRequest(String username, String password) async {
     final url = Uri.parse('$_address/signin');
     try {
-      final request = await _httpClient.postUrl(url);
-      request.headers.contentType = ContentType.json;
+      final response = await _client.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'username': username, 'password': password}),
+      );
 
-      // Send the username and password in the body as JSON
-      Map<String, dynamic> data = {'username': username, 'password': password};
-      request.add(utf8.encode(jsonEncode(data)));
-
-      final response = await request
-          .close(); // both closing and sending the data to the server
-      final responseBody = await response.transform(utf8.decoder).join();
+      final responseBody = response.body;
 
       if (response.statusCode == 200) {
         // Assuming response contains 'token' and 'uuid'
@@ -237,19 +247,16 @@ class HttpRequestHandler {
   ) async {
     final url = Uri.parse('$_address/signup');
     try {
-      final request = await _httpClient.postUrl(url);
-      request.headers.contentType = ContentType.json;
-
-      // Send the username and password in the body as JSON
-      Map<String, dynamic> data = {
-        'username': username,
-        'password': password,
-        'words': words,
-      };
-      request.add(utf8.encode(jsonEncode(data)));
-
-      final response = await request.close();
-      final responseBody = await response.transform(utf8.decoder).join();
+      final response = await _client.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'username': username,
+          'password': password,
+          'words': words,
+        }),
+      );
+      final responseBody = response.body;
 
       if (response.statusCode == 200) {
         return true;
@@ -295,8 +302,7 @@ class HttpRequestHandler {
       '$_address/ping',
     ); // Use a 'ping' endpoint or a health-check endpoint
     try {
-      final request = await _httpClient.getUrl(url);
-      final response = await request.close();
+      final response = await _client.get(url);
 
       if (response.statusCode == 202) {
         print("Connected.");

@@ -17,6 +17,14 @@ class Engine {
     print('HttpHandler initialized: $_httpHandler');
   }
 
+  // Add this constructor for testing:
+  Engine.forTest(
+      {required AuthManager authManager,
+      required HttpRequestHandler httpHandler}) {
+    _authManager = authManager;
+    _httpHandler = httpHandler;
+  }
+
   void setController(Controller controller) {
     _controller = controller;
     print('Controller set: $_controller');
@@ -39,7 +47,7 @@ class Engine {
       }
     } catch (e) {
       print("Login failed: $e");
-      return false;
+      rethrow;
     }
   }
 
@@ -51,7 +59,8 @@ class Engine {
     return {"hi": "hi"};
   }
 
-  Future<bool> createPost(dynamic data) async {
+  //post creation
+    Future<bool> createPost(dynamic data) async {
     bool success = false;
 
     String postType = data["type"];

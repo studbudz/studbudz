@@ -9,7 +9,7 @@ import 'package:studubdz/UI/post_widget.dart';
 import 'package:studubdz/UI/recovery_page.dart';
 import 'package:studubdz/UI/settings_page.dart';
 import 'package:studubdz/UI/schedule_page.dart';
-import 'package:studubdz/UI/sign_up.dart';
+import 'package:studubdz/UI/sign_up_page.dart';
 import 'package:studubdz/UI/theme_data.dart';
 import 'package:studubdz/UI/sign_in_page.dart';
 import 'package:studubdz/UI/profile_page.dart';

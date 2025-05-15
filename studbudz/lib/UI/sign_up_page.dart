@@ -341,7 +341,7 @@ class _WordGenerationState extends State<WordGeneration> {
                                     color: Colors.black.withOpacity(0.2),
                                     spreadRadius: 2,
                                     blurRadius: 6,
-                                    offset: Offset(0, 4))
+                                    offset: const Offset(0, 4))
                               ], borderRadius: BorderRadius.circular(10)),
                               child: TextField(
                                 readOnly: true,
@@ -455,7 +455,7 @@ class WordVerification extends StatelessWidget {
                                     color: Colors.black.withOpacity(0.2),
                                     spreadRadius: 2,
                                     blurRadius: 6,
-                                    offset: Offset(0, 4))
+                                    offset: const Offset(0, 4))
                               ], borderRadius: BorderRadius.circular(10)),
                               child: TextField(
                                 controller: controllers[index],
