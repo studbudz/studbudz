@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthManager {
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  final FlutterSecureStorage _secureStorage;
+
+  AuthManager({FlutterSecureStorage? storage})
+      : _secureStorage = storage ?? const FlutterSecureStorage();
 
   Future<void> saveAuthData(String token, String uuid) async {
     try {

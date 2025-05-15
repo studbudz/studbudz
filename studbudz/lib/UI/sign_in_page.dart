@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:studubdz/UI/sign_up.dart';
+import 'package:studubdz/UI/sign_up_page.dart';
 import 'package:studubdz/notifier.dart';
 
 class SignInPage extends StatefulWidget {
@@ -36,6 +36,7 @@ class _SignInPageState extends State<SignInPage> {
                 child: SizedBox(
                   width: screenWidth * 0.5,
                   child: ElevatedButton(
+                    key: const Key('loginButton'),
                     onPressed: () => _handleSignIn(),
                     child: const Text('Sign In'),
                   ),
@@ -135,6 +136,7 @@ class _SignInFormWidgetState extends State<SignInFormWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
+            key: const Key('usernameField'),
             controller: widget.usernameController,
             decoration: const InputDecoration(
               labelText: 'Username *',
@@ -151,6 +153,7 @@ class _SignInFormWidgetState extends State<SignInFormWidget> {
           ),
           const SizedBox(height: 20),
           TextFormField(
+            key: const Key('passwordField'),
             controller: widget.passwordController,
             obscureText: _obscurePassword,
             decoration: InputDecoration(

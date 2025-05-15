@@ -88,9 +88,20 @@ class _CreatePostPageState extends State<CreatePostPage> {
     );
   }
 
-  void submit(dynamic data) {
+  void submit(dynamic data) async {
     Controller controller = Controller();
-    controller.engine.createPost(data);
+    bool success = await controller.engine.createPost(data);
+
+    if (success) {
+      controller.setPage(AppPage.feed); // Go to feed page if post succeeded
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to create post.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   Widget buildForm() {
