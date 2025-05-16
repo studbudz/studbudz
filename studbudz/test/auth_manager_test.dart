@@ -5,13 +5,13 @@ import 'package:studubdz/Engine/auth_manager.dart';
 import 'dart:convert';
 
 // ╔══════════════════════════════════════════════════════════════════════════╗
-// ║                              Mock Classes                               ║
+// ║                              Mock Classes                                ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
 
 class MockStorage extends Mock implements FlutterSecureStorage {}
 
 // ╔══════════════════════════════════════════════════════════════════════════╗
-// ║                        Helper Functions                                 ║
+// ║                        Helper Functions                                  ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
 
 /// Helper function to create a fake JWT for testing
@@ -22,7 +22,7 @@ String _makeToken(Map<String, dynamic> payload) {
 }
 
 // ╔══════════════════════════════════════════════════════════════════════════╗
-// ║                              Main Test Suite                            ║
+// ║                              Main Test Suite                             ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
 
 void main() {
@@ -36,11 +36,11 @@ void main() {
   });
 
   // ╔════════════════════════════════════════════════════════════════════════╗
-  // ║                            AuthManager Tests                          ║
+  // ║                            AuthManager Tests                           ║
   // ╚════════════════════════════════════════════════════════════════════════╝
   group('AuthManager', () {
     // ╔══════════════════════════════════════════════════════════════════════╗
-    // ║                          saveAuthData Tests                         ║
+    // ║                          saveAuthData Tests                          ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     group('saveAuthData', () {
       test('writes token and uuid to secure storage', () async {
@@ -59,7 +59,7 @@ void main() {
     });
 
     // ╔══════════════════════════════════════════════════════════════════════╗
-    // ║                          getUserId Tests                            ║
+    // ║                          getUserId Tests                             ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     group('getUserId', () {
       test('returns userID from storage', () async {
@@ -79,7 +79,7 @@ void main() {
     });
 
     // ╔══════════════════════════════════════════════════════════════════════╗
-    // ║                          getUsername Tests                          ║
+    // ║                          getUsername Tests                           ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     group('getUsername', () {
       test('returns username from decoded token', () async {
@@ -101,7 +101,7 @@ void main() {
     });
 
     // ╔══════════════════════════════════════════════════════════════════════╗
-    // ║                      getUserIdFromToken Tests                       ║
+    // ║                      getUserIdFromToken Tests                        ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     group('getUserIdFromToken', () {
       test('extracts user_id from token', () async {
@@ -123,7 +123,7 @@ void main() {
     });
 
     // ╔══════════════════════════════════════════════════════════════════════╗
-    // ║                          getToken Tests                             ║
+    // ║                          getToken Tests                              ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     group('getToken', () {
       test('returns stored token', () async {
@@ -142,7 +142,7 @@ void main() {
     });
 
     // ╔══════════════════════════════════════════════════════════════════════╗
-    // ║                          getUuid Tests                              ║
+    // ║                          getUuid Tests                               ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     group('getUuid', () {
       test('returns stored uuid', () async {
@@ -163,7 +163,7 @@ void main() {
     });
 
     // ╔══════════════════════════════════════════════════════════════════════╗
-    // ║                          isLoggedIn Tests                           ║
+    // ║                          isLoggedIn Tests                            ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     group('isLoggedIn', () {
       test('returns true if token exists and valid', () async {
@@ -204,7 +204,7 @@ void main() {
     });
 
     // ╔══════════════════════════════════════════════════════════════════════╗
-    // ║                          logOut Tests                               ║
+    // ║                          logOut Tests                                ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     group('logOut', () {
       test('deletes token and uuid from storage', () async {

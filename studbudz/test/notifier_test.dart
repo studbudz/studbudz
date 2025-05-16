@@ -5,7 +5,7 @@ import 'package:studubdz/notifier.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 
 // ╔══════════════════════════════════════════════════════════════════════════╗
-// ║                               Mock Classes                              ║
+// ║                               Mock Classes                               ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
 
 class MockEngine extends Mock implements Engine {}
@@ -13,7 +13,7 @@ class MockEngine extends Mock implements Engine {}
 class FakeNotificationContent extends Fake implements NotificationContent {}
 
 // ╔══════════════════════════════════════════════════════════════════════════╗
-// ║                              Main Test Suite                            ║
+// ║                              Main Test Suite                             ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
 
 void main() {
@@ -35,7 +35,7 @@ void main() {
   });
 
   // ╔════════════════════════════════════════════════════════════════════════╗
-  // ║                              Notifier Tests                           ║
+  // ║                              Notifier Tests                            ║
   // ╚════════════════════════════════════════════════════════════════════════╝
   group('Notifier', () {
     group('init', () {
