@@ -5,12 +5,18 @@ import 'package:studubdz/Engine/engine.dart';
 import 'package:studubdz/Engine/auth_manager.dart';
 import 'package:studubdz/Engine/http_request_handler.dart';
 
-// Mock classes
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                             Mock Classes                                 ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
 class MockHttpRequestHandler extends Mock implements HttpRequestHandler {}
 
 class MockAuthManager extends Mock implements AuthManager {}
 
-// Test wrapper for Engine
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                        Testable Engine Wrapper                           ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
 class TestableEngine extends Engine {
   TestableEngine({required AuthManager auth, required HttpRequestHandler http})
       : super.forTest(authManager: auth, httpHandler: http);
@@ -29,6 +35,10 @@ class TestableEngine extends Engine {
   }
 }
 
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                              Main Test Suite                             ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
 void main() {
   late MockHttpRequestHandler mockHttp;
   late MockAuthManager mockAuth;
@@ -39,9 +49,14 @@ void main() {
     mockAuth = MockAuthManager();
     engine = Engine.forTest(authManager: mockAuth, httpHandler: mockHttp);
   });
+
+  // ╔════════════════════════════════════════════════════════════════════════╗
+  // ║                               Engine Tests                             ║
+  // ╚════════════════════════════════════════════════════════════════════════╝
   group('Engine', () {
     group('logIn', () {
       test('returns true for valid credentials', () async {
+        // Should return true if credentials are valid
         when(() => mockHttp.signInRequest('SophiaMiller', 'x|i0IS7IM\$0K'))
             .thenAnswer((_) async => true);
 
@@ -50,6 +65,7 @@ void main() {
       });
 
       test('returns false for invalid credentials', () async {
+        // Should return false if credentials are invalid
         when(() => mockHttp.signInRequest('WrongUser', 'WrongPass'))
             .thenAnswer((_) async => false);
 
@@ -58,6 +74,7 @@ void main() {
       });
 
       test('throws on network error', () async {
+        // Should throw if network error occurs during login
         when(() => mockHttp.signInRequest('Any', 'Any'))
             .thenThrow(Exception('Network error'));
 
@@ -67,6 +84,7 @@ void main() {
 
     group('signUpRequest', () {
       test('returns true when signup succeeds', () async {
+        // Should return true if signup is successful
         when(() => mockHttp.signUpRequest('user', 'pass', 'words'))
             .thenAnswer((_) async => true);
 
@@ -217,6 +235,9 @@ void main() {
       });
     });
 
+    // ╔══════════════════════════════════════════════════════════════════════╗
+    // ║                           downloadMedia Tests                        ║
+    // ╚══════════════════════════════════════════════════════════════════════╝
     group('downloadMedia', () {
       test('returns XFile after successful download', () async {
         final fakeFile = XFile('path/to/fake.jpg');
@@ -240,6 +261,7 @@ void main() {
 
     group('hasJoinedEvent', () {
       test('returns true when user has joined the event', () async {
+        // Should return true if backend says user has joined
         when(() =>
                 mockHttp.fetchData('hasjoined', queryParams: {'event_id': '1'}))
             .thenAnswer((_) async => {'has_joined': true});
@@ -249,6 +271,7 @@ void main() {
       });
 
       test('returns false when user has not joined the event', () async {
+        // Should return false if backend says user has not joined
         when(() =>
                 mockHttp.fetchData('hasjoined', queryParams: {'event_id': '2'}))
             .thenAnswer((_) async => {'has_joined': false});
@@ -258,6 +281,7 @@ void main() {
       });
 
       test('returns false if has_joined key is missing', () async {
+        // Should return false if backend response does not contain has_joined key
         when(() =>
                 mockHttp.fetchData('hasjoined', queryParams: {'event_id': '3'}))
             .thenAnswer((_) async => {}); // no key
@@ -267,6 +291,7 @@ void main() {
       });
 
       test('throws when fetchData fails', () async {
+        // Should throw if backend throws an exception
         when(() => mockHttp.fetchData('hasjoined',
                 queryParams: any(named: 'queryParams')))
             .thenThrow(Exception('Request failed'));
@@ -454,6 +479,7 @@ void main() {
         expect(() => engine.userExists('Bob'), throwsException);
       });
     });
+
     group('autoSuggest', () {
       test('returns map with suggestions from backend', () async {
         const query = 'Ali';
@@ -502,6 +528,7 @@ void main() {
         expect(() => engine.unlikePost(postID: 999), throwsException);
       });
     });
+
     group('hasLikedPost', () {
       test('returns true when post is liked', () async {
         when(() => mockHttp
@@ -558,6 +585,9 @@ void main() {
     });
   });
 
+  // ╔════════════════════════════════════════════════════════════════════════╗
+  // ║                      handleJoin/LeaveEvent Tests                       ║
+  // ╚════════════════════════════════════════════════════════════════════════╝
   group('handleJoin/LeaveEvent', () {
     test('handleJoinEvent completes on success', () async {
       when(() => mockHttp.sendData('joinevent', any()))

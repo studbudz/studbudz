@@ -4,25 +4,44 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:studubdz/Engine/auth_manager.dart';
 import 'dart:convert';
 
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                              Mock Classes                               ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
 class MockStorage extends Mock implements FlutterSecureStorage {}
 
-/// Helper function to create a fake JWT
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                        Helper Functions                                 ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+/// Helper function to create a fake JWT for testing
 String _makeToken(Map<String, dynamic> payload) {
   final header = base64Url.encode(utf8.encode('{"alg":"HS256","typ":"JWT"}'));
   final payloadEnc = base64Url.encode(utf8.encode(json.encode(payload)));
   return '$header.$payloadEnc.signature';
 }
 
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                              Main Test Suite                            ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
 void main() {
   late MockStorage mockStorage;
   late AuthManager auth;
 
   setUp(() {
+    // Initialize mock storage and AuthManager before each test
     mockStorage = MockStorage();
     auth = AuthManager(storage: mockStorage);
   });
 
+  // ╔════════════════════════════════════════════════════════════════════════╗
+  // ║                            AuthManager Tests                          ║
+  // ╚════════════════════════════════════════════════════════════════════════╝
   group('AuthManager', () {
+    // ╔══════════════════════════════════════════════════════════════════════╗
+    // ║                          saveAuthData Tests                         ║
+    // ╚══════════════════════════════════════════════════════════════════════╝
     group('saveAuthData', () {
       test('writes token and uuid to secure storage', () async {
         when(() => mockStorage.write(key: 'token', value: 'abc123'))
@@ -39,6 +58,9 @@ void main() {
       });
     });
 
+    // ╔══════════════════════════════════════════════════════════════════════╗
+    // ║                          getUserId Tests                            ║
+    // ╚══════════════════════════════════════════════════════════════════════╝
     group('getUserId', () {
       test('returns userID from storage', () async {
         when(() => mockStorage.read(key: 'userID'))
@@ -56,6 +78,9 @@ void main() {
       });
     });
 
+    // ╔══════════════════════════════════════════════════════════════════════╗
+    // ║                          getUsername Tests                          ║
+    // ╚══════════════════════════════════════════════════════════════════════╝
     group('getUsername', () {
       test('returns username from decoded token', () async {
         final token = _makeToken({'username': 'testUser'});
@@ -75,6 +100,9 @@ void main() {
       });
     });
 
+    // ╔══════════════════════════════════════════════════════════════════════╗
+    // ║                      getUserIdFromToken Tests                       ║
+    // ╚══════════════════════════════════════════════════════════════════════╝
     group('getUserIdFromToken', () {
       test('extracts user_id from token', () async {
         final token = _makeToken({'user_id': 42});
@@ -94,6 +122,9 @@ void main() {
       });
     });
 
+    // ╔══════════════════════════════════════════════════════════════════════╗
+    // ║                          getToken Tests                             ║
+    // ╚══════════════════════════════════════════════════════════════════════╝
     group('getToken', () {
       test('returns stored token', () async {
         when(() => mockStorage.read(key: 'token'))
@@ -110,8 +141,12 @@ void main() {
       });
     });
 
+    // ╔══════════════════════════════════════════════════════════════════════╗
+    // ║                          getUuid Tests                              ║
+    // ╚══════════════════════════════════════════════════════════════════════╝
     group('getUuid', () {
       test('returns stored uuid', () async {
+        // Should return the uuid value from storage
         when(() => mockStorage.read(key: 'uuid'))
             .thenAnswer((_) async => 'uid');
 
@@ -120,14 +155,19 @@ void main() {
       });
 
       test('throws if uuid missing', () async {
+        // Should throw if uuid is not found in storage
         when(() => mockStorage.read(key: 'uuid')).thenAnswer((_) async => null);
 
         expect(() => auth.getUuid(), throwsException);
       });
     });
 
+    // ╔══════════════════════════════════════════════════════════════════════╗
+    // ║                          isLoggedIn Tests                           ║
+    // ╚══════════════════════════════════════════════════════════════════════╝
     group('isLoggedIn', () {
       test('returns true if token exists and valid', () async {
+        // Should return true if token is not expired and uuid exists
         final token = _makeToken(
             {'exp': (DateTime.now().millisecondsSinceEpoch ~/ 1000) + 1000});
         when(() => mockStorage.read(key: 'token'))
@@ -140,6 +180,7 @@ void main() {
       });
 
       test('returns false if token is expired', () async {
+        // Should return false if token is expired
         final token = _makeToken(
             {'exp': (DateTime.now().millisecondsSinceEpoch ~/ 1000) - 1000});
         when(() => mockStorage.read(key: 'token'))
@@ -152,6 +193,7 @@ void main() {
       });
 
       test('returns false if uuid or token missing', () async {
+        // Should return false if either token or uuid is missing
         when(() => mockStorage.read(key: 'token'))
             .thenAnswer((_) async => null);
         when(() => mockStorage.read(key: 'uuid')).thenAnswer((_) async => null);
@@ -161,6 +203,9 @@ void main() {
       });
     });
 
+    // ╔══════════════════════════════════════════════════════════════════════╗
+    // ║                          logOut Tests                               ║
+    // ╚══════════════════════════════════════════════════════════════════════╝
     group('logOut', () {
       test('deletes token and uuid from storage', () async {
         when(() => mockStorage.delete(key: 'token')).thenAnswer((_) async {});
